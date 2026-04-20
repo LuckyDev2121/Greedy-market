@@ -56,6 +56,16 @@ export default function RankingHelpModal({
                         <span className="relative text-[#86551c] ml-[60px] text-[20px]">10~15</span>
                         <span className="relative text-[#86551c] mr-[50px] text-[20px]">80000</span>
                     </div>
+                    <span className="absolute left-[0px] top-[250px] text-[#86551c] text-[16px]">1. The prize diamond will increase after each</span>
+                    <span className="absolute left-[20px] top-[270px] text-[#86551c] text-[16px]">game round</span>
+                    <span className="absolute left-[0px] top-[300px] text-[#86551c] text-[16px]">2. The top 15 players can display in the</span>
+                    <span className="absolute left-[20px] top-[320px] text-[#86551c] text-[16px]">ranking list. The list will updated at 0 o'</span>
+                    <span className="absolute left-[20px] top-[340px] text-[#86551c] text-[16px]">clock every day.</span>
+                    <span className="absolute left-[0px] top-[370px] text-[#86551c] text-[16px]">3. The ranking of the laeaderboard depends</span>
+                    <span className="absolute left-[20px] top-[390px] text-[#86551c] text-[16px]">on the amount of players' diamonds</span>
+                    <span className="absolute left-[20px] top-[410px] text-[#86551c] text-[16px]">Played. The more diamonds Played in the</span>
+                    <span className="absolute left-[20px] top-[430px] text-[#86551c] text-[16px]">game, the higher the ranking and the richer</span>
+                    <span className="absolute left-[20px] top-[450px] text-[#86551c] text-[16px]">the rewards.</span>
                 </div>
             </div>
         </div>

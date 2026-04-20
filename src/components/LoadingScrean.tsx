@@ -18,7 +18,7 @@ export default function LoadingScreen({
             onTouchStart={onUnlockAudio}
             className=" h-svh w-full text-left"
         >
-            <div className="absolute flex inset-0 left-1/2 -translate-x-1/2">
+            <div className="absolute flex inset-0 items-center justify-center">
                 <img src={getAssetUrl(GAME_ASSETS.normalBg)} alt="normal" />
 
             </div>
