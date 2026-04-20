@@ -1,16 +1,15 @@
 import { useEffect, useRef, useState } from "react"
-import { getAssetUrl, GAME_ASSETS } from "../config/gameConfig";
 import { useGame } from "../hooks/useGameHook";
 import type { ResultData } from "../api/api";
 const fruits = [
-    { id: 5, element_name: "H", top: 40, left: 60 },
-    { id: 6, element_name: "G", top: 20, left: 165 },
-    { id: 7, element_name: "F", top: 40, left: 270 },
-    { id: 8, element_name: "E", top: 150, left: 315 },
-    { id: 9, element_name: "D", top: 260, left: 270 },
-    { id: 10, element_name: "C", top: 290, left: 165 },
-    { id: 11, element_name: "B", top: 260, left: 60 },
-    { id: 12, element_name: "A", top: 150, left: 10 },
+    { id: 27, element_name: "H", top: 37, left: 50 },
+    { id: 20, element_name: "G", top: 16, left: 156 },
+    { id: 21, element_name: "F", top: 37, left: 262 },
+    { id: 22, element_name: "E", top: 147, left: 307 },
+    { id: 23, element_name: "D", top: 257, left: 262 },
+    { id: 24, element_name: "C", top: 286, left: 156 },
+    { id: 25, element_name: "B", top: 257, left: 50 },
+    { id: 26, element_name: "A", top: 147, left: 2 },
 ];
 
 export default function ChooseRectangle({ onChooseTimeUp, RoundId }: { onChooseTimeUp?: () => void; RoundId?: number | null; onResult?: (fruit: string) => void }) {
@@ -151,8 +150,16 @@ export default function ChooseRectangle({ onChooseTimeUp, RoundId }: { onChooseT
         };
     }, [second, time,]);
     return (
-        <div className="absolute z-40" style={{ top: `${fruits[(8 + time) % fruits.length].top}px`, left: `${fruits[(8 + time) % fruits.length].left}px` }}>
-            <img src={getAssetUrl(GAME_ASSETS.selectround)} alt="Choose Rectangle" className="relative" />
+        <div className="relative  h-[400px] w-[402px] z-40">
+            {fruits.map((item, index) => (
+                (8 + time) % fruits.length) === index ? (
+                <div className="absolute z-40 h-[87px] w-[90px] rounded-[20px]" style={{ top: `${fruits[(8 + time) % fruits.length].top}px`, left: `${fruits[(8 + time) % fruits.length].left}px` }}>
+                </div>
+            ) :
+                (
+                    <div className="absolute z-40 h-[87px] w-[90px] rounded-[20px] bg-black/30" style={{ top: `${item.top}px`, left: `${item.left}px` }} />
+                )
+            )}
         </div>
     );
 }

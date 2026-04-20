@@ -28,11 +28,9 @@ import {
   
 } from "../api/api";
 import {
-  // fetchRuntimeConfigFromApi,
   REALTIME_CHANNEL,
   REALTIME_EVENT,
   getAssetUrl,
-  // type RuntimeConfig,
 } from "../config/gameConfig";
 
 export function resolveAssetUrl(path: string): string {

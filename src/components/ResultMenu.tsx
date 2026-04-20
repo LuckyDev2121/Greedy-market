@@ -1,8 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { motion } from "framer-motion";
 import { getAssetUrl, GAME_ASSETS } from "../config/gameConfig";
-import ModalHeaderPlate from "./ModalHeaderPlate";
-import ResultMenuDivider from "./ResultMenuDivider";
 import { useGame, resolveAssetUrl } from "../hooks/useGameHook";
 type ResultMenuProps = {
     start?: number;
@@ -24,7 +21,6 @@ function formatDiamondAmount(amount: number): string {
 }
 
 export default function ResultMenu({ start, onResultTimeUp }: ResultMenuProps) {
-    const [showIcon, setShowIcon] = useState(false);
     const initialTime = Math.max(0, start ?? 0);
     const [time, setTime] = useState(initialTime);
     const onResultTimeUpRef = useRef(onResultTimeUp);
@@ -69,11 +65,9 @@ export default function ResultMenu({ start, onResultTimeUp }: ResultMenuProps) {
             return "Did not participate in this round";
         }
 
-        if (winningDiamondAmount > 0) {
-            return "Congratelations on getting diamonds";
+        if (winningDiamondAmount === 0) {
+            return "Sorry, didn't win this round";
         }
-
-        return "Sorry, didn't win this round";
     }, [totalBetAmount, winningDiamondAmount]);
 
     const getResultOptionLogo = (optionId: number) => {
@@ -86,10 +80,6 @@ export default function ResultMenu({ start, onResultTimeUp }: ResultMenuProps) {
         void refreshGameData({ resetPendingBalanceDeduction: true });
     }, [refreshGameData]);
 
-    useEffect(() => {
-        if (winningDiamondAmount > 0) setShowIcon(true);
-        else setShowIcon(false);
-    }, [winningDiamondAmount]);
 
     useEffect(() => {
         setTime(initialTime);
@@ -115,94 +105,78 @@ export default function ResultMenu({ start, onResultTimeUp }: ResultMenuProps) {
         return () => window.clearInterval(timer);
     }, [initialTime]);
 
-    const formatted = String(time).padStart(2, "0");
-
     return (
-        <div className="absolute h-[374px] w-[374px]  top-[300px]">
-            <img src={getAssetUrl(GAME_ASSETS.result)} alt="result" className="absolute left-[20px] " />
-            {/* <span className="absolute  left-1/2 transform -translate-x-1/2 text-sm font-bold mt-1">Round {activeResult?.round_no} of Today</span>
-            <span className="absolute h-[19px] w-[19px] mt-[5px] right-[62px] rounded-full " >
-                {formatted}
-            </span>
-            <div className="absolute left-1/2 top-[57px] h-[117px] w-[117px] -translate-x-1/2 overflow-hidden rounded-full">
-                <motion.img
-                    src={getAssetUrl(GAME_ASSETS.rotatedInstances)}
-                    alt="Shine"
-                    className="absolute inset-0 h-full w-full origin-center opacity-50"
-                    animate={{ rotate: 360 }}
-                    transition={{
-                        rotate: { repeat: Infinity, duration: 8, ease: "linear" },
-                    }}
-                />
-            </div>
+        <div className="absolute h-[400px]  w-[400px] top-[300px]">
+            {winningDiamondAmount > 0 && (
+                <img src={getAssetUrl(GAME_ASSETS.winResult)} alt="result" className="absolute h-[374px] w-[374px] scale-110 left-[17px] z-[100]" />
+            )}
+            {winningDiamondAmount === 0 && (
+                <img src={getAssetUrl(GAME_ASSETS.result)} alt="result" className="absolute h-[374px] w-[374px]  top-[49px] left-[20px] z-[100]" />
+            )}
+            {winningDiamondAmount > 0 && (
+                <div className="absolute z-[110] left-[130px] top-[120px] flex">
+                    <img
+                        src={getAssetUrl(GAME_ASSETS.diamond)}
+                        alt="Diamond Icon"
+                        className=" h-[70px] w-[70px] "
+                    />
+                    <span className=" text-[30px] mt-[15px]">{formatDiamondAmount(winningDiamondAmount)}</span>
+                </div>
+            )}
+            {winningDiamondAmount === 0 && (
+                <span className="absolute z-[110] left-[150px] top-[145px] text-[15px]">{resultMessage}</span>
+            )}
             {activeResult && (
                 isJackpot ? (
                     <img
                         src={resolveAssetUrl(activeResult.jackpot_avatar ?? "")}
                         alt="selectedFruit"
-                        className={`absolute left-1/2 -translate-x-1/2 top-[70px] h-[85px] w-[85px]`}
+                        className={`absolute z-[110]  top-[130px] left-[80px] h-[50px] w-[50px]`}
                     />
                 )
                     : (
                         <img
                             src={getResultOptionLogo(activeResult.winning_option_id[0])}
                             alt="selectedFruit"
-                            className={`absolute left-1/2 -translate-x-1/2 top-[70px] h-[85px] w-[85px]`}
+                            className={`absolute z-[110]  top-[130px] left-[80px] h-[50px] w-[50px]`}
                         />
                     )
             )}
-            <div className="absolute left-1/2 top-[191px] flex -translate-x-1/2 items-center justify-center gap-1 whitespace-nowrap">
-                <span>{resultMessage}</span>
-                {showIcon && (
-                    <>
-                        <img
-                            src={getAssetUrl(GAME_ASSETS.diamondIcon)}
-                            alt="Diamond Icon"
-                            className="h-[9px] w-[16px]"
-                        />
-                        <span>{winningDiamondAmount > 0 ? formatDiamondAmount(winningDiamondAmount) : "0"}</span>
-                    </>
-                )}
+            <div className="absolute  z-[100] left-[60px] top-[200px]">
+                <div className="relative w-[312px] h-[47px] mt-[10px]  ">
+                    <div className="absolute left-[0px] h-[47px] w-[47px]  rounded-l-[10px]">
+                        <img src={getAssetUrl(GAME_ASSETS.prize1)} alt="prize" className=" absolute h-[35px] w-[35px] left-1/2 top-1/2 -translate-y-1/2 -translate-x-1/2" />
+                    </div>
+                    <div className="absolute left-[47px] flex h-[47px] w-[245px]  items-center rounded-r-[10px]">
+                        <div></div>
+                        <span className="text-[#ffffff] font-bold">Sumiya BD</span>
+                        {/* <img src={getAssetUrl(GAME_ASSETS.prize2)} alt="" /> */}
+                        <span></span>
+                    </div>
+                </div>
+                <div className="relative w-[292px] h-[47px] mt-[5px] flex">
+                    <div className="relative h-[47px] w-[47px]  rounded-l-[10px]">
+                        <img src={getAssetUrl(GAME_ASSETS.prize2)} alt="prize" className="absolute h-[35px] w-[35px] left-1/2 top-1/2 -translate-y-1/2 -translate-x-1/2 " />
+                    </div>
+                    <div className="relative flex h-[47px] w-[245px]  items-center rounded-r-[10px]">
+                        <div></div>
+                        <span className="text-[#ffffff] font-bold">Sumiya BD</span>
+                        {/* <img src="" alt="prize" /> */}
+                        <span></span>
+                    </div>
+                </div>
+                <div className="relative w-[292px] h-[47px] mt-[5px] flex">
+                    <div className="relative h-[47px] w-[47px]  rounded-l-[10px]">
+                        <img src={getAssetUrl(GAME_ASSETS.prize3)} alt="prize2" className="absolute h-[35px] w-[35px] left-1/2 top-1/2 -translate-y-1/2 -translate-x-1/2" />
+                    </div>
+                    <div className="relative flex h-[47px] w-[245px]  items-center rounded-r-[10px]">
+                        <div></div>
+                        <span className="text-[#ffffff] font-bold">Sumiya BD</span>
+                        {/* <img src="" alt="" /> */}
+                        <span></span>
+                    </div>
+                </div>
             </div>
-            <ResultMenuDivider className="absolute left-[61px] top-[221px]" direction="left" />
-            <ResultMenuDivider className="absolute left-[281px] top-[221px]" direction="right" />
-            <span className="absolute left-1/2 -translate-x-1/2 top-[215px] text-[#FFFFFF]/60">Biggest winning of the round</span>
-            <div className="absolute grid grid-cols-3 top-[244px] w-[300px] h-[100px] left-1/2 -translate-x-1/2 ">
-                {activeResult?.winners?.[0]?.avater && (
-                    <div className="relative h-[100px] w-[100px]">
-                        <img src={resolveAssetUrl(activeResult?.winners?.[0]?.avater ?? "")} alt="abatar" className="absolute left-1/2 h-[50px] w-[50px] -translate-x-1/2 rounded-full object-cover" />
-                        <span className="absolute top-[50px] w-[100px] text-center">{activeResult?.winners?.[0]?.id ?? "N/A"}</span>
-                        <div className="absolute flex top-[70px] w-[100px] items-center justify-center">
-                            <div className="relative ">
-                                <img src={getAssetUrl(GAME_ASSETS.diamondIcon)} alt="Diamond Icon" className="h-[9px] w-[16px] mr-[3px]" />
-                            </div>
-                            <span >{activeResult?.winners?.[0]?.win_amount ?? "***"}</span>
-                        </div>
-                    </div>
-                )}
-                {activeResult?.winners?.[1]?.avater && (<div className="relative h-[100px] w-[100px]">
-                    <img src={resolveAssetUrl(activeResult?.winners?.[1]?.avater ?? "")} alt="abatar" className="absolute left-1/2 h-[50px] w-[50px] -translate-x-1/2 rounded-full object-cover" />
-                    <span className="absolute top-[50px] w-[100px] text-center">{activeResult?.winners?.[1]?.id ?? "N/A"}</span>
-                    <div className="absolute flex top-[70px] w-[100px] items-center justify-center">
-                        <div className="relative ">
-                            <img src={getAssetUrl(GAME_ASSETS.diamondIcon)} alt="Diamond Icon" className="h-[9px] w-[16px] mr-[3px]" />
-                        </div>
-                        <span >{activeResult?.winners?.[1]?.win_amount ?? "***"}</span>
-                    </div>
-                </div>
-                )}
-                {activeResult?.winners?.[2]?.avater && (<div className="relative h-[100px] w-[100px]">
-                    <img src={resolveAssetUrl(activeResult?.winners?.[2]?.avater ?? "")} alt="image" className="absolute left-1/2 h-[50px] w-[50px] -translate-x-1/2 rounded-full object-cover" />
-                    <span className="absolute top-[50px] w-[100px] text-center">{activeResult?.winners?.[2]?.id ?? "N/A"}</span>
-                    <div className="absolute flex top-[70px] w-[100px] items-center justify-center">
-                        <div className="relative ">
-                            <img src={getAssetUrl(GAME_ASSETS.diamondIcon)} alt="Diamond Icon" className="h-[9px] w-[16px] mr-[3px]" />
-                        </div>
-                        <span >{activeResult?.winners?.[2]?.win_amount ?? "***"}</span>
-                    </div>
-                </div>
-                )}
-            </div> */}
         </div>
     )
 }

@@ -9,6 +9,7 @@ import LedTimer from "./LedTimer";
 import { useGame, resolveAssetUrl } from "../hooks/useGameHook";
 import MovingHand from "./MoveHand";
 import RoundStartTimer from "./RoundStartTimer";
+import { div } from "framer-motion/client";
 type PlayBoardProps = {
     onOpenModal: (modal: string) => void;
     onRepeatButtonClick: () => void;
@@ -430,7 +431,6 @@ export default function PlayBoard({
                         </div>
                     </div>
                 </div>
-
                 {showBoardOpacity && (
                     <div className="absolute w-[402px] h-[735px] rounded-[20px] inset-0 z-30 bg-[#360149]  opacity-20"></div>
                 )}
@@ -455,7 +455,7 @@ export default function PlayBoard({
                                 setPreviousRoundBets(displayedBets);
                                 setShowChooseTimer(true);
                                 setShowLedTimer(false);
-                                setShowBoardOpacity(true);
+                                setShowBoardOpacity(false);
                                 setBlockClick("none");
                                 setShowChooseRectangle(true);
                                 setShowHand(false);
@@ -479,7 +479,7 @@ export default function PlayBoard({
                     </div>
                 )}
                 {showResultTimer && (
-                    <div className='absolute top-[90px] h-[271px] w-[280px] z-30 left-1/2 transform -translate-x-1/2'>
+                    <div className='absolute inset-0 z-40'>
                         <ResultTimer
                             start={resultTime}
                             onResultTimeUp={() => {
@@ -505,12 +505,14 @@ export default function PlayBoard({
                     </div>
                 )}
                 {showChooseRectangle && (
-                    <ChooseRectangle
-                        RoundId={RoundId}
-                        onChooseTimeUp={() => {
-                            setShowChooseRectangle(false);
-                        }}
-                    />
+                    <div className="absolute inset-0 z-40">
+                        <ChooseRectangle
+                            RoundId={RoundId}
+                            onChooseTimeUp={() => {
+                                setShowChooseRectangle(false);
+                            }}
+                        />
+                    </div>
                 )}
             </div>
         </div>

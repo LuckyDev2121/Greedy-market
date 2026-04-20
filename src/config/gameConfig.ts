@@ -6,7 +6,7 @@ type ConnectionState =
   | "unavailable"
   | "failed";
 
-export const GAME_ID = 5;
+export const GAME_ID = 8;
 
 function getRuntimeOrigin(): string {
   if (typeof window !== "undefined" && window.location.origin) {
@@ -58,7 +58,7 @@ export const REALTIME_PORT = Number(
 );
 export const FALLBACK_REFRESH_MS = 5_000;
 
-export const ASSET_BASE_URL = `${BACKEND_ORIGIN}/core/storage/app/public/gready-market/`;
+export const ASSET_BASE_URL = `${BACKEND_ORIGIN}/core/storage/app/public/`;
 
 export function getAssetUrl(path: string): string {
   if (!path) {
@@ -70,7 +70,7 @@ export function getAssetUrl(path: string): string {
   }
 
   const normalizedPath = path.replace(/^\/+/, "");
-  const storagePrefix = "core/storage/app/public/gready-market/";
+  const storagePrefix = "core/storage/app/public/";
   const storagePathIndex = normalizedPath.indexOf(storagePrefix);
 
   if (storagePathIndex >= 0) {
@@ -117,59 +117,32 @@ export const CONNECTION_LABELS: Record<ConnectionState, string> = {
 };
 
 export const GAME_ASSETS = {
-  normalBg:"game-normal-mood-bg.svg",
-advanceBg:"advance-mood-bg.svg",
-middle:"gready-middle.svg",
-congraDiamond:"gready-congra-dismond.svg",
-diamond:"gready-diamond.svg",
-gameBoard:"gready-game-board.svg",
-hand:"gready-hand.svg",
-jackpotCounter:"gready-jackpot-counter.svg",
-onCard:"gready-game-on-card.svg",
-result:"gready-result-show.svg",
-jhalot:"jhalot.svg",
-leaderPart :"leader-part-frame.svg",
-RotatedInstant:"Rotated-Instances.svg",
-prize1:"1st-position.svg",
-prize2:"2nd-possition.svg",
-prize3:"3rd-position.svg",
-trofy:"trofy.svg",
-box1:"box1.svg",
-box2:"box2.svg",
-box3:"box3.svg",
-box4:"box4.svg",
-boxOpen1:"box-open1.svg",
-boxOpen2:"box-open2.svg",
-boxOpen3:"box-open3.svg",
-boxOpen4:"box-open4.svg",
-boxOpen5:"box-open5.svg",
-
-
-  betAmount1M: "bet-amount-1M.svg",
-  betAmount10k: "bet-amount-10k.svg",
-  betAmount100: "bet-amount-100.svg",
-  betAmount100k: "bet-amount-100k.svg",
-  betAmount1000: "bet-amount-1000.svg",
-  fruitAvocado: "fruit-avocado.svg",
-  fruitBgFrame: "fruit-bg-frame.svg",
-  fruitCheri: "fruit-cheri.svg",
-  fruitContainerFrame: "fruit-container-frame.svg",
-  fruitGameName: "fruit-game-name.svg",
-  fruitGraps: "fruit-graps.svg",
-  fruitLemon: "fruit-lemon.svg",
-  fruitOrange: "fruit-orange.svg",
-  fruitStroberry: "fruit-stroberry.svg",
-  fruitTomato: "fruit-tomato.svg",
-  fruitWatermalon: "fruit-watermalon.svg",
-  timeCountingBoard: "time-Counting-board.svg",
-  diamondIcon: "diamond-icon.svg",
-  resultfirstposition: "result-1st-postion.svg",
-  resultsecondposition: "result-2nd-postion.svg",
-  resultthirdposition: "result-3rd-postion.svg",
-  rotatedInstances: "Rotated-Instances.svg",
-  selectround: "select-round.svg",
-  resultboardbg: "result-board-bg.svg",
-  newtag: "new-tag.svg",
-  gamelogo: "game-logo.svg",
+  normalBg:"gready-market/game-normal-mood-bg.svg",
+advanceBg:"gready-market/advance-mood-bg.svg",
+middle:"gready-market/gready-middle.svg",
+congraDiamond:"gready-market/gready-congra-dismond.svg",
+diamond:"gready-market/gready-diamond.svg",
+gameBoard:"gready-market/gready-game-board.svg",
+hand:"gready-market/gready-hand.svg",
+jackpotCounter:"gready-market/gready-jackpot-counter.svg",
+onCard:"gready-market/gready-game-on-card.svg",
+result:"gready-market/gready-result-show.svg",
+jhalot:"gready-market/jhalot.svg",
+leaderPart :"gready-market/leader-part-frame.svg",
+RotatedInstant:"gready-market/Rotated-Instances.svg",
+prize1:"gready-market/1st-position.svg",
+prize2:"gready-market/2nd-possition.svg",
+prize3:"gready-market/3rd-position.svg",
+trofy:"gready-market/trofy.svg",
+winResult:"gready-market/person-win.svg",
+box1:"gready-market/box1.svg",
+box2:"gready-market/box2.svg",
+box3:"gready-market/box3.svg",
+box4:"gready-market/box4.svg",
+boxOpen1:"gready-market/box-open1.svg",
+boxOpen2:"gready-market/box-open2.svg",
+boxOpen3:"gready-market/box-open3.svg",
+boxOpen4:"gready-market/box-open4.svg",
+boxOpen5:"gready-market/box-open5.svg",
 } as const;
 

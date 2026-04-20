@@ -1,6 +1,5 @@
 import { useEffect, useRef, } from "react";
 import { useGame } from '../hooks/useGameHook';
-import { getAssetUrl, GAME_ASSETS } from "../config/gameConfig";
 
 type ResultTimerProps = {
     start?: number;
@@ -20,14 +19,14 @@ export default function ResultTimer({ start, onResultTimeUp }: ResultTimerProps)
             : [];
 
     const gridMap = [
-        { id: 12, top: 25, left: 50 },
-        { id: 11, top: 140, left: 2 },
-        { id: 10, top: 245, left: 50 },
-        { id: 9, top: 275, left: 155 },
-        { id: 8, top: 245, left: 262 },
-        { id: 7, top: 140, left: 310 },
-        { id: 6, top: 25, left: 262 },
-        { id: 5, top: 5, left: 155 },
+        { id: 27, top: 25, left: 50 },
+        { id: 26, top: 140, left: 2 },
+        { id: 25, top: 245, left: 50 },
+        { id: 24, top: 275, left: 155 },
+        { id: 23, top: 245, left: 262 },
+        { id: 22, top: 140, left: 310 },
+        { id: 21, top: 25, left: 262 },
+        { id: 20, top: 5, left: 155 },
     ];
 
     useEffect(() => {
@@ -48,19 +47,17 @@ export default function ResultTimer({ start, onResultTimeUp }: ResultTimerProps)
     }, [duration]);
 
     return (
-        <div className='absolute  z-30   '>
+        <div className='relative top-[8px] h-[400px] w-[402px] z-40 left-1/2 -translate-x-1/2'>
             {gridMap.map((item) => (
                 winningIds.includes(item.id) ? (
-                    <div key={item.id} className={`absolute left-${item.left} top-${item.top} z-40`}>
-                        <img
-                            src={getAssetUrl(GAME_ASSETS.selectround)}
-                            className="absolute -left-[2px] -top-[8px] h-[100px] w-[96px]"
-                        />
+                    <div key={item.id} className={`absolute h-[87px] w-[90px] z-40`}
+                        style={{ top: `${item.top}px`, left: `${item.left}px` }}>
                     </div>
                 ) : (
                     <div
                         key={item.id}
-                        className={`absolute left-${item.left} top-${item.top} z-40 bg-black/50 rounded-[8px]`}
+                        className={`absolute h-[87px] w-[90px] z-40 bg-black/30 rounded-[8px]`}
+                        style={{ top: `${item.top}px`, left: `${item.left}px` }}
                     />
                 )
             ))}
