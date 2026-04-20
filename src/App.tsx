@@ -15,12 +15,12 @@ function preloadImage(src: string) {
 }
 
 async function preloadGameAssets(setProgress: (value: number) => void) {
-  const logoSrc = getAssetUrl(GAME_ASSETS.gamelogo);
+  const logoSrc = getAssetUrl(GAME_ASSETS.logo);
   await preloadImage(logoSrc);
   setProgress(20);
 
   const assets = Object.values(GAME_ASSETS)
-    .filter((fileName) => fileName !== GAME_ASSETS.gamelogo)
+    .filter((fileName) => fileName !== GAME_ASSETS.logo)
     .map((fileName) => getAssetUrl(fileName));
 
   if (assets.length === 0) {
