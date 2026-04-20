@@ -16,6 +16,7 @@ type PlayBoardProps = {
     onRoundFinished: () => void;
     // repeatRequestId: number;
     RoundTime: number;
+    isAdvanced: boolean;
 };
 
 function sumBetMap(betMap: Record<number, number>): number {
@@ -29,6 +30,7 @@ export default function PlayBoard({
     onRoundFinished,
     // repeatRequestId,
     RoundTime,
+    isAdvanced,
 }: PlayBoardProps) {
     const [blockClick, setBlockClick] = useState<"auto" | "none">("none");
     const [showLedTimer, setShowLedTimer] = useState(false);
@@ -47,6 +49,11 @@ export default function PlayBoard({
     const [hiddenTime, setHiddenTime] = useState(0);
     const [showResultTimer, setShowResultTimer] = useState(false);
     const [roundStart, setRoundStart] = useState(false)
+    const [board, setBoard] = useState('');
+    const [todayWin, setTodayWin] = useState('');
+    const [betBoard, setBetBoard] = useState('');
+    const [scoreBoard, setScoreBoard] = useState('');
+    const [resultBoard, setResultBoard] = useState('');
     const {
         betAmounts,
         options,
@@ -301,6 +308,22 @@ export default function PlayBoard({
         };
     }, [hasStartedFinalBetWindow, placeBet, releaseBetBalance]);
 
+    useEffect(() => {
+        if (isAdvanced) {
+            setBoard("bg-[#72342B]");
+            setTodayWin("bg-[#6F372F] border-[#E92407]");
+            setBetBoard("bg-[#D95B48] border-[#E02407]");
+            setScoreBoard("bg-[#D95B48] border-[#E02407]");
+            setResultBoard("bg-[#D95B48] border-[#E02407]");
+            return;
+        }
+
+        setBoard("bg-[#2B93CA]");
+        setTodayWin("bg-[#0F6095] border-[#1087C6]");
+        setBetBoard("bg-[#0F6095] border-[#1087C6]");
+        setScoreBoard("bg-[#0F6095] border-[#1087C6]");
+        setResultBoard("bg-[#0F6095] border-[#1087C6]");
+    }, [isAdvanced]);
     return (
         <div className="absolute z-20 object-contain top-[90px]" style={{ width: "100%", height: "100%" }}>
             <div className="relative inset-0 z-20">
@@ -319,9 +342,9 @@ export default function PlayBoard({
                     displayedBets={displayedBets}
                     onBetOption={handleBetOption}
                 />
-                <div className="absolute w-[402px] h-[297px] top-[380px] bg-[#2B93CA]">
+                <div className={`absolute w-[402px] h-[297px] top-[380px] ${board}`}>
                     <img src={getAssetUrl(GAME_ASSETS.jhalot)} alt="jhalot" className="absolute inset-0 scale-x-110" />
-                    <div className="absolute justify-between items-center px-[10px] flex w-[234px] h-[26px] bg-[#0F6095] top-[10px] rounded-full border-[2px] border-[#1087C6] left-1/2 -translate-x-1/2">
+                    <div className={`absolute justify-between items-center px-[10px] ${todayWin} flex w-[234px] h-[26px] top-[10px] rounded-full border-[2px]  left-1/2 -translate-x-1/2`}>
                         <span className=" font-blod">TODAY'S WIN</span>
                         <span className="text-yellow-500 font-blod">100</span>
                     </div>
@@ -341,11 +364,12 @@ export default function PlayBoard({
                             handleBetOption(27, currentBetAmount);
                         }} />
                     </button>
-                    <div className="absolute w-[345px] h-[100px] bg-[#0F6095] top-[50px] rounded-[20px] border-[5px] border-[#1087C6] left-1/2 -translate-x-1/2">
+                    <div className={`absolute w-[345px] h-[100px] ${betBoard}  top-[50px] rounded-[20px] border-[5px]  left-1/2 -translate-x-1/2`}>
 
                     </div>
-///////////////////////////////////
-                    <div className="absolute flex items-center w-[343px] h-[45px] rounded-[12px] top-[210px] bg-[#0F6095] border-[2px] border-[#1087C6] left-1/2 -translate-x-1/2">
+                    <div className={`absolute w-[343px] h-[18px]  rounded-[20px] top-[160px] ${scoreBoard}  border-[1px]  left-1/2 -translate-x-1/2`}>
+                    </div >
+                    <div className={`absolute flex items-center w-[343px] h-[45px] rounded-[12px] ${resultBoard} top-[210px]  border-[2px]  left-1/2 -translate-x-1/2`}>
                         <span className="ml-[10px] text-[16px]">Result</span>
                         <div className="ml-[10px] w-[2px] h-[25px] bg-white/80"></div>
                     </div>
@@ -501,13 +525,13 @@ export default function PlayBoard({
                     </div>
                 )}
             </div>
-        </div>
+        </div >
     );
 }
 
 
-//<div className="absolute w-[343px] h-[18px]  rounded-[20px] top-[160px] bg-[#0F6095] border-[1px] border-[#1087C6] left-1/2 -translate-x-1/2">
-//                   <img src={getAssetUrl(GAME_ASSETS.box1)} alt="box" className="absolute left-[38px] -top-[12px] " />
+
+//    <img src={getAssetUrl(GAME_ASSETS.box1)} alt="box" className="absolute left-[38px] -top-[12px] " />
 //                   <img src={getAssetUrl(GAME_ASSETS.box2)} alt="box" className="absolute left-[106px] -top-[12px]" />
 //                    <img src={getAssetUrl(GAME_ASSETS.box3)} alt="box" className="absolute left-[174px] -top-[12px]" />
 //                    <img src={getAssetUrl(GAME_ASSETS.box4)} alt="box" className="absolute left-[242px] -top-[12px]" />
@@ -517,4 +541,4 @@ export default function PlayBoard({
 //                 <span className="absolute left-[184px] top-[25px] text-[#f0d457] [text-shadow:1px_0_0_brown,-1px_0_0_brown,0_1px_0_brown,0_-1px_0_brown]">100K</span>
 //                  <span className="absolute left-[252px] top-[25px] text-[#f0d457] [text-shadow:1px_0_0_brown,-1px_0_0_brown,0_1px_0_brown,0_-1px_0_brown]">500K</span>
 //                <span className="absolute left-[320px] top-[25px] text-[#f0d457] [text-shadow:1px_0_0_brown,-1px_0_0_brown,0_1px_0_brown,0_-1px_0_brown]">1M</span>
-//             </div > 
+//            

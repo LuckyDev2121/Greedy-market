@@ -15,26 +15,27 @@ import JackpotMenu from "./Jackpot";
 import { GAME_ASSETS, getAssetUrl } from "../config/gameConfig";
 type ToggleRowProps = {
   isOn: boolean;
-  onToggle: () => void;
+  onBasic: () => void;
+  onAdvanced: () => void;
 };
 const GAME_WIDTH = 402;
 const GAME_HEIGHT = 735;
 
-function ToggleRow({ isOn, onToggle }: ToggleRowProps) {
+function ToggleRow({ isOn, onBasic, onAdvanced }: ToggleRowProps) {
   return (
     <div className="flex items-center justify-between">
       <div className="flex h-[26px] w-[172px] overflow-hidden rounded-full border bg-gradient-to-t bg-black/10 border-[#b4870a]  text-white shadow-[inset_0_0_0_1px_rgba(255,255,255,0.14)]">
         <button
           type="button"
-          onClick={isOn ? onToggle : undefined}
-          className={`h-full flex-1 text-[10px] font-bold [text-shadow:1px_0_0_brown,-1px_0_0_brown,0_1px_0_brown,0_-1px_0_brown] leading-none transition ${isOn ? "bg-transparent  " : "bg-gradient-to-t from-[#FFDB19] to-[#E09613] rounded-full"}`}
+          onClick={isOn ? onBasic : undefined}
+          className={`h-full flex-1 text-[10px] font-bold [text-shadow:1px_0_0_brown,-1px_0_0_brown,0_1px_0_brown,0_-1px_0_brown] leading-none transition ${isOn ? "bg-transparent  " : "bg-gradient-to-t from-[#E09613] to-[#FFDB19] rounded-full"}`}
         >
           Basic
         </button>
         <button
           type="button"
-          onClick={isOn ? undefined : onToggle}
-          className={`h-full flex-1 text-[10px] font-bold [text-shadow:1px_0_0_brown,-1px_0_0_brown,0_1px_0_brown,0_-1px_0_brown] leading-none transition ${isOn ? "bg-gradient-to-t from-[#FFDB19] to-[#E09613] rounded-full  " : "bg-transparent text-white "}`}
+          onClick={isOn ? undefined : onAdvanced}
+          className={`h-full flex-1 text-[10px] font-bold [text-shadow:1px_0_0_brown,-1px_0_0_brown,0_1px_0_brown,0_-1px_0_brown] leading-none transition ${isOn ? "bg-gradient-to-t from-[#a02323] to-[#fa7070] rounded-full  " : "bg-transparent text-white "}`}
         >
           Advance
         </button>
@@ -124,9 +125,9 @@ export default function GreedyMarket({
           }}
         >
           <div className="absolute flex -z-100 blur-[3px]">
-            <img src={getAssetUrl(GAME_ASSETS.normalBg)} alt="normal" />
+            {isAdvancedMode ? <img src={getAssetUrl(GAME_ASSETS.advanceBg)} alt="advanced" />
+              : <img src={getAssetUrl(GAME_ASSETS.normalBg)} alt="normal" />}
           </div>
-          {/* <img src={getAssetUrl(GAME_ASSETS.advanceBg)} alt="advanced" /> */}
           <div className="flex justify-between">
             <div className="ml-[13px] mt-[11px]">
               <CoinBoard onOpenModal={(modal) => setActiveModal(modal)} />
@@ -158,10 +159,10 @@ export default function GreedyMarket({
               </motion.button>
 
               <div className="absolute flex top-[20px] left-1/2 -translate-x-1/2">
-                <ToggleRow isOn={isAdvancedMode} onToggle={() => {
-                  setActiveModal("advanced")
-                  setIsAdvancedMode(!isAdvancedMode)
-                }} />
+                <ToggleRow isOn={isAdvancedMode} onAdvanced={() => { setActiveModal("advanced") }}
+                  onBasic={() => {
+                    setIsAdvancedMode(false);
+                  }} />
               </div>
               <motion.button className="absolute flex w-[70px] h-[70px] right-[5px]"
                 initial={{ y: 0, }}
@@ -188,6 +189,7 @@ export default function GreedyMarket({
               isRoundRunning={isRoundRunning}
               onRoundFinished={onRoundFinished}
               onOpenModal={(modal) => setActiveModal(modal)}
+              isAdvanced={isAdvancedMode}
             // repeatRequestId={repeatRequestId}
             />
           </div>
@@ -212,7 +214,12 @@ export default function GreedyMarket({
                 transition={{ duration: 0.4 }}
                 className="absolute z-50 h-[567px] w-[355px] left-[20px]"
               >
-                <AdvancedModal onCloseAdvanced={() => setActiveModal(null)} />
+                <AdvancedModal onCloseAdvanced={() => setActiveModal(null)}
+                  onOk={() => {
+                    // if () setActiveModal(null)
+                    setIsAdvancedMode(true);
+                    setActiveModal(null);
+                  }} />
               </motion.div>
             )}
 
