@@ -145,8 +145,8 @@ boxOpen3:"gready-market/box-open3.svg",
 boxOpen4:"gready-market/box-open4.svg",
 boxOpen5:"gready-market/box-open5.svg",
 logo:"gready-market/loading-logo.svg",
-drink:"gready-market/gready-jackpot-big-drink.svg",
-veg:"gready-market/gready-jackpot-small-veg.svg",
+drink:"gready-jackpot/gready-jackpot-big-drink.svg",
+veg:"gready-jackpot/gready-jackpot-small-veg.svg",
 rebons:"gready-market/rebons.svg"
 } as const;
 

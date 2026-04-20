@@ -9,10 +9,8 @@ import LedTimer from "./LedTimer";
 import { useGame, resolveAssetUrl } from "../hooks/useGameHook";
 import MovingHand from "./MoveHand";
 import RoundStartTimer from "./RoundStartTimer";
-import { div } from "framer-motion/client";
 type PlayBoardProps = {
     onOpenModal: (modal: string) => void;
-    onRepeatButtonClick: () => void;
     RoundId: number | null;
     isRoundRunning: boolean;
     onRoundFinished: () => void;
@@ -26,7 +24,6 @@ function sumBetMap(betMap: Record<number, number>): number {
 
 export default function PlayBoard({
     onOpenModal,
-    onRepeatButtonClick,
     RoundId,
     isRoundRunning,
     onRoundFinished,
@@ -43,7 +40,6 @@ export default function PlayBoard({
     const [currentBetAmount, setCurrentBetAmount] = useState(100);
     const [displayedBets, setDisplayedBets] = useState<Record<number, number>>({});
     const [queuedBets, setQueuedBets] = useState<Record<number, number>>({});
-    const [serverErrorMessage, setServerErrorMessage] = useState<string | null>(null);
     const [hasStartedFinalBetWindow, setHasStartedFinalBetWindow] = useState(false);
     const [ledTime, setLedTime] = useState(0);
     const [chooseTime, setChooseTime] = useState(0);
@@ -76,14 +72,12 @@ export default function PlayBoard({
     const playerBalance = Number.parseFloat(playerInfo?.balance ?? "0");
 
     const showTemporaryMessage = (message: string, duration = 3000) => {
-        setServerErrorMessage(message);
 
         if (errorTimeoutRef.current !== null) {
             window.clearTimeout(errorTimeoutRef.current);
         }
 
         errorTimeoutRef.current = window.setTimeout(() => {
-            setServerErrorMessage(null);
             errorTimeoutRef.current = null;
         }, duration);
     };
@@ -105,7 +99,6 @@ export default function PlayBoard({
             return;
         }
 
-        setServerErrorMessage(null);
         setDisplayedBets((prev) => {
             const next = { ...prev };
             betEntries.forEach(([optionId, amount]) => {
@@ -155,7 +148,6 @@ export default function PlayBoard({
             setQueuedBets({});
             queuedBetsRef.current = {};
             isSendingBetRef.current = false;
-            setServerErrorMessage(null);
             setHasStartedFinalBetWindow(false);
         } else if (RoundTime < 12 && RoundTime >= 5) {
             setLedTime(27);
@@ -174,7 +166,6 @@ export default function PlayBoard({
             setQueuedBets({});
             queuedBetsRef.current = {};
             isSendingBetRef.current = false;
-            setServerErrorMessage(null);
             setHasStartedFinalBetWindow(false);
         } else if (RoundTime < 5 && RoundTime >= 4) {
             setLedTime(27);
@@ -192,7 +183,6 @@ export default function PlayBoard({
             setQueuedBets({});
             queuedBetsRef.current = {};
             isSendingBetRef.current = false;
-            setServerErrorMessage(null);
             setHasStartedFinalBetWindow(false);
             setShowResultTimer(true)
         } else if (RoundTime < 4 && RoundTime >= 1) {
@@ -211,7 +201,6 @@ export default function PlayBoard({
             setQueuedBets({});
             queuedBetsRef.current = {};
             isSendingBetRef.current = false;
-            setServerErrorMessage(null);
             setHasStartedFinalBetWindow(false);
             onOpenModal("result");
             setShowResultTimer(false)
@@ -227,7 +216,6 @@ export default function PlayBoard({
             setQueuedBets({});
             queuedBetsRef.current = {};
             isSendingBetRef.current = false;
-            setServerErrorMessage(null);
             setHasStartedFinalBetWindow(false);
             return;
         }
@@ -250,7 +238,6 @@ export default function PlayBoard({
             return;
         }
 
-        setServerErrorMessage(null);
         setDisplayedBets((prev) => ({
             ...prev,
             [optionId]: (prev[optionId] ?? 0) + amount,
@@ -303,7 +290,6 @@ export default function PlayBoard({
                 .catch(() => {
                     const total = Object.values(batch).reduce((a, b) => a + b, 0);
                     releaseBetBalance(total);
-                    setServerErrorMessage("Server not response");
                 })
                 .finally(() => {
                     isSendingBetRef.current = false;
@@ -339,8 +325,23 @@ export default function PlayBoard({
                         <span className=" font-blod">TODAY'S WIN</span>
                         <span className="text-yellow-500 font-blod">100</span>
                     </div>
+                    <button className="absolute left-[10px] -top-[60px] h-[70px] w-[70px] z-[50]">
+                        <img src={getAssetUrl(GAME_ASSETS.veg)} alt="drink" className="absolute h-[70px] w-[70px] " onClick={() => {
+                            handleBetOption(20, currentBetAmount);
+                            handleBetOption(21, currentBetAmount);
+                            handleBetOption(22, currentBetAmount);
+                            handleBetOption(23, currentBetAmount);
+                        }} />
+                    </button>
+                    <button className="absolute right-[10px] -top-[60px] h-[70px] w-[70px] z-[50] ">
+                        <img src={getAssetUrl(GAME_ASSETS.drink)} alt="veg" className="absolute h-[70px] w-[70px]" onClick={() => {
+                            handleBetOption(24, currentBetAmount);
+                            handleBetOption(25, currentBetAmount);
+                            handleBetOption(26, currentBetAmount);
+                            handleBetOption(27, currentBetAmount);
+                        }} />
+                    </button>
                     <div className="absolute w-[345px] h-[100px] bg-[#0F6095] top-[50px] rounded-[20px] border-[5px] border-[#1087C6] left-1/2 -translate-x-1/2">
-
                     </div>
                     <div className="absolute w-[343px] h-[18px]  rounded-[20px] top-[160px] bg-[#0F6095] border-[1px] border-[#1087C6] left-1/2 -translate-x-1/2">
                         <img src={getAssetUrl(GAME_ASSETS.box1)} alt="box" className="absolute left-[38px] -top-[12px] " />

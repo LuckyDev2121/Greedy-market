@@ -7,7 +7,6 @@ import HelpMenu from "./HelpMenu";
 import NoteMenu from "./NoteMenu";
 import PlayBoard from "./PlayBoard";
 import RechargeMenu from "./RechargeMenu";
-import RepeatModal from "./RepeatModal";
 import MusicModal from "./MusicModal";
 import ResultMenu from "./ResultMenu";
 import TopMenu from "./TopMenu";
@@ -306,18 +305,6 @@ export default function GreedyMarket({
                 transition={{ duration: 0.4 }}
                 className="absolute left-1/2 top-1/2 z-50"
               >
-                {
-                  activeAlert === "repeat" && (
-                    <RepeatModal
-                      onCloseRepeatModal={() => setActiveAlert(null)}
-                      onConfirmRepeat={handleConfirmRepeat}
-                      previousRoundTotal={previousRoundTotal}
-                      skipNextRepeatModal={skipNextRepeatModal}
-                      onSkipNextRepeatModalChange={setSkipNextRepeatModal}
-                      hasInsufficientBalance={hasInsufficientBalance}
-                    />
-                  )
-                }
                 {activeAlert === "music" && (
                   <MusicModal
                     isMusicPlaying={isMusicPlaying}

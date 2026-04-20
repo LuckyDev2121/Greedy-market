@@ -28,7 +28,7 @@ export default function LoadingScreen({
                 </div>
                 <div className="h-[16px] w-full bg-gray-300/50 rounded-full">
                     <div
-                        className="h-[16px] bg-gradient-to-t from-[#3d019e] to-[#8032fd] rounded-full"
+                        className="h-[16px] bg-gradient-to-t from-[#076879] to-[#0CC0DF] rounded-full"
                         style={{ width: `${progress}%` }}
                     />
                 </div>

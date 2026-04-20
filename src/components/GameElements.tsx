@@ -47,14 +47,6 @@ const GameElements = ({ controlButtons, currentBetAmount, displayedBets, onBetOp
                 else if (index === 5) gridPosition = 'top-[245px] left-[50px]';
                 else if (index === 6) gridPosition = 'top-[140px] left-[2px]';
                 else if (index === 7) gridPosition = 'top-[25px] left-[50px]';
-                //  { id: 27, element_name: "H", top: 37, left: 50 },
-                //     { id: 20, element_name: "G", top: 17, left: 150 },
-                //     { id: 21, element_name: "F", top: 37, left: 262 },
-                //     { id: 22, element_name: "E", top: 147, left: 307 },
-                //     { id: 23, element_name: "D", top: 257, left: 262 },
-                //     { id: 24, element_name: "C", top: 287, left: 150 },
-                //     { id: 25, element_name: "B", top: 257, left: 50 },
-                //     { id: 26, element_name: "A", top: 147, left: 2 },
                 const shownBetAmount = displayedBets[element.id] ?? 0;
 
                 return (
