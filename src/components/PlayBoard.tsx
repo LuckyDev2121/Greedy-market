@@ -410,22 +410,17 @@ export default function PlayBoard({
                                     )}
                                     {result.is_jackpot === 1 && (
                                         <img
-                                            src={getAssetUrl("fruit-jackpot/big.svg")}
+                                            src={getAssetUrl(GAME_ASSETS.drink)}
                                             alt={result.option_name || `Result ${index + 1}`}
                                             className="absolute inset-0 h-full w-full"
                                         />
                                     )}
                                     {result.is_jackpot === 2 && (
                                         <img
-                                            src={getAssetUrl("fruit-jackpot/small.svg")}
+                                            src={getAssetUrl(GAME_ASSETS.veg)}
                                             alt={result.option_name || `Result ${index + 1}`}
                                             className="absolute inset-0 h-full w-full"
                                         />
-                                    )}
-                                    {index === 0 && (
-                                        <div className="absolute left-[3px] top-[18px] w-[24px] h-[12px] z-50">
-                                            <img src={getAssetUrl(GAME_ASSETS.newtag)} alt="Result Board Frame" className="absolute inset-0 h-full w-full" />
-                                        </div>
                                     )}
                                 </div>
                             ))}
