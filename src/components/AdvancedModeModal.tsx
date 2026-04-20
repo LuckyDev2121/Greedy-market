@@ -23,7 +23,6 @@ function CloseIcon() {
     );
 }
 
-
 export default function AdvancedModal({ onCloseAdvanced }: AdvancedModalProps) {
     return (
         <div className="h-[437px] bg-amber-500 w-[355px] rounded-[20px]">
