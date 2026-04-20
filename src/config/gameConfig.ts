@@ -120,7 +120,7 @@ export const GAME_ASSETS = {
   normalBg:"gready-market/game-normal-mood-bg.svg",
 advanceBg:"gready-market/advance-mood-bg.svg",
 middle:"gready-market/gready-middle.svg",
-congraDiamond:"gready-market/gready-congra-dismond.svg",
+congraDiamond:"gready-market/gready-congra-diamond.svg",
 diamond:"gready-market/gready-diamond.svg",
 gameBoard:"gready-market/gready-game-board.svg",
 hand:"gready-market/gready-hand.svg",

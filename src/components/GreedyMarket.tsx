@@ -11,6 +11,7 @@ import RepeatModal from "./RepeatModal";
 import MusicModal from "./MusicModal";
 import ResultMenu from "./ResultMenu";
 import TopMenu from "./TopMenu";
+import AdvancedModal from "./AdvancedModeModal";
 import { GAME_ASSETS, getAssetUrl } from "../config/gameConfig";
 type ToggleRowProps = {
   isOn: boolean;
@@ -175,7 +176,10 @@ export default function GreedyMarket({
               </motion.button>
 
               <div className="absolute flex top-[20px] left-1/2 -translate-x-1/2">
-                <ToggleRow isOn={isBasicMode} onToggle={() => setIsBasicMode(!isBasicMode)} />
+                <ToggleRow isOn={isBasicMode} onToggle={() => {
+                  setActiveModal("advanced")
+                  setIsBasicMode(!isBasicMode)
+                }} />
               </div>
               <motion.button className="absolute flex w-[70px] h-[70px] right-[5px]"
                 initial={{ y: 0, }}
@@ -217,7 +221,18 @@ export default function GreedyMarket({
                 className="absolute inset-0 z-40 rounded-t-[20px] bg-black/60 "
               />
             )}
-
+            {activeModal === "advanced" && (
+              <motion.div
+                key={activeModal}
+                initial={{ y: GAME_HEIGHT, opacity: 0 }}
+                animate={{ y: 100, opacity: 1 }}
+                exit={{ y: GAME_HEIGHT, opacity: 0 }}
+                transition={{ duration: 0.4 }}
+                className="absolute z-50 h-[567px] w-[355px] left-[20px]"
+              >
+                <AdvancedModal onCloseAdvanced={() => setActiveModal(null)} />
+              </motion.div>
+            )}
 
             {activeModal === "help" && (
               <motion.div
