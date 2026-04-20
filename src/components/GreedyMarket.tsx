@@ -11,6 +11,7 @@ import MusicModal from "./MusicModal";
 import ResultMenu from "./ResultMenu";
 import TopMenu from "./TopMenu";
 import AdvancedModal from "./AdvancedModeModal";
+import JackpotMenu from "./Jackpot";
 import { GAME_ASSETS, getAssetUrl } from "../config/gameConfig";
 type ToggleRowProps = {
   isOn: boolean;
@@ -187,7 +188,8 @@ export default function GreedyMarket({
                   duration: 0.4,
                   repeat: Infinity, // 👈 add this
                   repeatType: "reverse"
-                }}>
+                }}
+                onClick={() => setActiveModal("jackpot")}>
                 <motion.img src={getAssetUrl(GAME_ASSETS.RotatedInstant)} alt="shine" className="absolute h-[70px] w-[70px] " animate={{ rotate: 360 }}
                   transition={{
                     rotate: { repeat: Infinity, duration: 5, ease: "linear" },
@@ -295,7 +297,20 @@ export default function GreedyMarket({
                 <RechargeMenu onCloseRechargeModal={() => setActiveModal(null)} />
               </motion.div>
             )}
-
+            {activeModal === "jackpot" && (
+              <motion.div
+                key={activeModal}
+                initial={{ y: GAME_HEIGHT, opacity: 0 }}
+                animate={{ y: 100, opacity: 1 }}
+                exit={{ y: GAME_HEIGHT, opacity: 0 }}
+                transition={{ duration: 0.4 }}
+                className="absolute z-50 h-[567px] w-[355px] left-[20px]"
+              >
+                <JackpotMenu
+                  onCloseJackpot={() => setActiveModal(null)}
+                />
+              </motion.div>
+            )}
             {activeAlert && (
               <motion.div
                 key={activeAlert}

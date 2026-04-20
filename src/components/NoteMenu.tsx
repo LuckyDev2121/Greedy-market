@@ -58,18 +58,21 @@ export default function NoteMenu({ onCloseNote }: NoteMenuProps) {
                     <CloseIcon />
                 </button>
                 <div className="scrollbar-hidden absolute top-[30px]  left-1/2 transform -translate-x-1/2 w-[325px] h-[500px] grip overflow-x-hidden overflow-y-auto">
-                    <div className="absolute top-[30px] bg-amber-400/40 rounded-[20px] w-[325px] h-[500px]">
+                    <div className="absolute  bg-amber-300/30 rounded-[20px] w-[325px] h-[150px] border-t-[1px] border-t-amber-600">
                         <div className="absolute w-[325px] flex justify-between mx-[20px] mt-[5px]">
                             <span className=" relative text-[15px] text-[#bb8000] ">Round: 645</span>
                             <span className=" relative text-[15px] pr-[30px] text-[#bb8000]  ">05/02/2026 00:13:25</span>
                         </div>
+                        <div className="absolute w-[300px] top-[25px] h-[1px] left-1/2 -translate-x-1/2 bg-amber-600/50"></div>
                         <div>
                             <span className=" absolute left-[5px] top-[30px] text-[12px] text-[#bb8000]" >Selected option:</span>
                             <span className=" absolute left-[5px] top-[80px] text-[12px] text-[#bb8000] ">Winning items:</span>
                             <span className=" absolute left-[5px] top-[100px] text-[12px] text-[#bb8000] ">Win diamonds:</span>
                             <span className=" absolute left-[5px] top-[120px] text-[12px] text-[#bb8000] ">Diamond Balance:</span>
                         </div>
-                        {/* {rounds.map((item) => {
+                    </div>
+                </div>
+                {/* {rounds.map((item) => {
                         const result = new Date(new Date().getTime() - (39 * item.round_id) * 1000)
                         const formatDate = (date: Date) => {
                             return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")} ${String(date.getHours()).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}`;
@@ -133,8 +136,7 @@ export default function NoteMenu({ onCloseNote }: NoteMenuProps) {
                             </div>
                         )
                     })} */}
-                    </div>
-                </div>
+
             </div >
         </div >
     )

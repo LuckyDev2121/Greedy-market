@@ -34,8 +34,8 @@ export default function HelpMenu({ onCloseHelp }: HelpMenuProps) {
                 <button className="absolute -right-[15px] -top-[25px] h-[30px] w-[30px] mt-[9px] pl-[7px]  rounded-full bg-[#ee3333]" onClick={onCloseHelp}>
                     <CloseIcon />
                 </button>
-                <div className="scrollbar-hidden absolute top-[30px]  left-1/2 transform -translate-x-1/2 w-[325px] h-[500px] grip overflow-x-hidden overflow-y-auto">
-
+                <div className="scrollbar-hidden absolute top-[30px]  left-1/2 transform -translate-x-1/2 w-[325px] h-[370px] grip overflow-x-hidden overflow-y-auto">
+                    <span className="text-[#d37c0a] font-sans">{gameDetails?.how_to_play?.rules}</span>
                 </div>
             </div>
         </div >
