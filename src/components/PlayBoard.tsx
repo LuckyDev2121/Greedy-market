@@ -14,7 +14,7 @@ type PlayBoardProps = {
     RoundId: number | null;
     isRoundRunning: boolean;
     onRoundFinished: () => void;
-    repeatRequestId: number;
+    // repeatRequestId: number;
     RoundTime: number;
 };
 
@@ -27,7 +27,7 @@ export default function PlayBoard({
     RoundId,
     isRoundRunning,
     onRoundFinished,
-    repeatRequestId,
+    // repeatRequestId,
     RoundTime,
 }: PlayBoardProps) {
     const [blockClick, setBlockClick] = useState<"auto" | "none">("none");
@@ -53,7 +53,7 @@ export default function PlayBoard({
         results,
         clearCurrentRoundBets,
         placeBet,
-        previousRoundBets,
+        // previousRoundBets,
         reserveBetBalance,
         releaseBetBalance,
         playerInfo,
@@ -61,7 +61,7 @@ export default function PlayBoard({
     } = useGame();
     const queuedBetsRef = useRef<Record<number, number>>({});
     const isSendingBetRef = useRef(false);
-    const repeatRequestIdRef = useRef(repeatRequestId);
+    // const repeatRequestIdRef = useRef(repeatRequestId);
     const errorTimeoutRef = useRef<number | null>(null);
     const optionMap = useMemo(() => {
         return Object.fromEntries(
@@ -71,50 +71,50 @@ export default function PlayBoard({
     const roundKey = RoundId ?? "waiting";
     const playerBalance = Number.parseFloat(playerInfo?.balance ?? "0");
 
-    const showTemporaryMessage = (message: string, duration = 3000) => {
+    // const showTemporaryMessage = (message: string, duration = 3000) => {
 
-        if (errorTimeoutRef.current !== null) {
-            window.clearTimeout(errorTimeoutRef.current);
-        }
+    //     if (errorTimeoutRef.current !== null) {
+    //         window.clearTimeout(errorTimeoutRef.current);
+    //     }
 
-        errorTimeoutRef.current = window.setTimeout(() => {
-            errorTimeoutRef.current = null;
-        }, duration);
-    };
+    //     errorTimeoutRef.current = window.setTimeout(() => {
+    //         errorTimeoutRef.current = null;
+    //     }, duration);
+    // };
 
-    const applyBetBatch = (betBatch: Record<number, number>) => {
-        const betEntries = Object.entries(betBatch)
-            .map(([optionId, amount]) => [Number(optionId), amount] as const)
-            .filter(([, amount]) => amount > 0);
+    // const applyBetBatch = (betBatch: Record<number, number>) => {
+    //     const betEntries = Object.entries(betBatch)
+    //         .map(([optionId, amount]) => [Number(optionId), amount] as const)
+    //         .filter(([, amount]) => amount > 0);
 
-        if (betEntries.length === 0) {
-            return;
-        }
+    //     if (betEntries.length === 0) {
+    //         return;
+    //     }
 
-        const totalAmount = betEntries.reduce((sum, [, amount]) => sum + amount, 0);
-        const queuedTotal = sumBetMap(queuedBetsRef.current);
+    //     const totalAmount = betEntries.reduce((sum, [, amount]) => sum + amount, 0);
+    //     const queuedTotal = sumBetMap(queuedBetsRef.current);
 
-        if ((playerBalance - queuedTotal) < totalAmount) {
-            showTemporaryMessage("Sorry balance is bad");
-            return;
-        }
+    //     if ((playerBalance - queuedTotal) < totalAmount) {
+    //         showTemporaryMessage("Sorry balance is bad");
+    //         return;
+    //     }
 
-        setDisplayedBets((prev) => {
-            const next = { ...prev };
-            betEntries.forEach(([optionId, amount]) => {
-                next[optionId] = (next[optionId] ?? 0) + amount;
-            });
-            return next;
-        });
-        setQueuedBets((prev) => {
-            const next = { ...prev };
-            betEntries.forEach(([optionId, amount]) => {
-                next[optionId] = (next[optionId] ?? 0) + amount;
-            });
-            return next;
-        });
-        reserveBetBalance(totalAmount);
-    };
+    //     setDisplayedBets((prev) => {
+    //         const next = { ...prev };
+    //         betEntries.forEach(([optionId, amount]) => {
+    //             next[optionId] = (next[optionId] ?? 0) + amount;
+    //         });
+    //         return next;
+    //     });
+    //     setQueuedBets((prev) => {
+    //         const next = { ...prev };
+    //         betEntries.forEach(([optionId, amount]) => {
+    //             next[optionId] = (next[optionId] ?? 0) + amount;
+    //         });
+    //         return next;
+    //     });
+    //     reserveBetBalance(totalAmount);
+    // };
 
     const getResultOptionLogo = (id: number) =>
         optionMap[id] ? resolveAssetUrl(optionMap[id]) : "";
@@ -249,19 +249,19 @@ export default function PlayBoard({
         reserveBetBalance(amount);
     };
 
-    useEffect(() => {
-        if (repeatRequestId === repeatRequestIdRef.current) {
-            return;
-        }
+    // useEffect(() => {
+    //     if (repeatRequestId === repeatRequestIdRef.current) {
+    //         return;
+    //     }
 
-        repeatRequestIdRef.current = repeatRequestId;
+    //     repeatRequestIdRef.current = repeatRequestId;
 
-        if (blockClick === "none" || hasStartedFinalBetWindow) {
-            return;
-        }
+    //     if (blockClick === "none" || hasStartedFinalBetWindow) {
+    //         return;
+    //     }
 
-        applyBetBatch(previousRoundBets);
-    }, [repeatRequestId, blockClick, hasStartedFinalBetWindow, previousRoundBets]);
+    //     applyBetBatch(previousRoundBets);
+    // }, [repeatRequestId, blockClick, hasStartedFinalBetWindow, previousRoundBets]);
 
     useEffect(() => {
         if (!hasStartedFinalBetWindow) {
@@ -320,7 +320,7 @@ export default function PlayBoard({
                     onBetOption={handleBetOption}
                 />
                 <div className="absolute w-[402px] h-[297px] top-[380px] bg-[#2B93CA]">
-                    <img src={getAssetUrl(GAME_ASSETS.jhalot)} alt="jhalot" className="absolute inset-0" />
+                    <img src={getAssetUrl(GAME_ASSETS.jhalot)} alt="jhalot" className="absolute inset-0 scale-x-110" />
                     <div className="absolute justify-between items-center px-[10px] flex w-[234px] h-[26px] bg-[#0F6095] top-[10px] rounded-full border-[2px] border-[#1087C6] left-1/2 -translate-x-1/2">
                         <span className=" font-blod">TODAY'S WIN</span>
                         <span className="text-yellow-500 font-blod">100</span>
@@ -342,19 +342,9 @@ export default function PlayBoard({
                         }} />
                     </button>
                     <div className="absolute w-[345px] h-[100px] bg-[#0F6095] top-[50px] rounded-[20px] border-[5px] border-[#1087C6] left-1/2 -translate-x-1/2">
+
                     </div>
-                    <div className="absolute w-[343px] h-[18px]  rounded-[20px] top-[160px] bg-[#0F6095] border-[1px] border-[#1087C6] left-1/2 -translate-x-1/2">
-                        <img src={getAssetUrl(GAME_ASSETS.box1)} alt="box" className="absolute left-[38px] -top-[12px] " />
-                        <img src={getAssetUrl(GAME_ASSETS.box2)} alt="box" className="absolute left-[106px] -top-[12px]" />
-                        <img src={getAssetUrl(GAME_ASSETS.box3)} alt="box" className="absolute left-[174px] -top-[12px]" />
-                        <img src={getAssetUrl(GAME_ASSETS.box4)} alt="box" className="absolute left-[242px] -top-[12px]" />
-                        {/* <img src={getAssetUrl(GAME_ASSETS.box1)} alt="box" /> */}
-                        <span className="absolute left-[48px] top-[25px] text-[#f0d457] [text-shadow:1px_0_0_brown,-1px_0_0_brown,0_1px_0_brown,0_-1px_0_brown]">10K</span>
-                        <span className="absolute left-[116px] top-[25px] text-[#f0d457] [text-shadow:1px_0_0_brown,-1px_0_0_brown,0_1px_0_brown,0_-1px_0_brown]">50K</span>
-                        <span className="absolute left-[184px] top-[25px] text-[#f0d457] [text-shadow:1px_0_0_brown,-1px_0_0_brown,0_1px_0_brown,0_-1px_0_brown]">100K</span>
-                        <span className="absolute left-[252px] top-[25px] text-[#f0d457] [text-shadow:1px_0_0_brown,-1px_0_0_brown,0_1px_0_brown,0_-1px_0_brown]">500K</span>
-                        <span className="absolute left-[320px] top-[25px] text-[#f0d457] [text-shadow:1px_0_0_brown,-1px_0_0_brown,0_1px_0_brown,0_-1px_0_brown]">1M</span>
-                    </div>
+///////////////////////////////////
                     <div className="absolute flex items-center w-[343px] h-[45px] rounded-[12px] top-[210px] bg-[#0F6095] border-[2px] border-[#1087C6] left-1/2 -translate-x-1/2">
                         <span className="ml-[10px] text-[16px]">Result</span>
                         <div className="ml-[10px] w-[2px] h-[25px] bg-white/80"></div>
@@ -514,3 +504,17 @@ export default function PlayBoard({
         </div>
     );
 }
+
+
+//<div className="absolute w-[343px] h-[18px]  rounded-[20px] top-[160px] bg-[#0F6095] border-[1px] border-[#1087C6] left-1/2 -translate-x-1/2">
+//                   <img src={getAssetUrl(GAME_ASSETS.box1)} alt="box" className="absolute left-[38px] -top-[12px] " />
+//                   <img src={getAssetUrl(GAME_ASSETS.box2)} alt="box" className="absolute left-[106px] -top-[12px]" />
+//                    <img src={getAssetUrl(GAME_ASSETS.box3)} alt="box" className="absolute left-[174px] -top-[12px]" />
+//                    <img src={getAssetUrl(GAME_ASSETS.box4)} alt="box" className="absolute left-[242px] -top-[12px]" />
+//                   {/* <img src={getAssetUrl(GAME_ASSETS.box1)} alt="box" /> */}
+//                   <span className="absolute left-[48px] top-[25px] text-[#f0d457] [text-shadow:1px_0_0_brown,-1px_0_0_brown,0_1px_0_brown,0_-1px_0_brown]">10K</span>
+//                  <span className="absolute left-[116px] top-[25px] text-[#f0d457] [text-shadow:1px_0_0_brown,-1px_0_0_brown,0_1px_0_brown,0_-1px_0_brown]">50K</span>
+//                 <span className="absolute left-[184px] top-[25px] text-[#f0d457] [text-shadow:1px_0_0_brown,-1px_0_0_brown,0_1px_0_brown,0_-1px_0_brown]">100K</span>
+//                  <span className="absolute left-[252px] top-[25px] text-[#f0d457] [text-shadow:1px_0_0_brown,-1px_0_0_brown,0_1px_0_brown,0_-1px_0_brown]">500K</span>
+//                <span className="absolute left-[320px] top-[25px] text-[#f0d457] [text-shadow:1px_0_0_brown,-1px_0_0_brown,0_1px_0_brown,0_-1px_0_brown]">1M</span>
+//             </div > 

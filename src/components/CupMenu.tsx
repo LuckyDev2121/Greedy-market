@@ -50,14 +50,14 @@ function ToggleRow({ isOn, onToggle }: ToggleRowProps) {
             <div className="flex h-[26px] w-[172px] overflow-hidden rounded-full border bg-gradient-to-t bg-[#e49236]/60 border-[#b4870a]  text-white shadow-[inset_0_0_0_1px_rgba(255,255,255,0.14)]">
                 <button
                     type="button"
-                    onClick={isOn ? undefined : onToggle}
+                    onClick={isOn ? onToggle : undefined}
                     className={`h-full flex-1 text-[10px] font-bold [text-shadow:1px_0_0_brown,-1px_0_0_brown,0_1px_0_brown,0_-1px_0_brown] leading-none transition ${isOn ? "bg-transparent  " : "bg-gradient-to-t from-[#FFDB19] to-[#E09613] rounded-full"}`}
                 >
                     Today
                 </button>
                 <button
                     type="button"
-                    onClick={isOn ? onToggle : undefined}
+                    onClick={isOn ? undefined : onToggle}
                     className={`h-full flex-1 text-[10px] font-bold [text-shadow:1px_0_0_brown,-1px_0_0_brown,0_1px_0_brown,0_-1px_0_brown] leading-none transition ${isOn ? "bg-gradient-to-t from-[#FFDB19] to-[#E09613] rounded-full  " : "bg-transparent text-white "}`}
                 >
                     Yesterday
@@ -68,7 +68,7 @@ function ToggleRow({ isOn, onToggle }: ToggleRowProps) {
 }
 export default function CupMenu({ onCloseCup }: CupMenuProps) {
     const [isRankingHelpOpen, setIsRankingHelpOpen] = useState(false);
-    const [isTodayRanking, setIsTodayRanking] = useState(true);
+    const [isYesterdayRanking, setIsYesterdayRanking] = useState(false);
     const { rankingToday } = useGame();
     const [time, setTime] = useState("");
 
@@ -97,7 +97,7 @@ export default function CupMenu({ onCloseCup }: CupMenuProps) {
                     <span className="text-[12px] font-bold ">{time}</span>
                 </div>
                 <div className="absolute left-1/2 -translate-x-1/2 top-[50px]">
-                    <ToggleRow isOn={isTodayRanking} onToggle={() => setIsTodayRanking(!isTodayRanking)} />
+                    <ToggleRow isOn={isYesterdayRanking} onToggle={() => setIsYesterdayRanking(!isYesterdayRanking)} />
                 </div>
                 <button className="absolute -right-[20px] -top-[30px] h-[30px] w-[30px] mt-[9px] pl-[7px]  rounded-full bg-[#ee3333]" onClick={onCloseCup}>
                     <CloseIcon />

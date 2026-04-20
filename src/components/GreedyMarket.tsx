@@ -1,6 +1,6 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
-import { useGame } from "../hooks/useGameHook";
+// import { useGame } from "../hooks/useGameHook";
 import CoinBoard from "./CoinBoard";
 import CupMenu from "./CupMenu";
 import HelpMenu from "./HelpMenu";
@@ -26,14 +26,14 @@ function ToggleRow({ isOn, onToggle }: ToggleRowProps) {
       <div className="flex h-[26px] w-[172px] overflow-hidden rounded-full border bg-gradient-to-t bg-black/10 border-[#b4870a]  text-white shadow-[inset_0_0_0_1px_rgba(255,255,255,0.14)]">
         <button
           type="button"
-          onClick={isOn ? undefined : onToggle}
+          onClick={isOn ? onToggle : undefined}
           className={`h-full flex-1 text-[10px] font-bold [text-shadow:1px_0_0_brown,-1px_0_0_brown,0_1px_0_brown,0_-1px_0_brown] leading-none transition ${isOn ? "bg-transparent  " : "bg-gradient-to-t from-[#FFDB19] to-[#E09613] rounded-full"}`}
         >
           Basic
         </button>
         <button
           type="button"
-          onClick={isOn ? onToggle : undefined}
+          onClick={isOn ? undefined : onToggle}
           className={`h-full flex-1 text-[10px] font-bold [text-shadow:1px_0_0_brown,-1px_0_0_brown,0_1px_0_brown,0_-1px_0_brown] leading-none transition ${isOn ? "bg-gradient-to-t from-[#FFDB19] to-[#E09613] rounded-full  " : "bg-transparent text-white "}`}
         >
           Advance
@@ -69,36 +69,18 @@ export default function GreedyMarket({
 
   const [activeModal, setActiveModal] = useState<string | null>(null);
   const [activeAlert, setActiveAlert] = useState<string | null>(null);
-  const [repeatRequestId, setRepeatRequestId] = useState(0);
-  const [skipNextRepeatModal, setSkipNextRepeatModal] = useState(false);
+  // const [repeatRequestId, setRepeatRequestId] = useState(0);
   const [scale, setScale] = useState(1);
-  const [isBasicMode, setIsBasicMode] = useState(true);
-  const { displayBalance, previousRoundBets } = useGame();
+  const [isAdvancedMode, setIsAdvancedMode] = useState(false);
+  // const { displayBalance, previousRoundBets } = useGame();
   const isOverlayOpen = activeModal !== null || activeAlert !== null;
-  const previousRoundTotal = Object.values(previousRoundBets).reduce((sum, amount) => sum + amount, 0);
-  const availableBalance = Number.parseFloat(displayBalance ?? "0");
-  const hasInsufficientBalance = previousRoundTotal > availableBalance;
-  const triggerRepeatBet = () => {
-    setRepeatRequestId((prev) => prev + 1);
-  };
+  // const previousRoundTotal = Object.values(previousRoundBets).reduce((sum, amount) => sum + amount, 0);
+  // const availableBalance = Number.parseFloat(displayBalance ?? "0");
+  // const hasInsufficientBalance = previousRoundTotal > availableBalance;
+  // const triggerRepeatBet = () => {
+  //   setRepeatRequestId((prev) => prev + 1);
+  // };
 
-  const handleRepeatButtonClick = () => {
-    if (skipNextRepeatModal) {
-      triggerRepeatBet();
-      return;
-    }
-
-    setActiveAlert("repeat");
-  };
-
-  const handleConfirmRepeat = () => {
-    if (hasInsufficientBalance || previousRoundTotal <= 0) {
-      return;
-    }
-
-    setActiveAlert(null);
-    triggerRepeatBet();
-  };
 
   useEffect(() => {
     if (activeModal === "result") {
@@ -141,7 +123,7 @@ export default function GreedyMarket({
             transform: `scale(${scale})`,
           }}
         >
-          <div className="absolute flex -z-100">
+          <div className="absolute flex -z-100 blur-[3px]">
             <img src={getAssetUrl(GAME_ASSETS.normalBg)} alt="normal" />
           </div>
           {/* <img src={getAssetUrl(GAME_ASSETS.advanceBg)} alt="advanced" /> */}
@@ -176,9 +158,9 @@ export default function GreedyMarket({
               </motion.button>
 
               <div className="absolute flex top-[20px] left-1/2 -translate-x-1/2">
-                <ToggleRow isOn={isBasicMode} onToggle={() => {
+                <ToggleRow isOn={isAdvancedMode} onToggle={() => {
                   setActiveModal("advanced")
-                  setIsBasicMode(!isBasicMode)
+                  setIsAdvancedMode(!isAdvancedMode)
                 }} />
               </div>
               <motion.button className="absolute flex w-[70px] h-[70px] right-[5px]"
@@ -194,8 +176,8 @@ export default function GreedyMarket({
                   transition={{
                     rotate: { repeat: Infinity, duration: 5, ease: "linear" },
                   }} />
-                <img src={getAssetUrl(GAME_ASSETS.jackpotCounter)} alt="jackpot" className="absolute h-[70px] w-[70px] " />
-                <span className="absolute font-bold left-1/2 -translate-x-1/2 text-[12px] text-[#ffe033] top-[40px] [text-shadow:1px_0_0_brown,-1px_0_0_brown,0_1px_0_brown,0_-1px_0_brown]">12372634</span>
+                <img src={getAssetUrl(GAME_ASSETS.jackpotCounter)} alt="jackpot" className="absolute h-[70px] w-[70px] scale-x-125" />
+                <span className="absolute font-bold left-1/2 -translate-x-1/2 text-[12px] text-[#ffe033] top-[40px] [text-shadow:1px_0_0_brown,-1px_0_0_brown,0_1px_0_brown,0_-1px_0_brown]">12372634910</span>
               </motion.button>
             </AnimatePresence>
           </div>
@@ -206,8 +188,7 @@ export default function GreedyMarket({
               isRoundRunning={isRoundRunning}
               onRoundFinished={onRoundFinished}
               onOpenModal={(modal) => setActiveModal(modal)}
-              onRepeatButtonClick={handleRepeatButtonClick}
-              repeatRequestId={repeatRequestId}
+            // repeatRequestId={repeatRequestId}
             />
           </div>
 
