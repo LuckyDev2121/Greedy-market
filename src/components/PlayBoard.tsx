@@ -9,7 +9,6 @@ import LedTimer from "./LedTimer";
 import { useGame, resolveAssetUrl } from "../hooks/useGameHook";
 import MovingHand from "./MoveHand";
 import RoundStartTimer from "./RoundStartTimer";
-import { getOptimisedAppearId, moveItem } from "framer-motion";
 type PlayBoardProps = {
     onOpenModal: (modal: string) => void;
     RoundId: number | null;
@@ -409,7 +408,6 @@ export default function PlayBoard({
                                         className={`absolute left-[${38 + 68 * index}px] -top-[32px]`}
                                     />
                                     <span className={`absolute left-[${48 + 68 * index}px] top-[5px] text-[#f0d457] [text-shadow:1px_0_0_brown,-1px_0_0_brown,0_1px_0_brown,0_-1px_0_brown]`}>{formatNumber(amountValue)}</span>
-
                                 </>
                             ) : (
                                 <>

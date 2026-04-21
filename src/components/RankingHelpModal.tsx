@@ -1,4 +1,6 @@
 import ModalHeaderPlate from "./ModalHeaderPlate";
+import { useEffect } from "react";
+import { useGame } from "../hooks/useGameHook";
 
 type RankingHelpModalProps = {
     onCloseRankingHelpModal: () => void;
@@ -24,6 +26,18 @@ function CloseIcon() {
 export default function RankingHelpModal({
     onCloseRankingHelpModal,
 }: RankingHelpModalProps) {
+    const { prizeDistribution, handlePrizeDistribution } = useGame();
+
+    useEffect(() => {
+        const load = async () => {
+
+            if (!prizeDistribution) {
+                await handlePrizeDistribution();
+            }
+        };
+        void load();
+    }, [handlePrizeDistribution, prizeDistribution]);
+
     return (
         <div className="relative h-[567px] w-[383px] bg-amber-500 rounded-[20px]">
             <div className="absolute h-[547px] w-[363px] bg-amber-200  rounded-[20px] left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2">
@@ -39,37 +53,33 @@ export default function RankingHelpModal({
                         <span className="relative text-[#e6cfb5] mx-[60px] text-[20px]">Prize</span>
                     </div>
                     <div className="absolute top-[40px] w-[333px] h-[40px] bg-[#f7d198] justify-between flex items-center">
-                        <span className="relative text-[#86551c] ml-[80px] text-[20px]">1</span>
-                        <span className="relative text-[#86551c] mx-[50px] text-[20px]">1000000</span>
+                        <span className="relative text-[#86551c] ml-[80px] text-[20px]">{prizeDistribution?.ranks[0].rank_no}</span>
+                        <span className="relative text-[#86551c] mx-[50px] text-[20px]">{prizeDistribution?.ranks[0].price}</span>
                     </div>
                     <div className="absolute top-[80px] w-[333px] h-[40px] bg-[#ffc06e] justify-between flex items-center">
-                        <span className="relative text-[#86551c] ml-[80px] text-[20px]">2</span>
-                        <span className="relative text-[#86551c] mx-[50px] text-[20px]">800000</span>
+                        <span className="relative text-[#86551c] ml-[80px] text-[20px]">{prizeDistribution?.ranks[1].rank_no}</span>
+                        <span className="relative text-[#86551c] mx-[50px] text-[20px]">{prizeDistribution?.ranks[1].price}</span>
                     </div>
                     <div className="absolute top-[120px] w-[333px] h-[40px] bg-[#f7d198] justify-between flex items-center">
-                        <span className="relative text-[#86551c] ml-[80px] text-[20px]">3</span>
-                        <span className="relative text-[#86551c] mx-[50px] text-[20px]">500000</span>
+                        <span className="relative text-[#86551c] ml-[80px] text-[20px]">{prizeDistribution?.ranks[2].rank_no}</span>
+                        <span className="relative text-[#86551c] mx-[50px] text-[20px]">{prizeDistribution?.ranks[2].price}</span>
                     </div>
                     <div className="absolute top-[160px] w-[333px] h-[40px] bg-[#ffc06e] justify-between flex items-center">
-                        <span className="relative text-[#86551c] ml-[70px] text-[20px]">4~9</span>
-                        <span className="relative text-[#86551c] mx-[50px] text-[20px]">100000</span>
+                        <span className="relative text-[#86551c] ml-[70px] text-[20px]">{prizeDistribution?.ranks[3].rank_no}</span>
+                        <span className="relative text-[#86551c] mx-[50px] text-[20px]">{prizeDistribution?.ranks[3].price}</span>
                     </div>
                     <div className="absolute top-[200px] w-[333px] h-[40px] bg-[#f7d198] rounded-b-[20px] justify-between flex items-center">
-                        <span className="relative text-[#86551c] ml-[60px] text-[20px]">10~15</span>
-                        <span className="relative text-[#86551c] mr-[50px] text-[20px]">80000</span>
+                        <span className="relative text-[#86551c] ml-[60px] text-[20px]">{prizeDistribution?.ranks[4].rank_no}</span>
+                        <span className="relative text-[#86551c] mr-[50px] text-[20px]">{prizeDistribution?.ranks[4].price}</span>
                     </div>
-                    <span className="absolute left-[0px] top-[250px] text-[#86551c] text-[16px]">1. The prize diamond will increase after each</span>
-                    <span className="absolute left-[20px] top-[270px] text-[#86551c] text-[16px]">game round</span>
-                    <span className="absolute left-[0px] top-[300px] text-[#86551c] text-[16px]">2. The top 15 players can display in the</span>
-                    <span className="absolute left-[20px] top-[320px] text-[#86551c] text-[16px]">ranking list. The list will updated at 0 o'</span>
-                    <span className="absolute left-[20px] top-[340px] text-[#86551c] text-[16px]">clock every day.</span>
-                    <span className="absolute left-[0px] top-[370px] text-[#86551c] text-[16px]">3. The ranking of the laeaderboard depends</span>
-                    <span className="absolute left-[20px] top-[390px] text-[#86551c] text-[16px]">on the amount of players' diamonds</span>
-                    <span className="absolute left-[20px] top-[410px] text-[#86551c] text-[16px]">Played. The more diamonds Played in the</span>
-                    <span className="absolute left-[20px] top-[430px] text-[#86551c] text-[16px]">game, the higher the ranking and the richer</span>
-                    <span className="absolute left-[20px] top-[450px] text-[#86551c] text-[16px]">the rewards.</span>
+                    <div className="absolute left-[2px] top-[250px] w-[335px] h-[250px] ">
+                        {prizeDistribution?.policy.map((element, index) => (
+                            <span className="relative left-[0px] top-[0px] mt-[5px] mr-[8px] text-[#86551c] text-[16px]">{element.policy}</span>
+                        ))}
+                    </div>
+
                 </div>
             </div>
-        </div>
+        </div >
     )
 }

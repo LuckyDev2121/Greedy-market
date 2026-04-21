@@ -14,7 +14,8 @@ import {
   PLAYER_LOG_API_URL,
   RECHARGE_URL_API_URL,
   CURRENT_MODE_API_URL,
-  CHANGE_MODE_API_URL
+  CHANGE_MODE_API_URL,
+  PRIZE_DISTRIBUTIONS_API_URL,
 } from "../config/gameConfig";
 import { getUserId } from "../utils/user";
 
@@ -408,3 +409,29 @@ export const fetchCurrentMode=async (): Promise<CurrentModeProps> => {
 
 //   return response.data;
 // };
+type Ranks ={
+  rank_no:string;
+  price:number;
+  policy:string|null;
+}
+type Policy ={
+  rank_no:string;
+  price:number;
+  policy:string|null;
+}
+export type PrizeDistributionProps = {
+  status: boolean;
+  ranks:Ranks[];
+  policy:Policy[];
+  message:string;
+}
+
+export const fetchPrizeDistribution=async (): Promise<PrizeDistributionProps> => {
+  const response = await axios.get<PrizeDistributionProps>(PRIZE_DISTRIBUTIONS_API_URL);
+
+  if (!response.data.status) {
+    throw new Error(response.data.message || "API returned false status");
+  }
+
+  return response.data;
+};
