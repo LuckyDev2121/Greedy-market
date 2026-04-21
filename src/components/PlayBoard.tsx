@@ -40,6 +40,32 @@ function countSelectedOptions(betMap: Record<number, number>): number {
     return Object.values(betMap).filter((amount) => amount > 0).length;
 }
 
+type Point = {
+    x: number;
+    y: number;
+};
+
+type FlyingBet = {
+    id: number;
+    imageSrc: string;
+    start: Point;
+    end: Point;
+    active: boolean;
+};
+
+function getElementCenterWithinContainer(
+    container: HTMLElement,
+    element: HTMLElement,
+): Point {
+    const containerRect = container.getBoundingClientRect();
+    const elementRect = element.getBoundingClientRect();
+
+    return {
+        x: elementRect.left - containerRect.left + (elementRect.width / 2),
+        y: elementRect.top - containerRect.top + (elementRect.height / 2),
+    };
+}
+
 export default function PlayBoard({
     onOpenModal,
     RoundId,
@@ -71,6 +97,7 @@ export default function PlayBoard({
     const [betBoard, setBetBoard] = useState('');
     const [scoreBoard, setScoreBoard] = useState('');
     const [resultBoard, setResultBoard] = useState('');
+    const [flyingBets, setFlyingBets] = useState<FlyingBet[]>([]);
     const {
         betAmounts,
         options,
@@ -90,6 +117,12 @@ export default function PlayBoard({
     const displayedBetsRef = useRef<Record<number, number>>({});
     const isSendingBetRef = useRef(false);
     const errorTimeoutRef = useRef<number | null>(null);
+    const animationIdRef = useRef(0);
+    const boardRef = useRef<HTMLDivElement | null>(null);
+    const currentBetButtonRef = useRef<HTMLButtonElement | null>(null);
+    const vegButtonRef = useRef<HTMLImageElement | null>(null);
+    const drinkButtonRef = useRef<HTMLImageElement | null>(null);
+    const optionButtonRefs = useRef<Record<number, HTMLButtonElement | null>>({});
     const optionMap = useMemo(() => {
         return Object.fromEntries(
             options.map(o => [o.id, o.logo])
@@ -110,6 +143,47 @@ export default function PlayBoard({
 
     const getResultOptionLogo = (id: number) =>
         optionMap[id] ? resolveAssetUrl(optionMap[id]) : "";
+
+    const currentBetImageSrc = useMemo(() => {
+        const selectedBetAmount = betAmounts.find((element) => Number.parseInt(element.amount, 10) === currentBetAmount);
+        return selectedBetAmount ? resolveAssetUrl(selectedBetAmount.icon) : "";
+    }, [betAmounts, currentBetAmount]);
+
+    const registerOptionRef = (optionId: number, element: HTMLButtonElement | null) => {
+        optionButtonRefs.current[optionId] = element;
+    };
+
+    const startBetFlight = (startElement: HTMLElement | null, optionId: number) => {
+        const boardElement = boardRef.current;
+        const targetElement = optionButtonRefs.current[optionId];
+
+        if (!boardElement || !startElement || !targetElement || !currentBetImageSrc) {
+            return;
+        }
+
+        const start = getElementCenterWithinContainer(boardElement, startElement);
+        const end = getElementCenterWithinContainer(boardElement, targetElement);
+        const animationId = animationIdRef.current++;
+
+        setFlyingBets((prev) => [
+            ...prev,
+            {
+                id: animationId,
+                imageSrc: currentBetImageSrc,
+                start,
+                end,
+                active: false,
+            },
+        ]);
+
+        window.requestAnimationFrame(() => {
+            setFlyingBets((prev) => prev.map((item) => item.id === animationId ? { ...item, active: true } : item));
+        });
+
+        window.setTimeout(() => {
+            setFlyingBets((prev) => prev.filter((item) => item.id !== animationId));
+        }, 220);
+    };
 
     useEffect(() => {
         queuedBetsRef.current = queuedBets;
@@ -152,6 +226,7 @@ export default function PlayBoard({
             setShowChooseRectangle(false);
             setDisplayedBets({});
             setQueuedBets({});
+            setFlyingBets([]);
             displayedBetsRef.current = {};
             queuedBetsRef.current = {};
             isSendingBetRef.current = false;
@@ -171,6 +246,7 @@ export default function PlayBoard({
             setShowHand(false);
             setDisplayedBets({});
             setQueuedBets({});
+            setFlyingBets([]);
             displayedBetsRef.current = {};
             queuedBetsRef.current = {};
             isSendingBetRef.current = false;
@@ -189,6 +265,7 @@ export default function PlayBoard({
             setShowHand(true);
             setDisplayedBets({});
             setQueuedBets({});
+            setFlyingBets([]);
             displayedBetsRef.current = {};
             queuedBetsRef.current = {};
             isSendingBetRef.current = false;
@@ -208,6 +285,7 @@ export default function PlayBoard({
             setShowHand(true);
             setDisplayedBets({});
             setQueuedBets({});
+            setFlyingBets([]);
             displayedBetsRef.current = {};
             queuedBetsRef.current = {};
             isSendingBetRef.current = false;
@@ -224,6 +302,7 @@ export default function PlayBoard({
             setShowHand(false);
             setDisplayedBets({});
             setQueuedBets({});
+            setFlyingBets([]);
             displayedBetsRef.current = {};
             queuedBetsRef.current = {};
             isSendingBetRef.current = false;
@@ -239,19 +318,19 @@ export default function PlayBoard({
 
     const handleBetOption = (optionId: number, amount: number) => {
         if (blockClick === "none" || hasStartedFinalBetWindow) {
-            return;
+            return false;
         }
 
         const queuedTotal = sumBetMap(queuedBetsRef.current);
 
         if ((playerBalance - queuedTotal) < amount) {
             onOpenModal("recharge");
-            return;
+            return false;
         }
 
         const isNewOption = (queuedBetsRef.current[optionId] ?? 0) <= 0;
         if (isNewOption && countSelectedOptions(queuedBetsRef.current) >= MAX_BET_OPTIONS_PER_ROUND) {
-            return;
+            return false;
         }
 
         const nextDisplayedBets = {
@@ -268,6 +347,7 @@ export default function PlayBoard({
         setDisplayedBets(nextDisplayedBets);
         setQueuedBets(nextQueuedBets);
         reserveBetBalance(amount);
+        return true;
     };
 
     // useEffect(() => {
@@ -340,7 +420,7 @@ export default function PlayBoard({
     }, [isAdvanced]);
     return (
         <div className="absolute z-20 object-contain top-[90px]" style={{ width: "100%", height: "100%" }}>
-            <div className="relative inset-0 z-20">
+            <div ref={boardRef} className="relative inset-0 z-20">
                 <img
                     src={getAssetUrl(GAME_ASSETS.middle)}
                     alt="luckyfruit"
@@ -354,8 +434,28 @@ export default function PlayBoard({
                     controlButtons={blockClick}
                     currentBetAmount={currentBetAmount}
                     displayedBets={displayedBets}
-                    onBetOption={handleBetOption}
+                    onBetOption={(optionId, amount) => {
+                        if (handleBetOption(optionId, amount)) {
+                            startBetFlight(currentBetButtonRef.current, optionId);
+                        }
+                    }}
+                    registerOptionRef={registerOptionRef}
                 />
+                {flyingBets.map((item) => (
+                    <img
+                        key={item.id}
+                        src={item.imageSrc}
+                        alt=""
+                        aria-hidden="true"
+                        className="pointer-events-none absolute z-[60] h-[44px] w-[44px] -translate-x-1/2 -translate-y-1/2"
+                        style={{
+                            left: item.active ? item.end.x : item.start.x,
+                            top: item.active ? item.end.y : item.start.y,
+                            opacity: item.active ? 0 : 1,
+                            transition: "left 200ms linear, top 200ms linear, opacity 200ms linear",
+                        }}
+                    />
+                ))}
                 <div className={`absolute w-[402px] h-[297px] top-[380px]  ${board}`}>
                     <div className="absolute -top-[15px] left-[0px] h-[100px] w-[402px] overflow-hidden">
                         <img
@@ -373,20 +473,22 @@ export default function PlayBoard({
                     </div>
                     <button className="absolute left-[10px] -top-[60px] h-[70px] w-[70px] z-[50]">
                         <img src={getAssetUrl(GAME_ASSETS.RotatedInstant)} alt="RotatedInstant" className="absolute scale-125" />
-                        <img src={getAssetUrl(GAME_ASSETS.veg)} alt="drink" className="absolute h-[70px] w-[70px] " onClick={() => {
-                            handleBetOption(20, currentBetAmount);
-                            handleBetOption(21, currentBetAmount);
-                            handleBetOption(22, currentBetAmount);
-                            handleBetOption(23, currentBetAmount);
+                        <img ref={vegButtonRef} src={getAssetUrl(GAME_ASSETS.veg)} alt="drink" className="absolute h-[70px] w-[70px] " onClick={() => {
+                            [20, 21, 22, 23].forEach((optionId) => {
+                                if (handleBetOption(optionId, currentBetAmount)) {
+                                    startBetFlight(vegButtonRef.current, optionId);
+                                }
+                            });
                         }} />
                     </button>
                     <button className="absolute  right-[10px] -top-[60px] h-[70px] w-[70px] z-[50] ">
                         <img src={getAssetUrl(GAME_ASSETS.RotatedInstant)} alt="RotatedInstant" className="absolute scale-125" />
-                        <img src={getAssetUrl(GAME_ASSETS.drink)} alt="veg" className="absolute h-[70px] w-[70px]" onClick={() => {
-                            handleBetOption(24, currentBetAmount);
-                            handleBetOption(25, currentBetAmount);
-                            handleBetOption(26, currentBetAmount);
-                            handleBetOption(27, currentBetAmount);
+                        <img ref={drinkButtonRef} src={getAssetUrl(GAME_ASSETS.drink)} alt="veg" className="absolute h-[70px] w-[70px]" onClick={() => {
+                            [24, 25, 26, 27].forEach((optionId) => {
+                                if (handleBetOption(optionId, currentBetAmount)) {
+                                    startBetFlight(drinkButtonRef.current, optionId);
+                                }
+                            });
                         }} />
                     </button>
                     <div className={`absolute scrollbar-hidden flex overflow-y-hidden overflow-x-auto w-[345px] h-[100px] ${betBoard} top-[50px] rounded-[20px] border-[5px] left-1/2 -translate-x-1/2`}
@@ -400,6 +502,7 @@ export default function PlayBoard({
                                 return (
                                     <button
                                         key={element.id}
+                                        ref={currentBetAmount === amountValue ? currentBetButtonRef : undefined}
                                         className="relative h-[80px] w-[80px] shrink-0"
                                         onClick={() => setCurrentBetAmount(amountValue)}
                                     >

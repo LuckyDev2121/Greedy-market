@@ -7,6 +7,7 @@ type FruitBoardProps = {
     currentBetAmount: number;
     displayedBets: Record<number, number>;
     onBetOption: (optionId: number, amount: number) => void;
+    registerOptionRef?: (optionId: number, element: HTMLButtonElement | null) => void;
 };
 
 function formatNumber(num: number): string {
@@ -22,7 +23,7 @@ function formatNumber(num: number): string {
     return num.toString();
 }
 
-const GameElements = ({ controlButtons, currentBetAmount, displayedBets, onBetOption }: FruitBoardProps) => {
+const GameElements = ({ controlButtons, currentBetAmount, displayedBets, onBetOption, registerOptionRef }: FruitBoardProps) => {
     const { options, playerInfo } = useGame();
 
     useEffect(() => {
@@ -52,6 +53,7 @@ const GameElements = ({ controlButtons, currentBetAmount, displayedBets, onBetOp
                 return (
                     <button
                         key={element.id}
+                        ref={(node) => registerOptionRef?.(element.id, node)}
                         type="button"
                         disabled={controlButtons === "none" || balance < currentBetAmount}
                         style={{
