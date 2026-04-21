@@ -16,6 +16,7 @@ import {
   CURRENT_MODE_API_URL,
   CHANGE_MODE_API_URL,
   PRIZE_DISTRIBUTIONS_API_URL,
+  GET_GIFT_API_URL,
 } from "../config/gameConfig";
 import { getUserId } from "../utils/user";
 
@@ -36,6 +37,7 @@ type HowToPlay = {
   rules?: string;
 };
 type giftBox={
+  id:number;
   amount: string;
   box_closed: string;
   box_opened:string;
@@ -227,24 +229,30 @@ console.log("fetchgamemode", response)
 export type ChangeMode={
   status:boolean;
   message: string;
+  remaining?:number;
 }
 
 export const changeMode = async (
   isMode: string,
 ): Promise<ChangeMode> => {
   console.log("changegamemode", isMode);
-  const response = await axios.post<ChangeMode>(CHANGE_MODE_API_URL, {
-    mode: isMode,
-    game_id: GAME_ID,
-    user_id: getUserId(),
-  });
+  try {
+    const response = await axios.post<ChangeMode>(CHANGE_MODE_API_URL, {
+      mode: isMode,
+      game_id: GAME_ID,
+      user_id: getUserId(),
+    });
 
-  console.log("changegamemode", response);
-  if (!response.data.status) {
-    throw new Error(response.data.message || "Failed to change game mode");
+    console.log("changegamemode", response);
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError<ChangeMode>(error) && error.response?.data) {
+      console.log("changegamemode-error", error.response.data);
+      return error.response.data;
+    }
+
+    throw error;
   }
-
-  return response.data;
 };
 
 
@@ -443,6 +451,22 @@ export type PrizeDistributionProps = {
 
 export const fetchPrizeDistribution=async (): Promise<PrizeDistributionProps> => {
   const response = await axios.get<PrizeDistributionProps>(PRIZE_DISTRIBUTIONS_API_URL);
+
+  if (!response.data.status) {
+    throw new Error(response.data.message || "API returned false status");
+  }
+
+  return response.data;
+};
+
+type getGift={
+  status?:boolean;
+  message?:string;
+  data?:{gift_amount:number}
+}
+
+export const fetchGetGift=async (giftId:number): Promise<getGift> => {
+  const response = await axios.get<getGift>(`${GET_GIFT_API_URL}/${getUserId()}/${giftId}/${GAME_ID}`);
 
   if (!response.data.status) {
     throw new Error(response.data.message || "API returned false status");

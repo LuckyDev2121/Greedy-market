@@ -67,6 +67,7 @@ export default function GreedyMarket({
   // const [repeatRequestId, setRepeatRequestId] = useState(0);
   const [scale, setScale] = useState(1);
   const [isAdvancedMode, setIsAdvancedMode] = useState(false);
+  const [remainingAmount, setRemainingAmount] = useState(0);
   const { gameMode, handleGameMode, setGameMode } = useGame();
   const isOverlayOpen = activeModal !== null;
   // const previousRoundTotal = Object.values(previousRoundBets).reduce((sum, amount) => sum + amount, 0);
@@ -180,7 +181,16 @@ export default function GreedyMarket({
               </motion.button>
 
               <div className="absolute flex top-[20px] left-1/2 -translate-x-1/2">
-                <ToggleRow isOn={isAdvancedMode} onAdvanced={() => { setActiveModal("advanced") }}
+                <ToggleRow isOn={isAdvancedMode} onAdvanced={() => {
+                  void (async () => {
+                    await setGameMode(false).then((response) => {
+                      if (!response.status) {
+                        setRemainingAmount(response.remaining);
+                        setActiveModal("advanced");
+                      }
+                    })
+                  })();
+                }}
                   onBasic={() => {
                     void (async () => {
                       await setGameMode(true);
@@ -237,12 +247,9 @@ export default function GreedyMarket({
                 transition={{ duration: 0.4 }}
                 className="absolute z-50 h-[567px] w-[355px] left-[20px]"
               >
-                <AdvancedModal onCloseAdvanced={() => setActiveModal(null)}
+                <AdvancedModal remainingAmount={remainingAmount} onCloseAdvanced={() => setActiveModal(null)}
                   onOk={() => {
-                    void (async () => {
-                      setActiveModal(null);
-                      await setGameMode(false);
-                    })();
+                    setActiveModal(null);
                   }} />
               </motion.div>
             )}

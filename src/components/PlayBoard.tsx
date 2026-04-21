@@ -112,6 +112,7 @@ export default function PlayBoard({
         setPreviousRoundBets,
         winToday,
         handleWinToday,
+        handleGetGift,
     } = useGame();
     const queuedBetsRef = useRef<Record<number, number>>({});
     const displayedBetsRef = useRef<Record<number, number>>({});
@@ -155,6 +156,14 @@ export default function PlayBoard({
 
     const registerOptionRef = (optionId: number, element: HTMLButtonElement | null) => {
         optionButtonRefs.current[optionId] = element;
+    };
+
+    const handleClaimGift = async (giftId: number) => {
+        try {
+            await handleGetGift(giftId);
+        } catch (error) {
+            console.error("Failed to claim gift", error);
+        }
     };
 
     const startBetFlight = (startElement: HTMLElement | null, optionId: number) => {
@@ -526,7 +535,10 @@ export default function PlayBoard({
                                                 key={index}
                                                 src={`${gameDetails?.gift_boxes_asset_base_path}${element.box_opened}`}
                                                 alt="box"
-                                                className={`absolute left-[38px] top-[12px]`}
+                                                className={`absolute left-[38px] top-[12px] cursor-pointer`}
+                                                onClick={() => {
+                                                    void handleClaimGift(element.id);
+                                                }}
                                             />
                                             <span className={`absolute left-[48px] top-[45px] text-[#f0d457] [text-shadow:1px_0_0_brown,-1px_0_0_brown,0_1px_0_brown,0_-1px_0_brown]`}>{formatNumber(amountValue)}</span>
                                         </>
@@ -538,7 +550,10 @@ export default function PlayBoard({
                                                 key={index}
                                                 src={`${gameDetails?.gift_boxes_asset_base_path}${element.box_opened}`}
                                                 alt="box"
-                                                className={`absolute left-[106px] top-[12px]`}
+                                                className={`absolute left-[106px] top-[12px] cursor-pointer`}
+                                                onClick={() => {
+                                                    void handleClaimGift(element.id);
+                                                }}
                                             />
                                             <span className={`absolute left-[116px] top-[45px] text-[#f0d457] [text-shadow:1px_0_0_brown,-1px_0_0_brown,0_1px_0_brown,0_-1px_0_brown]`}>{formatNumber(amountValue)}</span>
                                         </>
@@ -550,7 +565,10 @@ export default function PlayBoard({
                                                 key={index}
                                                 src={`${gameDetails?.gift_boxes_asset_base_path}${element.box_opened}`}
                                                 alt="box"
-                                                className={`absolute left-[174px] top-[12px]`}
+                                                className={`absolute left-[174px] top-[12px] cursor-pointer`}
+                                                onClick={() => {
+                                                    void handleClaimGift(element.id);
+                                                }}
                                             />
                                             <span className={`absolute left-[184px] top-[45px] text-[#f0d457] [text-shadow:1px_0_0_brown,-1px_0_0_brown,0_1px_0_brown,0_-1px_0_brown]`}>{formatNumber(amountValue)}</span>
                                         </>
@@ -562,7 +580,10 @@ export default function PlayBoard({
                                                 key={index}
                                                 src={`${gameDetails?.gift_boxes_asset_base_path}${element.box_opened}`}
                                                 alt="box"
-                                                className={`absolute left-[242px] top-[12px]`}
+                                                className={`absolute left-[242px] top-[12px] cursor-pointer`}
+                                                onClick={() => {
+                                                    void handleClaimGift(element.id);
+                                                }}
                                             />
                                             <span className={`absolute left-[252px] top-[45px] text-[#f0d457] [text-shadow:1px_0_0_brown,-1px_0_0_brown,0_1px_0_brown,0_-1px_0_brown]`}>{formatNumber(amountValue)}</span>
                                         </>
@@ -574,7 +595,10 @@ export default function PlayBoard({
                                                 key={index}
                                                 src={`${gameDetails?.gift_boxes_asset_base_path}${element.box_opened}`}
                                                 alt="box"
-                                                className={`absolute left-[310px] top-[12px]`}
+                                                className={`absolute left-[310px] top-[12px] cursor-pointer`}
+                                                onClick={() => {
+                                                    void handleClaimGift(element.id);
+                                                }}
                                             />
                                             <span className={`absolute left-[320px] top-[45px] text-[#f0d457] [text-shadow:1px_0_0_brown,-1px_0_0_brown,0_1px_0_brown,0_-1px_0_brown]`}>{formatNumber(amountValue)}</span>
                                         </>

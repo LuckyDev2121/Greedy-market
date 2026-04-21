@@ -43,6 +43,7 @@ export const INTRO_API_URL= `${API_BASE_URL.replace(/\/$/, "")}/intro`;
 export const CURRENT_MODE_API_URL= `${API_BASE_URL.replace(/\/$/, "")}/current-mode/${GAME_ID}`;
 export const CHANGE_MODE_API_URL= `${API_BASE_URL.replace(/\/$/, "")}/change-mode`;
 export const PRIZE_DISTRIBUTIONS_API_URL= `${API_BASE_URL.replace(/\/$/, "")}/prize-distributions/${GAME_ID}`;
+export const GET_GIFT_API_URL= `${API_BASE_URL.replace(/\/$/, "")}/get-gift`;
 
 
 

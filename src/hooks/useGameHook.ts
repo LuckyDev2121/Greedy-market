@@ -18,6 +18,7 @@ import {
   fetchCurrentMode,
   changeMode,
   fetchPrizeDistribution,
+  fetchGetGift,
   type PrizeDistributionProps,
   type PlayerLogData,
   type WinTodayResponse,
@@ -64,6 +65,7 @@ type GameStore = {
 musicOverridden: boolean;
 prizeDistribution:PrizeDistributionProps|null;
 gameMode: string|null;
+remaining:number;
 };
 
 
@@ -91,6 +93,7 @@ let store: GameStore = {
 musicOverridden: false,
 prizeDistribution:null,
 gameMode:null,
+remaining:0,
   // runtimeConfig: { backendOrigin: "", apiBaseUrl: "" },
 };
 
@@ -238,6 +241,13 @@ export function useGame() {
     updateStore({ winToday: data });
     return data;
   }, []);
+
+  const handleGetGift= useCallback(async (giftId:number) => {
+    const data = await fetchGetGift(giftId);
+    return data;
+  }, []);
+
+
 const handlePrizeDistribution= useCallback(async () => {
     const data = await fetchPrizeDistribution();
     updateStore({ prizeDistribution: data });
@@ -346,15 +356,25 @@ console.log("music",nextValue);
     let isMode='';
     if(isAdvanceMode)isMode="basic"
     else isMode="advance"
-   await changeMode(isMode);
+   const response=await changeMode(isMode);
+    if (response.status) {
+      updateStore({
+        gameMode: isMode,
+        remaining: response.remaining ?? 0,
+      });
+      return response;
+    }
+
     updateStore({
-      gameMode: isMode,
+      remaining: response.remaining ?? 0,
     });
+    return response
   }, []);
 
 const handleGameMode= useCallback(async () => {
     const data = await fetchCurrentMode();
-    updateStore({ gameMode: data.data?.mode });
+    updateStore({ gameMode: data.data?.mode
+     });
     return data;
   }, []);
 
@@ -431,7 +451,8 @@ const handleGameMode= useCallback(async () => {
     handlePlayerLog,
     handleWinToday,
     handleRechargeRedirect,
-handlePrizeDistribution,
-handleGameMode,
+    handlePrizeDistribution,
+    handleGameMode,
+    handleGetGift,
   };
 }
