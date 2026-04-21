@@ -437,8 +437,8 @@ export default function PlayBoard({
                         aria-hidden="true"
                         className="pointer-events-none absolute z-[60] h-[44px] w-[44px] -translate-x-1/2 -translate-y-1/2"
                         style={{
-                            left: item.active ? item.end.x + 40 : item.start.x + 50,
-                            top: item.active ? item.end.y + 40 : item.start.y + 80,
+                            left: item.active ? item.end.x : item.start.x,
+                            top: item.active ? item.end.y : item.start.y,
                             opacity: item.active ? 0 : 1,
                             transition: "left 200ms linear, top 200ms linear, opacity 500ms linear",
                         }}
