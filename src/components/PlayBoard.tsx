@@ -131,14 +131,18 @@ export default function PlayBoard({
     const roundKey = RoundId ?? "waiting";
     const playerBalance = Number.parseFloat(playerInfo?.balance ?? "0");
     const currentWinToday = Math.max(0, Number(winToday?.win ?? 0));
-    const maxGiftBoxAmount = gift_boxes.reduce((highest, giftBox) => {
-        const amount = Number.parseInt(giftBox.amount, 10);
-        return Number.isNaN(amount) ? highest : Math.max(highest, amount);
-    }, 0);
     const progressBarWidth =
-        maxGiftBoxAmount > 0
-            ? Math.min((currentWinToday / maxGiftBoxAmount) * 100, 100)
-            : 0;
+        currentWinToday >= 0 && currentWinToday < Number.parseInt(gift_boxes[0]?.amount, 10)
+            ? currentWinToday / Number.parseInt(gift_boxes[0]?.amount, 10) * 20
+            : currentWinToday >= Number.parseInt(gift_boxes[0]?.amount, 10) && currentWinToday < Number.parseInt(gift_boxes[1]?.amount, 10)
+                ? (currentWinToday - Number.parseInt(gift_boxes[0]?.amount, 10)) / (Number.parseInt(gift_boxes[1]?.amount, 10) - Number.parseInt(gift_boxes[0]?.amount, 10)) * 20 + 20
+                : currentWinToday >= Number.parseInt(gift_boxes[1]?.amount, 10) && currentWinToday < Number.parseInt(gift_boxes[2]?.amount, 10)
+                    ? (currentWinToday - Number.parseInt(gift_boxes[1]?.amount, 10)) / (Number.parseInt(gift_boxes[2]?.amount, 10) - Number.parseInt(gift_boxes[1]?.amount, 10)) * 20 + 40
+                    : currentWinToday >= Number.parseInt(gift_boxes[2]?.amount, 10) && currentWinToday < Number.parseInt(gift_boxes[3]?.amount, 10)
+                        ? (currentWinToday - Number.parseInt(gift_boxes[2]?.amount, 10)) / (Number.parseInt(gift_boxes[3]?.amount, 10) - Number.parseInt(gift_boxes[2]?.amount, 10)) * 20 + 60
+                        : currentWinToday >= Number.parseInt(gift_boxes[3]?.amount, 10) && currentWinToday < Number.parseInt(gift_boxes[4]?.amount, 10)
+                            ? (currentWinToday - Number.parseInt(gift_boxes[3]?.amount, 10)) / (Number.parseInt(gift_boxes[4]?.amount, 10) - Number.parseInt(gift_boxes[3]?.amount, 10)) * 20 + 80
+                            : 100;
 
 
     const getResultOptionLogo = (id: number) =>
@@ -521,32 +525,134 @@ export default function PlayBoard({
                     </div>
                     <div className={`absolute w-[343px] h-[18px] overflow-hidden rounded-[20px] top-[160px] ${scoreBoard}  border-[1px]  left-1/2 -translate-x-1/2`}>
                         <div
-                            className={`absolute inset-y-0 left-0 rounded-[20px] ${isAdvanced ? "bg-[#F3A44B]" : "bg-[#FFD24A]"}`}
+                            className={`absolute inset-y-0 left-0 rounded-[20px] bg-gradient-to-t from-[#118D11] to-[#1EF31E]`}
                             style={{ width: `${progressBarWidth}%` }}
                         />
+
                     </div >
-                    <div className={`absolute w-[343px] h-[18px]  top-[180px] left-1/2 -translate-x-1/2`}>
+                    <div className={`absolute w-[343px] h-[18px] top-[140px] left-1/2 -translate-x-1/2`}>
                         {gift_boxes?.map((element, index) => {
                             const amountValue = Number.parseInt(element.amount, 10);
-                            return currentWinToday > amountValue ? (
+                            return currentWinToday >= amountValue ? (
                                 <>
-                                    <img
-                                        key={index}
-                                        src={`${gameDetails?.gift_boxes_asset_base_path}${element.box_opened}`}
-                                        alt="box"
-                                        className={`absolute left-[${38 + 68 * index}px] -top-[32px]`}
-                                    />
-                                    <span className={`absolute left-[${48 + 68 * index}px] top-[5px] text-[#f0d457] [text-shadow:1px_0_0_brown,-1px_0_0_brown,0_1px_0_brown,0_-1px_0_brown]`}>{formatNumber(amountValue)}</span>
+                                    {index === 0 && (
+                                        <>
+                                            <img src={getAssetUrl(GAME_ASSETS.RotatedInstant)} alt="RotatedInstant" className="absolute left-[5px] -top-[30px] scale-50" />
+                                            <img
+                                                key={index}
+                                                src={`${gameDetails?.gift_boxes_asset_base_path}${element.box_opened}`}
+                                                alt="box"
+                                                className={`absolute left-[38px] top-[12px]`}
+                                            />
+                                            <span className={`absolute left-[48px] top-[45px] text-[#f0d457] [text-shadow:1px_0_0_brown,-1px_0_0_brown,0_1px_0_brown,0_-1px_0_brown]`}>{formatNumber(amountValue)}</span>
+                                        </>
+                                    )}
+                                    {index === 1 && (
+                                        <>
+                                            <img src={getAssetUrl(GAME_ASSETS.RotatedInstant)} alt="RotatedInstant" className="absolute left-[73px] -top-[30px] scale-50" />
+                                            <img
+                                                key={index}
+                                                src={`${gameDetails?.gift_boxes_asset_base_path}${element.box_opened}`}
+                                                alt="box"
+                                                className={`absolute left-[106px] top-[12px]`}
+                                            />
+                                            <span className={`absolute left-[116px] top-[45px] text-[#f0d457] [text-shadow:1px_0_0_brown,-1px_0_0_brown,0_1px_0_brown,0_-1px_0_brown]`}>{formatNumber(amountValue)}</span>
+                                        </>
+                                    )}
+                                    {index === 2 && (
+                                        <>
+                                            <img src={getAssetUrl(GAME_ASSETS.RotatedInstant)} alt="RotatedInstant" className="absolute left-[141px] -top-[30px] scale-50" />
+                                            <img
+                                                key={index}
+                                                src={`${gameDetails?.gift_boxes_asset_base_path}${element.box_opened}`}
+                                                alt="box"
+                                                className={`absolute left-[174px] top-[12px]`}
+                                            />
+                                            <span className={`absolute left-[184px] top-[45px] text-[#f0d457] [text-shadow:1px_0_0_brown,-1px_0_0_brown,0_1px_0_brown,0_-1px_0_brown]`}>{formatNumber(amountValue)}</span>
+                                        </>
+                                    )}
+                                    {index === 3 && (
+                                        <>
+                                            <img src={getAssetUrl(GAME_ASSETS.RotatedInstant)} alt="RotatedInstant" className="absolute left-[209px] -top-[30px] scale-50" />
+                                            <img
+                                                key={index}
+                                                src={`${gameDetails?.gift_boxes_asset_base_path}${element.box_opened}`}
+                                                alt="box"
+                                                className={`absolute left-[242px] top-[12px]`}
+                                            />
+                                            <span className={`absolute left-[252px] top-[45px] text-[#f0d457] [text-shadow:1px_0_0_brown,-1px_0_0_brown,0_1px_0_brown,0_-1px_0_brown]`}>{formatNumber(amountValue)}</span>
+                                        </>
+                                    )}
+                                    {index === 4 && (
+                                        <>
+                                            <img src={getAssetUrl(GAME_ASSETS.RotatedInstant)} alt="RotatedInstant" className="absolute left-[277px] -top-[30px] scale-50" />
+                                            <img
+                                                key={index}
+                                                src={`${gameDetails?.gift_boxes_asset_base_path}${element.box_opened}`}
+                                                alt="box"
+                                                className={`absolute left-[310px] top-[12px]`}
+                                            />
+                                            <span className={`absolute left-[320px] top-[45px] text-[#f0d457] [text-shadow:1px_0_0_brown,-1px_0_0_brown,0_1px_0_brown,0_-1px_0_brown]`}>{formatNumber(amountValue)}</span>
+                                        </>
+                                    )}
                                 </>
                             ) : (
                                 <>
-                                    <img
-                                        key={index}
-                                        src={`${gameDetails?.gift_boxes_asset_base_path}${element.box_closed}`}
-                                        alt="box"
-                                        className={`absolute left-[${38 + 68 * index}px] -top-[32px]`}
-                                    />
-                                    <span className={`absolute left-[${48 + 68 * index}px] top-[5px] text-[#f0d457] [text-shadow:1px_0_0_brown,-1px_0_0_brown,0_1px_0_brown,0_-1px_0_brown]`}>{formatNumber(amountValue)}</span>
+                                    {index === 0 && (
+                                        <>
+                                            <img
+                                                key={index}
+                                                src={`${gameDetails?.gift_boxes_asset_base_path}${element.box_closed}`}
+                                                alt="box"
+                                                className={`absolute left-[38px] top-[12px]`}
+                                            />
+                                            <span className={`absolute left-[48px] top-[45px] text-[#f0d457] [text-shadow:1px_0_0_brown,-1px_0_0_brown,0_1px_0_brown,0_-1px_0_brown]`}>{formatNumber(amountValue)}</span>
+                                        </>
+                                    )}
+                                    {index === 1 && (
+                                        <>
+                                            <img
+                                                key={index}
+                                                src={`${gameDetails?.gift_boxes_asset_base_path}${element.box_closed}`}
+                                                alt="box"
+                                                className={`absolute left-[106px] top-[12px]`}
+                                            />
+                                            <span className={`absolute left-[116px] top-[45px] text-[#f0d457] [text-shadow:1px_0_0_brown,-1px_0_0_brown,0_1px_0_brown,0_-1px_0_brown]`}>{formatNumber(amountValue)}</span>
+                                        </>
+                                    )}
+                                    {index === 2 && (
+                                        <>
+                                            <img
+                                                key={index}
+                                                src={`${gameDetails?.gift_boxes_asset_base_path}${element.box_closed}`}
+                                                alt="box"
+                                                className={`absolute left-[174px] top-[12px]`}
+                                            />
+                                            <span className={`absolute left-[184px] top-[45px] text-[#f0d457] [text-shadow:1px_0_0_brown,-1px_0_0_brown,0_1px_0_brown,0_-1px_0_brown]`}>{formatNumber(amountValue)}</span>
+                                        </>
+                                    )}
+                                    {index === 3 && (
+                                        <>
+                                            <img
+                                                key={index}
+                                                src={`${gameDetails?.gift_boxes_asset_base_path}${element.box_closed}`}
+                                                alt="box"
+                                                className={`absolute left-[242px] top-[12px]`}
+                                            />
+                                            <span className={`absolute left-[252px] top-[45px] text-[#f0d457] [text-shadow:1px_0_0_brown,-1px_0_0_brown,0_1px_0_brown,0_-1px_0_brown]`}>{formatNumber(amountValue)}</span>
+                                        </>
+                                    )}
+                                    {index === 4 && (
+                                        <>
+                                            <img
+                                                key={index}
+                                                src={`${gameDetails?.gift_boxes_asset_base_path}${element.box_closed}`}
+                                                alt="box"
+                                                className={`absolute left-[310px] top-[12px]`}
+                                            />
+                                            <span className={`absolute left-[320px] top-[45px] text-[#f0d457] [text-shadow:1px_0_0_brown,-1px_0_0_brown,0_1px_0_brown,0_-1px_0_brown]`}>{formatNumber(amountValue)}</span>
+                                        </>
+                                    )}
                                 </>
                             );
                         })}
