@@ -240,8 +240,8 @@ export default function GreedyMarket({
                 <AdvancedModal onCloseAdvanced={() => setActiveModal(null)}
                   onOk={() => {
                     void (async () => {
-                      await setGameMode(false);
                       setActiveModal(null);
+                      await setGameMode(false);
                     })();
                   }} />
               </motion.div>
