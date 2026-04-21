@@ -1,3 +1,5 @@
+import ModalHeaderPlate from "./ModalHeaderPlate";
+
 type RankingHelpModalProps = {
     onCloseRankingHelpModal: () => void;
 };

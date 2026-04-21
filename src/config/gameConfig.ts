@@ -40,6 +40,8 @@ export const WIN_TODAY_API_URL= `${API_BASE_URL.replace(/\/$/, "")}/win-today`;
 export const PLAYER_LOG_API_URL= `${API_BASE_URL.replace(/\/$/, "")}/player-log`;
 export const RECHARGE_URL_API_URL= `${API_BASE_URL.replace(/\/$/, "")}/company/wallet/1`;
 export const INTRO_API_URL= `${API_BASE_URL.replace(/\/$/, "")}/intro`;
+export const CURRENT_MODE_API_URL= `${API_BASE_URL.replace(/\/$/, "")}/current-mode/${GAME_ID}`;
+export const CHANGE_MODE_API_URL= `${API_BASE_URL.replace(/\/$/, "")}/change-mode`;
 
 
 

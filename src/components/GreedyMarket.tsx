@@ -127,6 +127,9 @@ export default function GreedyMarket({
           <div className="absolute flex -z-100 blur-[3px]">
             {isAdvancedMode ? <img src={getAssetUrl(GAME_ASSETS.advanceBg)} alt="advanced" />
               : <img src={getAssetUrl(GAME_ASSETS.normalBg)} alt="normal" />}
+            {isAdvancedMode === false && (
+              <div className="absolute inset-0 bg-blue-500/30 mix-blend-normal" />
+            )}
           </div>
           <div className="flex justify-between">
             <div className="ml-[13px] mt-[11px]">

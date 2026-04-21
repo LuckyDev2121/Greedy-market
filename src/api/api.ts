@@ -13,6 +13,8 @@ import {
   WIN_TODAY_API_URL,
   PLAYER_LOG_API_URL,
   RECHARGE_URL_API_URL,
+  CURRENT_MODE_API_URL,
+  CHANGE_MODE_API_URL
 } from "../config/gameConfig";
 import { getUserId } from "../utils/user";
 
@@ -25,20 +27,26 @@ type GameOption = {
 type BetAmount = {
   id: number;
   amount: string;
+  mode:string;
   icon: string;
 };
 
 type HowToPlay = {
   rules?: string;
 };
-
+type giftBox={
+  amount: string;
+  box_closed: string;
+  box_opened:string;
+}
 export type GameDetailsData = {
   id?: number;
   name?: string;
   how_to_play?: HowToPlay;
   options?: GameOption[];
   bet_amounts?: BetAmount[];
-  [key: string]: unknown;
+  gift_boxes_asset_base_path:string;
+  gift_boxes:giftBox[];
 };
 
 type GameDetails = {
@@ -362,3 +370,41 @@ export const fetchRechargeUrl = async (): Promise<RechargeUrlResponse> => {
 
   return response.data;
 };
+
+export type CurrentData={
+  user_id?: number;
+  mode?: string;
+}
+
+export type CurrentModeProps={
+  status?:boolean;
+  message?:string;
+  data?:CurrentData;
+}
+
+export const fetchCurrentMode=async (): Promise<CurrentModeProps> => {
+  const response = await axios.get<CurrentModeProps>(`${CURRENT_MODE_API_URL}/${getUserId()}`);
+
+  if (!response.data.status) {
+    throw new Error(response.data.message || "API returned false status");
+  }
+
+  return response.data;
+};
+
+
+// export const changeMode = async (
+//   isMusicOn: boolean,
+// ): Promise<SaveMusicSettingResponse> => {
+//   const response = await axios.post<SaveMusicSettingResponse>(MUSIC_SETTING_API_URL, {
+//     game_id: GAME_ID,
+//     user_id: getUserId(),
+//     status: isMusicOn ? 1 : 0,
+//   });
+// console.log("saveMusic-userid",getUserId(),"isMusicOn",isMusicOn)
+//   if (!response.data.status) {
+//     throw new Error(response.data.message || "Failed to save music setting");
+//   }
+
+//   return response.data;
+// };

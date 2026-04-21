@@ -359,6 +359,7 @@ console.log("music",nextValue);
     winToday: snapshot.winToday,
     betAmounts: snapshot.gameDetails?.bet_amounts ?? [],
     options: snapshot.gameDetails?.options ?? [],
+    gift_boxes:snapshot.gameDetails?.gift_boxes??[],
     gameDetails: snapshot.gameDetails,
     playerInfo: snapshot.playerInfo,
     displayBalance,

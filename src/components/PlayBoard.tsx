@@ -9,6 +9,7 @@ import LedTimer from "./LedTimer";
 import { useGame, resolveAssetUrl } from "../hooks/useGameHook";
 import MovingHand from "./MoveHand";
 import RoundStartTimer from "./RoundStartTimer";
+import { getOptimisedAppearId, moveItem } from "framer-motion";
 type PlayBoardProps = {
     onOpenModal: (modal: string) => void;
     RoundId: number | null;
@@ -18,7 +19,18 @@ type PlayBoardProps = {
     RoundTime: number;
     isAdvanced: boolean;
 };
-
+function formatNumber(num: number): string {
+    if (num >= 1_000_000_000) {
+        return (num / 1_000_000_000).toFixed(1).replace(/\.0$/, '') + 'B';
+    }
+    if (num >= 1_000_000) {
+        return (num / 1_000_000).toFixed(1).replace(/\.0$/, '') + 'M';
+    }
+    if (num >= 1_000) {
+        return (num / 1_000).toFixed(1).replace(/\.0$/, '') + 'K';
+    }
+    return num.toString();
+}
 function sumBetMap(betMap: Record<number, number>): number {
     return Object.values(betMap).reduce((sum, amount) => sum + amount, 0);
 }
@@ -58,17 +70,19 @@ export default function PlayBoard({
         betAmounts,
         options,
         results,
+        gameDetails,
+        gift_boxes,
         clearCurrentRoundBets,
         placeBet,
-        // previousRoundBets,
         reserveBetBalance,
         releaseBetBalance,
         playerInfo,
         setPreviousRoundBets,
+        winToday,
+        handleWinToday,
     } = useGame();
     const queuedBetsRef = useRef<Record<number, number>>({});
     const isSendingBetRef = useRef(false);
-    // const repeatRequestIdRef = useRef(repeatRequestId);
     const errorTimeoutRef = useRef<number | null>(null);
     const optionMap = useMemo(() => {
         return Object.fromEntries(
@@ -77,51 +91,16 @@ export default function PlayBoard({
     }, [options]);
     const roundKey = RoundId ?? "waiting";
     const playerBalance = Number.parseFloat(playerInfo?.balance ?? "0");
+    const currentWinToday = Math.max(0, Number(winToday?.win ?? 0));
+    const maxGiftBoxAmount = gift_boxes.reduce((highest, giftBox) => {
+        const amount = Number.parseInt(giftBox.amount, 10);
+        return Number.isNaN(amount) ? highest : Math.max(highest, amount);
+    }, 0);
+    const progressBarWidth =
+        maxGiftBoxAmount > 0
+            ? Math.min((currentWinToday / maxGiftBoxAmount) * 100, 100)
+            : 0;
 
-    // const showTemporaryMessage = (message: string, duration = 3000) => {
-
-    //     if (errorTimeoutRef.current !== null) {
-    //         window.clearTimeout(errorTimeoutRef.current);
-    //     }
-
-    //     errorTimeoutRef.current = window.setTimeout(() => {
-    //         errorTimeoutRef.current = null;
-    //     }, duration);
-    // };
-
-    // const applyBetBatch = (betBatch: Record<number, number>) => {
-    //     const betEntries = Object.entries(betBatch)
-    //         .map(([optionId, amount]) => [Number(optionId), amount] as const)
-    //         .filter(([, amount]) => amount > 0);
-
-    //     if (betEntries.length === 0) {
-    //         return;
-    //     }
-
-    //     const totalAmount = betEntries.reduce((sum, [, amount]) => sum + amount, 0);
-    //     const queuedTotal = sumBetMap(queuedBetsRef.current);
-
-    //     if ((playerBalance - queuedTotal) < totalAmount) {
-    //         showTemporaryMessage("Sorry balance is bad");
-    //         return;
-    //     }
-
-    //     setDisplayedBets((prev) => {
-    //         const next = { ...prev };
-    //         betEntries.forEach(([optionId, amount]) => {
-    //             next[optionId] = (next[optionId] ?? 0) + amount;
-    //         });
-    //         return next;
-    //     });
-    //     setQueuedBets((prev) => {
-    //         const next = { ...prev };
-    //         betEntries.forEach(([optionId, amount]) => {
-    //             next[optionId] = (next[optionId] ?? 0) + amount;
-    //         });
-    //         return next;
-    //     });
-    //     reserveBetBalance(totalAmount);
-    // };
 
     const getResultOptionLogo = (id: number) =>
         optionMap[id] ? resolveAssetUrl(optionMap[id]) : "";
@@ -137,6 +116,16 @@ export default function PlayBoard({
             }
         };
     }, []);
+
+    useEffect(() => {
+        const load = async () => {
+
+            if (!winToday) {
+                await handleWinToday();
+            }
+        };
+        void load();
+    }, [handleWinToday, winToday]);
 
     useEffect(() => {
 
@@ -310,7 +299,7 @@ export default function PlayBoard({
 
     useEffect(() => {
         if (isAdvanced) {
-            setBoard("bg-[#72342B]");
+            setBoard("bg-[#4e4e4e]");
             setTodayWin("bg-[#6F372F] border-[#E92407]");
             setBetBoard("bg-[#D95B48] border-[#E02407]");
             setScoreBoard("bg-[#D95B48] border-[#E02407]");
@@ -342,13 +331,23 @@ export default function PlayBoard({
                     displayedBets={displayedBets}
                     onBetOption={handleBetOption}
                 />
-                <div className={`absolute w-[402px] h-[297px] top-[380px] ${board}`}>
-                    <img src={getAssetUrl(GAME_ASSETS.jhalot)} alt="jhalot" className="absolute inset-0 scale-x-110" />
+                <div className={`absolute w-[402px] h-[297px] top-[380px]  ${board}`}>
+                    <div className="absolute -top-[15px] left-[0px] h-[100px] w-[402px] overflow-hidden">
+                        <img
+                            src={getAssetUrl(GAME_ASSETS.jhalot)}
+                            alt="jhalot"
+                            className="absolute inset-0 h-[100px] w-[402px] scale-x-110"
+                        />
+                    </div>
+                    {isAdvanced && (
+                        <div className="absolute w-[402px] h-[370px] -top-[1px] inset-0 bg-red-700/80 mix-blend-plus-darker" />
+                    )}
                     <div className={`absolute justify-between items-center px-[10px] ${todayWin} flex w-[234px] h-[26px] top-[10px] rounded-full border-[2px]  left-1/2 -translate-x-1/2`}>
                         <span className=" font-blod">TODAY'S WIN</span>
-                        <span className="text-yellow-500 font-blod">100</span>
+                        <span className="text-yellow-500 font-blod">{winToday?.win}</span>
                     </div>
                     <button className="absolute left-[10px] -top-[60px] h-[70px] w-[70px] z-[50]">
+                        <img src={getAssetUrl(GAME_ASSETS.RotatedInstant)} alt="RotatedInstant" className="absolute scale-125" />
                         <img src={getAssetUrl(GAME_ASSETS.veg)} alt="drink" className="absolute h-[70px] w-[70px] " onClick={() => {
                             handleBetOption(20, currentBetAmount);
                             handleBetOption(21, currentBetAmount);
@@ -356,7 +355,8 @@ export default function PlayBoard({
                             handleBetOption(23, currentBetAmount);
                         }} />
                     </button>
-                    <button className="absolute right-[10px] -top-[60px] h-[70px] w-[70px] z-[50] ">
+                    <button className="absolute  right-[10px] -top-[60px] h-[70px] w-[70px] z-[50] ">
+                        <img src={getAssetUrl(GAME_ASSETS.RotatedInstant)} alt="RotatedInstant" className="absolute scale-125" />
                         <img src={getAssetUrl(GAME_ASSETS.drink)} alt="veg" className="absolute h-[70px] w-[70px]" onClick={() => {
                             handleBetOption(24, currentBetAmount);
                             handleBetOption(25, currentBetAmount);
@@ -364,82 +364,101 @@ export default function PlayBoard({
                             handleBetOption(27, currentBetAmount);
                         }} />
                     </button>
-                    <div className={`absolute w-[345px] h-[100px] ${betBoard}  top-[50px] rounded-[20px] border-[5px]  left-1/2 -translate-x-1/2`}>
+                    <div className={`absolute scrollbar-hidden flex overflow-y-hidden overflow-x-auto w-[345px] h-[100px] ${betBoard} top-[50px] rounded-[20px] border-[5px] left-1/2 -translate-x-1/2`}
+                        style={{ pointerEvents: "auto" }}>
+                        {betAmounts
+                            .filter((element) =>
+                                isAdvanced ? element.mode === "advance" : element.mode === "basic"
+                            )
+                            .map((element) => {
+                                const amountValue = Number.parseInt(element.amount, 10);
+                                return (
+                                    <button
+                                        key={element.id}
+                                        className="relative h-[80px] w-[80px] shrink-0"
+                                        onClick={() => setCurrentBetAmount(amountValue)}
+                                    >
+                                        {currentBetAmount === amountValue && (
+                                            <div className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 h-[60px] w-[60px] bg-[#ffee8d] blur-[3px] rounded-full"></div>
+                                        )}
+                                        <img
+                                            src={resolveAssetUrl(element.icon)}
+                                            alt={`Bet amount ${element.amount}`}
+                                            className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 pt-0"
+                                        />
 
+                                    </button>
+                                );
+                            })}
                     </div>
-                    <div className={`absolute w-[343px] h-[18px]  rounded-[20px] top-[160px] ${scoreBoard}  border-[1px]  left-1/2 -translate-x-1/2`}>
+                    <div className={`absolute w-[343px] h-[18px] overflow-hidden rounded-[20px] top-[160px] ${scoreBoard}  border-[1px]  left-1/2 -translate-x-1/2`}>
+                        <div
+                            className={`absolute inset-y-0 left-0 rounded-[20px] ${isAdvanced ? "bg-[#F3A44B]" : "bg-[#FFD24A]"}`}
+                            style={{ width: `${progressBarWidth}%` }}
+                        />
+                    </div >
+                    <div className={`absolute w-[343px] h-[18px]  top-[180px] left-1/2 -translate-x-1/2`}>
+                        {gift_boxes?.map((element, index) => {
+                            const amountValue = Number.parseInt(element.amount, 10);
+                            return currentWinToday > amountValue ? (
+                                <>
+                                    <img
+                                        key={index}
+                                        src={`${gameDetails?.gift_boxes_asset_base_path}${element.box_opened}`}
+                                        alt="box"
+                                        className={`absolute left-[${38 + 68 * index}px] -top-[32px]`}
+                                    />
+                                    <span className={`absolute left-[${48 + 68 * index}px] top-[5px] text-[#f0d457] [text-shadow:1px_0_0_brown,-1px_0_0_brown,0_1px_0_brown,0_-1px_0_brown]`}>{formatNumber(amountValue)}</span>
+
+                                </>
+                            ) : (
+                                <>
+                                    <img
+                                        key={index}
+                                        src={`${gameDetails?.gift_boxes_asset_base_path}${element.box_closed}`}
+                                        alt="box"
+                                        className={`absolute left-[${38 + 68 * index}px] -top-[32px]`}
+                                    />
+                                    <span className={`absolute left-[${48 + 68 * index}px] top-[5px] text-[#f0d457] [text-shadow:1px_0_0_brown,-1px_0_0_brown,0_1px_0_brown,0_-1px_0_brown]`}>{formatNumber(amountValue)}</span>
+                                </>
+                            );
+                        })}
                     </div >
                     <div className={`absolute flex items-center w-[343px] h-[45px] rounded-[12px] ${resultBoard} top-[210px]  border-[2px]  left-1/2 -translate-x-1/2`}>
                         <span className="ml-[10px] text-[16px]">Result</span>
                         <div className="ml-[10px] w-[2px] h-[25px] bg-white/80"></div>
-                    </div>
-                    <div
-                        className="absolute inset-0 top-[361px] pt-[10px] z-20 flex justify-center"
-                        style={{ pointerEvents: "auto" }}
-                    >
-                        {betAmounts.map((element, index) => {
-                            const amountValue = Number.parseInt(element.amount, 10);
-
-                            return (
-                                <button
-                                    key={element.id}
-                                    className="relative"
-                                    onClick={() => setCurrentBetAmount(amountValue)}
-                                >
-                                    <img
-                                        src={resolveAssetUrl(element.icon)}
-                                        alt={`Bet amount ${element.amount}`}
-                                        className="relative pt-0"
-                                    />
-                                    {currentBetAmount === 100 && index === 0 && (
-                                        <div className="absolute left-[1px] top-[0px] h-[41px] w-[54px] bg-[#ffae00]/50 rounded-full"></div>
-                                    )}
-                                    {currentBetAmount === 1000 && index === 1 && (
-                                        <div className="absolute left-[5px] top-[0px] h-[41px] w-[54px] bg-[#ffae00]/50 rounded-full"></div>
-                                    )}
-                                    {currentBetAmount === 10000 && index === 2 && (
-                                        <div className="absolute left-[6px] top-[1px] h-[42px] w-[52px] bg-[#ffae00]/50 rounded-full"></div>
-                                    )}
-                                    {currentBetAmount === 100000 && index === 3 && (
-                                        <div className="absolute left-[6px] top-[1px] h-[41px] w-[53px] bg-[#ffae00]/50 rounded-full"></div>
-                                    )}
-                                    {currentBetAmount === 1000000 && index === 4 && (
-                                        <div className="absolute left-[2px] top-[0px] h-[42px] w-[53px] bg-[#ffae00]/50 rounded-full"></div>
-                                    )}
-                                </button>
-                            );
-                        })}
-                    </div>
-                    <div className="scrollbar-hidden absolute flex left-1/2 top-[442px] h-[40px] w-[280px] overflow-y-hidden overflow-x-auto z-20 -translate-x-1/2 transform">
-                        <div className="flex items-center h-full whitespace-nowrap ">
-                            {results?.data?.map((result, index) => (
-                                <div key={index} className={`flex-shrink-0 relative h-[30px] w-[30px] mt-[3px] ${results.data?.length === undefined || index === results.data.length - 1 ? "" : "mr-[12px]"
-                                    }`}>
-                                    {result.is_jackpot === 0 && (
-                                        <img
-                                            src={getResultOptionLogo(result.option_id)}
-                                            alt={result.option_name || `Result ${index + 1}`}
-                                            className="absolute inset-0 h-full w-full"
-                                        />
-                                    )}
-                                    {result.is_jackpot === 1 && (
-                                        <img
-                                            src={getAssetUrl(GAME_ASSETS.drink)}
-                                            alt={result.option_name || `Result ${index + 1}`}
-                                            className="absolute inset-0 h-full w-full"
-                                        />
-                                    )}
-                                    {result.is_jackpot === 2 && (
-                                        <img
-                                            src={getAssetUrl(GAME_ASSETS.veg)}
-                                            alt={result.option_name || `Result ${index + 1}`}
-                                            className="absolute inset-0 h-full w-full"
-                                        />
-                                    )}
-                                </div>
-                            ))}
+                        <div className="scrollbar-hidden absolute flex  left-[60px] top-[5px] h-[40px] w-[280px] overflow-y-hidden overflow-x-auto z-20  transform">
+                            <div className="flex items-center h-full whitespace-nowrap ">
+                                {results?.data?.map((result, index) => (
+                                    <div key={index} className={`flex-shrink-0 relative h-[30px] w-[30px] mt-[3px] ${results.data?.length === undefined || index === results.data.length - 1 ? "" : "mr-[12px]"
+                                        }`}>
+                                        {result.is_jackpot === 0 && (
+                                            <img
+                                                src={getResultOptionLogo(result.option_id)}
+                                                alt={result.option_name || `Result ${index + 1}`}
+                                                className="absolute inset-0 h-full w-full"
+                                            />
+                                        )}
+                                        {result.is_jackpot === 1 && (
+                                            <img
+                                                src={getAssetUrl(GAME_ASSETS.drink)}
+                                                alt={result.option_name || `Result ${index + 1}`}
+                                                className="absolute inset-0 h-full w-full"
+                                            />
+                                        )}
+                                        {result.is_jackpot === 2 && (
+                                            <img
+                                                src={getAssetUrl(GAME_ASSETS.veg)}
+                                                alt={result.option_name || `Result ${index + 1}`}
+                                                className="absolute inset-0 h-full w-full"
+                                            />
+                                        )}
+                                    </div>
+                                ))}
+                            </div>
                         </div>
                     </div>
+
                 </div>
                 {showBoardOpacity && (
                     <div className="absolute w-[402px] h-[735px] rounded-[20px] inset-0 z-30 bg-[#360149]  opacity-20"></div>
@@ -531,14 +550,4 @@ export default function PlayBoard({
 
 
 
-//    <img src={getAssetUrl(GAME_ASSETS.box1)} alt="box" className="absolute left-[38px] -top-[12px] " />
-//                   <img src={getAssetUrl(GAME_ASSETS.box2)} alt="box" className="absolute left-[106px] -top-[12px]" />
-//                    <img src={getAssetUrl(GAME_ASSETS.box3)} alt="box" className="absolute left-[174px] -top-[12px]" />
-//                    <img src={getAssetUrl(GAME_ASSETS.box4)} alt="box" className="absolute left-[242px] -top-[12px]" />
-//                   {/* <img src={getAssetUrl(GAME_ASSETS.box1)} alt="box" /> */}
-//                   <span className="absolute left-[48px] top-[25px] text-[#f0d457] [text-shadow:1px_0_0_brown,-1px_0_0_brown,0_1px_0_brown,0_-1px_0_brown]">10K</span>
-//                  <span className="absolute left-[116px] top-[25px] text-[#f0d457] [text-shadow:1px_0_0_brown,-1px_0_0_brown,0_1px_0_brown,0_-1px_0_brown]">50K</span>
-//                 <span className="absolute left-[184px] top-[25px] text-[#f0d457] [text-shadow:1px_0_0_brown,-1px_0_0_brown,0_1px_0_brown,0_-1px_0_brown]">100K</span>
-//                  <span className="absolute left-[252px] top-[25px] text-[#f0d457] [text-shadow:1px_0_0_brown,-1px_0_0_brown,0_1px_0_brown,0_-1px_0_brown]">500K</span>
-//                <span className="absolute left-[320px] top-[25px] text-[#f0d457] [text-shadow:1px_0_0_brown,-1px_0_0_brown,0_1px_0_brown,0_-1px_0_brown]">1M</span>
-//            
+

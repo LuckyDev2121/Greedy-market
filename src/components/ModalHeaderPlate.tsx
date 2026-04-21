@@ -5,43 +5,88 @@ type ModalHeaderPlateProps = {
 export default function ModalHeaderPlate({ className = "" }: ModalHeaderPlateProps) {
     return (
         <svg
-            width="362"
-            height="32"
-            viewBox="0 0 362 32"
+            width="474"
+            height="122"
+            viewBox="0 0 474 122"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
             className={className}
             aria-hidden="true"
         >
-            <path
-                d="M339.393 23.5007C336.656 28.4356 331.454 31.4943 325.812 31.4851L35.9131 31.0124C30.4306 31.0033 25.3607 28.0988 22.5801 23.3737L0.871094 -13.5179L360.878 -15.2483L339.393 23.5007Z"
-                fill="url(#modal-header-plate-fill)"
-                stroke="url(#modal-header-plate-stroke)"
-            />
             <defs>
                 <linearGradient
-                    id="modal-header-plate-fill"
-                    x1="181.043"
-                    y1="-4.7306"
-                    x2="183.024"
-                    y2="31.3949"
+                    id="yellow-plate-fill"
+                    x1="237"
+                    y1="0"
+                    x2="237"
+                    y2="105"
                     gradientUnits="userSpaceOnUse"
                 >
-                    <stop stopColor="#6919D2" />
-                    <stop offset="1" stopColor="#821BF0" />
+                    <stop stopColor="#FFD047" />
+                    <stop offset="1" stopColor="#F7AF17" />
                 </linearGradient>
                 <linearGradient
-                    id="modal-header-plate-stroke"
-                    x1="180.565"
-                    y1="31.4975"
-                    x2="179.692"
-                    y2="4.23935"
+                    id="yellow-plate-highlight"
+                    x1="237"
+                    y1="2"
+                    x2="237"
+                    y2="30"
                     gradientUnits="userSpaceOnUse"
                 >
-                    <stop stopColor="#F8D954" />
-                    <stop offset="1" stopColor="#928031" stopOpacity="0" />
+                    <stop stopColor="#FFF3B0" stopOpacity="0.95" />
+                    <stop offset="1" stopColor="#FFF3B0" stopOpacity="0" />
                 </linearGradient>
+                <linearGradient
+                    id="yellow-plate-bottom"
+                    x1="237"
+                    y1="88"
+                    x2="237"
+                    y2="109"
+                    gradientUnits="userSpaceOnUse"
+                >
+                    <stop stopColor="#E2940A" />
+                    <stop offset="1" stopColor="#FFD77D" />
+                </linearGradient>
+                <filter
+                    id="yellow-plate-shadow"
+                    x="0"
+                    y="0"
+                    width="474"
+                    height="122"
+                    filterUnits="userSpaceOnUse"
+                    colorInterpolationFilters="sRGB"
+                >
+                    <feOffset dy="6" />
+                    <feGaussianBlur stdDeviation="4" />
+                    <feColorMatrix
+                        type="matrix"
+                        values="0 0 0 0 0.239216 0 0 0 0 0.141176 0 0 0 0 0.0117647 0 0 0 0.35 0"
+                    />
+                    <feBlend in2="SourceGraphic" result="shape" />
+                </filter>
             </defs>
+
+            <g filter="url(#yellow-plate-shadow)">
+                <path
+                    d="M18 23C18 12.5066 26.5066 4 37 4H437C447.493 4 456 12.5066 456 23V66.5C456 84.6574 353.036 99.5 237 99.5C120.964 99.5 18 84.6574 18 66.5V23Z"
+                    fill="url(#yellow-plate-fill)"
+                />
+                <path
+                    d="M37 4.75H437C447.079 4.75 455.25 12.9218 455.25 23V24.5H18.75V23C18.75 12.9218 26.9218 4.75 37 4.75Z"
+                    fill="url(#yellow-plate-highlight)"
+                />
+                <path
+                    d="M18.75 67.5C18.75 84.8489 121.557 99.75 237 99.75C352.443 99.75 455.25 84.8489 455.25 67.5"
+                    stroke="url(#yellow-plate-bottom)"
+                    strokeWidth="6"
+                    strokeLinecap="round"
+                />
+                <path
+                    d="M18.75 23C18.75 12.9218 26.9218 4.75 37 4.75H437C447.078 4.75 455.25 12.9218 455.25 23V66.5C455.25 83.8489 352.443 98.75 237 98.75C121.557 98.75 18.75 83.8489 18.75 66.5V23Z"
+                    stroke="#E09B12"
+                    strokeWidth="1.5"
+                />
+            </g>
         </svg>
     );
 }

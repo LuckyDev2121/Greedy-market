@@ -20,7 +20,7 @@ export default function LoadingScreen({
         >
             <div className="absolute flex inset-0 items-center justify-center">
                 <img src={getAssetUrl(GAME_ASSETS.normalBg)} alt="normal" />
-
+                <div className="absolute inset-0 bg-blue-500/30 mix-blend-normal" />
             </div>
             <div className="absolute  inset-0 z-[200] flex-col flex left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 h-[300px] w-[200px] rounded-[40px] border-blue-950 items-center justify-center px-6">
                 <div className="w-[100px] h-[100px] ">
