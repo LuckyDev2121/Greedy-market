@@ -1,4 +1,4 @@
-import ModalHeaderPlate from "./ModalHeaderPlate";
+// import ModalHeaderPlate from "./ModalHeaderPlate";
 import { useEffect } from "react";
 import { useGame } from "../hooks/useGameHook";
 

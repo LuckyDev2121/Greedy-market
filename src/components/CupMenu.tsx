@@ -94,7 +94,7 @@ export default function CupMenu({ onCloseCup }: CupMenuProps) {
                 <img src={getAssetUrl(GAME_ASSETS.rebons)} alt="leaderPart" className="absolute left-1/2 -translate-x-1/2 -top-[90px]" />
                 <span className="absolute left-1/2 -translate-x-1/2 -top-[30px] text-[#ffd991] text-[25px] [text-shadow:1px_0_0_brown,-1px_0_0_brown,0_1px_0_brown,0_-1px_0_brown]">Game Rank</span>
                 <div className="absolute left-1/2 top-[25px] flex h-[20px] w-[140px] -translate-x-1/2 items-center justify-center rounded-full bg-[#976507]">
-                    <span className="text-[12px] font-bold ">{time}</span>
+                    <span className="text-[12px] font-bold ">{isYesterdayRanking ? "Yesterday Ranking" : time}</span>
                 </div>
                 <div className="absolute left-1/2 -translate-x-1/2 top-[50px]">
                     <ToggleRow isOn={isYesterdayRanking} onToggle={() => setIsYesterdayRanking(!isYesterdayRanking)} />

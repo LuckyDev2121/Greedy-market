@@ -7,6 +7,19 @@ type NoteMenuProps = {
     onCloseNote: () => void;
 };
 
+function formatCreatedAt(value?: string) {
+    if (!value) {
+        return "--/--/---- --:--:--";
+    }
+
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) {
+        return value;
+    }
+
+    return `${String(date.getMonth() + 1).padStart(2, "0")}/${String(date.getDate()).padStart(2, "0")}/${date.getFullYear()} ${String(date.getHours()).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}:${String(date.getSeconds()).padStart(2, "0")}`;
+}
+
 function CloseIcon() {
     return (
         <svg width="15" height="15" viewBox="0 0 15 15" fill="none" aria-hidden="true">
@@ -58,19 +71,66 @@ export default function NoteMenu({ onCloseNote }: NoteMenuProps) {
                     <CloseIcon />
                 </button>
                 <div className="scrollbar-hidden absolute top-[30px]  left-1/2 transform -translate-x-1/2 w-[325px] h-[500px] grip overflow-x-hidden overflow-y-auto">
-                    <div className="absolute  bg-amber-300/30 rounded-[20px] w-[325px] h-[150px] border-t-[1px] border-t-amber-600">
-                        <div className="absolute w-[325px] flex justify-between mx-[20px] mt-[5px]">
-                            <span className=" relative text-[15px] text-[#bb8000] ">Round: 645</span>
-                            <span className=" relative text-[15px] pr-[30px] text-[#bb8000]  ">05/02/2026 00:13:25</span>
-                        </div>
-                        <div className="absolute w-[300px] top-[25px] h-[1px] left-1/2 -translate-x-1/2 bg-amber-600/50"></div>
-                        <div>
-                            <span className=" absolute left-[5px] top-[30px] text-[12px] text-[#bb8000]" >Selected option:</span>
-                            <span className=" absolute left-[5px] top-[80px] text-[12px] text-[#bb8000] ">Winning items:</span>
-                            <span className=" absolute left-[5px] top-[100px] text-[12px] text-[#bb8000] ">Win diamonds:</span>
-                            <span className=" absolute left-[5px] top-[120px] text-[12px] text-[#bb8000] ">Diamond Balance:</span>
-                        </div>
-                    </div>
+                    {rounds.map((item) => {
+                        const winningOption = item.winning_option_id[0]
+                            ? optionById.get(item.winning_option_id[0])
+                            : undefined;
+                        return (
+                            <div key={item.round_id} className="relative mt-[5px] bg-amber-300/30 rounded-[20px] w-[325px] h-[150px] border-t-[1px] border-t-amber-600">
+                                <div className="absolute w-[325px] flex justify-between mx-[20px] mt-[5px]">
+                                    <span className=" relative text-[15px] text-[#bb8000] ">Round: {item.round_id}</span>
+                                    <span className=" relative text-[15px] pr-[30px] text-[#bb8000]  ">{formatCreatedAt(item.created_at)}</span>
+                                </div>
+                                <div className="absolute w-[300px] top-[25px] h-[1px] left-1/2 -translate-x-1/2 bg-amber-600/50"></div>
+                                <div>
+                                    <span className=" absolute left-[5px] top-[30px] text-[12px] text-[#bb8000]" >Selected option:</span>
+                                    <div className="absolute top-[38px] bg-white grid grid-cols-4 grid-rows-2 gap-[0px]">
+                                        {item.detail.map((element) => {
+                                            const option = optionById.get(element.option_id);
+                                            if (element.bet_amount && option) {
+                                                return (
+                                                    <div key={element.option_id} className="relative w-[75px] h-[20px] justify-center items-center flex " >
+                                                        <img src={getAssetUrl(option.logo)} alt={option.name} className="h-4 w-4 mr-[2px]" />
+                                                        <div className=" justify-center items-center content-center h-[14px] w-[10px]">
+                                                            <img src={getAssetUrl(GAME_ASSETS.diamond)} alt="Diamond Icon" className="h-[9px] w-[16px] mr-[5px]" />
+                                                        </div>
+                                                        <span className=" items-center ml-[2px]">{element.bet_amount}</span>
+                                                    </div>
+                                                );
+                                            }
+                                        })}
+                                    </div>
+                                    <span className=" absolute left-[5px] top-[80px] text-[12px] text-[#bb8000] ">Winning items:
+                                        {item.winning_option_id.length === 1 && winningOption && (
+                                            <img
+                                                src={getAssetUrl(winningOption.logo)}
+                                                alt="a"
+                                                className="w-[20px] h-[20px] ml-[10px]"
+                                            />
+                                        )}
+                                        {item.winning_option_id.length > 1 && item.winning_option_id[0] === 20 && (
+                                            <img
+                                                key={item.winning_option_id[0]}
+                                                src={getAssetUrl(GAME_ASSETS.veg)}
+                                                alt="a"
+                                                className="w-[20px] h-[20px] ml-[10px]"
+                                            />
+                                        )}
+                                        {item.winning_option_id.length > 1 && item.winning_option_id[0] === 24 && (
+                                            <img
+                                                key={item.winning_option_id[0]}
+                                                src={getAssetUrl(GAME_ASSETS.drink)}
+                                                alt="a"
+                                                className="w-[20px] h-[20px] ml-[10px]"
+                                            />
+                                        )}
+                                    </span>
+                                    <span className=" absolute left-[5px] top-[100px] text-[12px] text-[#bb8000] ">Win diamonds:</span>
+                                    <span className=" absolute left-[5px] top-[120px] text-[12px] text-[#bb8000] ">Diamond Balance:</span>
+                                </div>
+                            </div>
+                        )
+                    })}
                 </div>
                 {/* {rounds.map((item) => {
                         const result = new Date(new Date().getTime() - (39 * item.round_id) * 1000)
@@ -115,24 +175,7 @@ export default function NoteMenu({ onCloseNote }: NoteMenuProps) {
                                     <span className=" relative   ">{item.status ? "WIN" : "LOSE"}
                                     </span>
                                 </div>
-                                <span className="absolute top-[54px]">Mine</span>
-                                <div className="absolute top-[78px]  grid grid-cols-4 grid-rows-2 gap-[0px]">
-                                    {item.detail.map((element) => {
-                                        const option = optionById.get(element.option_id);
-
-                                        if (element.bet_amount && option) {
-                                            return (
-                                                <div key={element.option_id} className="relative w-[75px] h-[20px] justify-center items-center flex " >
-                                                    <img src={getAssetUrl(option.logo)} alt={option.name} className="h-4 w-4 mr-[2px]" />
-                                                    <div className=" justify-center items-center content-center h-[14px] w-[10px]">
-                                                        <img src={getAssetUrl(GAME_ASSETS.diamondIcon)} alt="Diamond Icon" className="h-[9px] w-[16px] mr-[5px]" />
-                                                    </div>
-                                                    <span className=" items-center ml-[2px]">{element.bet_amount}</span>
-                                                </div>
-                                            );
-                                        }
-                                    })}
-                                </div>
+                          
                             </div>
                         )
                     })} */}

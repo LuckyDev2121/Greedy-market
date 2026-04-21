@@ -7,6 +7,7 @@ export type TransformedRound = {
   round_id: number;
   winning_option_id: number[];
   status: number;
+  created_at?: string;
   detail: DetailItem[];
 };
 
@@ -45,6 +46,7 @@ type MutableRound = {
   round_id: number;
   winning_option_id: number[];
   status: number;
+  created_at?: string;
   detail: number[];
 };
 
@@ -102,6 +104,7 @@ export const transformGameLog = (
         round_id: roundId,
         winning_option_id: parseWinningIds(item.winning_option),
         status: item.winAnyOption ? 1 : 0,
+        created_at: item.bets?.[0]?.created_at,
         detail: new Array(ROUND_OPTION_IDS.length).fill(0),
       };
       rounds.set(roundId, round);
@@ -126,6 +129,7 @@ export const transformGameLog = (
       round_id: round.round_id,
       winning_option_id: round.winning_option_id,
       status: round.status,
+      created_at: round.created_at,
       detail: round.detail.map((bet_amount, index) => ({
         option_id: ROUND_OPTION_IDS[index],
         bet_amount,
