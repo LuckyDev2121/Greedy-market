@@ -65,10 +65,7 @@ export default function ResultMenu({ start, onResultTimeUp }: ResultMenuProps) {
             return "Did not participate in this round";
         }
 
-        if (winningDiamondAmount === 0) {
-            return "Sorry, didn't win this round";
-        }
-    }, [totalBetAmount, winningDiamondAmount]);
+    }, [totalBetAmount,]);
 
     const getResultOptionLogo = (optionId: number) => {
         return optionMap[optionId]
@@ -113,7 +110,7 @@ export default function ResultMenu({ start, onResultTimeUp }: ResultMenuProps) {
             {winningDiamondAmount === 0 && (
                 <img src={getAssetUrl(GAME_ASSETS.result)} alt="result" className="absolute h-[374px] w-[374px]  top-[49px] left-[20px] z-[100]" />
             )}
-            {winningDiamondAmount > 0 && (
+            {winningDiamondAmount >= 0 && totalBetAmount !== 0 && (
                 <div className="absolute z-[110] left-[130px] top-[120px] flex">
                     <img
                         src={getAssetUrl(GAME_ASSETS.diamond)}
@@ -123,7 +120,7 @@ export default function ResultMenu({ start, onResultTimeUp }: ResultMenuProps) {
                     <span className=" text-[30px] mt-[15px]">{formatDiamondAmount(winningDiamondAmount)}</span>
                 </div>
             )}
-            {winningDiamondAmount === 0 && (
+            {totalBetAmount === 0 && (
                 <span className="absolute z-[110] left-[150px] top-[145px] text-[15px]">{resultMessage}</span>
             )}
             {activeResult && (

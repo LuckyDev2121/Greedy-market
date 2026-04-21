@@ -238,7 +238,6 @@ export default function PlayBoard({
         } else if (RoundTime < 12 && RoundTime >= 5) {
             setLedTime(27);
             setChooseTime(Math.floor(RoundTime) - 4);
-
             setResultTime(1);
             setHiddenTime(3);
             setBlockClick("none");
@@ -353,21 +352,6 @@ export default function PlayBoard({
         reserveBetBalance(amount);
         return true;
     };
-
-    // useEffect(() => {
-    //     if (repeatRequestId === repeatRequestIdRef.current) {
-    //         return;
-    //     }
-
-    //     repeatRequestIdRef.current = repeatRequestId;
-
-    //     if (blockClick === "none" || hasStartedFinalBetWindow) {
-    //         return;
-    //     }
-
-    //     applyBetBatch(previousRoundBets);
-    // }, [repeatRequestId, blockClick, hasStartedFinalBetWindow, previousRoundBets]);
-
     useEffect(() => {
         if (!hasStartedFinalBetWindow) {
             return;
@@ -691,7 +675,6 @@ export default function PlayBoard({
                             </div>
                         </div>
                     </div>
-
                 </div>
                 {showBoardOpacity && (
                     <div className="absolute w-[402px] h-[735px] rounded-[20px] inset-0 z-30 bg-[#360149]  opacity-20"></div>
