@@ -2,7 +2,7 @@ import { useEffect, useMemo, } from "react";
 import { getAssetUrl, GAME_ASSETS } from "../config/gameConfig";
 import { useGame, } from "../hooks/useGameHook";
 import { transformGameLog, } from "../utils/transformGameLog";
-
+import ModalHeaderPlate from "./ModalHeaderPlate";
 type NoteMenuProps = {
     onCloseNote: () => void;
 };
@@ -66,7 +66,10 @@ export default function NoteMenu({ onCloseNote }: NoteMenuProps) {
     return (
         <div className="h-[567px] bg-amber-500 w-[355px] rounded-[20px]">
             <div className="absolute bg-[#fadbad] h-[547px] w-[335px] left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 rounded-[20px]">
-                <span className="absolute  left-1/2 transform -translate-x-1/2 text-sm font-bold mt-1">Game records</span>
+                <div className="absolute left-1/2 -translate-x-1/2 -top-[30px] h-[70px] w-[240px]">
+                    <ModalHeaderPlate />
+                </div>
+                <span className="absolute  left-1/2 transform -translate-x-1/2 text-[20px] -top-[20px] font-bold mt-1 text-[#f7ebb9] [text-shadow:1px_0_0_brown,-1px_0_0_brown,0_1px_0_brown,0_-1px_0_brown]">Game records</span>
                 <button className="absolute -right-[15px] -top-[25px] h-[30px] w-[30px] mt-[9px] pl-[7px]  rounded-full bg-[#ee3333]" onClick={onCloseNote}>
                     <CloseIcon />
                 </button>

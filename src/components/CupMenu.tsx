@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { getAssetUrl, GAME_ASSETS } from "../config/gameConfig";
 import { useGame, resolveAssetUrl } from "../hooks/useGameHook";
 import RankingHelpModal from "./RankingHelpModal";
-
 type CupMenuProps = {
     onCloseCup: () => void;
     onOpenModal: (modal: string) => void;
@@ -121,7 +120,7 @@ export default function CupMenu({ onCloseCup }: CupMenuProps) {
                                                 <img src={getAssetUrl(GAME_ASSETS.prize1)} alt="prize" className=" absolute h-[35px] w-[35px] left-1/2 top-1/2 -translate-y-1/2 -translate-x-1/2" />
                                             </div>
                                             <div className="absolute left-[47px] flex h-[47px] w-[245px] bg-gradient-to-t from-[#FBBA07]   to-[#FFF987] items-center rounded-r-[10px]">
-                                                <img src={resolveAssetUrl(item.player?.avater ?? "")} alt="avatar" />
+                                                <img src={resolveAssetUrl(item.player?.avater ?? "")} alt="avatar" className="h-[45px] w-[45px]" />
                                                 <span className="absolute left-[50px] text-[#fde4c7] font-bold  h-[40px] w-[80px] content-center">{item.player?.username}</span>
                                                 <img src={getAssetUrl(GAME_ASSETS.diamond)} alt="diamond" className="absolute left-[130px] h-[40px] w-[40px]" />
                                                 <span className="absolute left-[160px] text-[#fde4c7] font-bold  h-[40px] w-[80px] content-center">{item.total_win}</span>

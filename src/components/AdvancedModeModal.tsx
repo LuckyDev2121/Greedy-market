@@ -1,5 +1,5 @@
 import { GAME_ASSETS, getAssetUrl } from "../config/gameConfig";
-
+import ModalHeaderPlate from "./ModalHeaderPlate";
 type AdvancedModalProps = {
     onCloseAdvanced: () => void;
     onOk: () => void;
@@ -24,11 +24,15 @@ function CloseIcon() {
     );
 }
 
+
 export default function AdvancedModal({ onCloseAdvanced, onOk }: AdvancedModalProps) {
     return (
-        <div className="h-[437px] bg-amber-500 w-[355px] rounded-[20px]">
+        <div className="h-[437px]  bg-amber-500 w-[355px] rounded-[20px]">
             <div className="absolute bg-[#fadbad] h-[417px] w-[335px] left-1/2 -translate-x-1/2 top-[10px] rounded-[20px]">
-                <span className="absolute  left-1/2 transform -translate-x-1/2 text-sm font-bold mt-1">Advanced Mode</span>
+                <div className="absolute left-1/2 -translate-x-1/2 -top-[30px] h-[70px] w-[240px]">
+                    <ModalHeaderPlate />
+                </div>
+                <span className="absolute  left-1/2 transform -translate-x-1/2 text-[20px] -top-[20px] font-bold mt-1 text-[#f7ebb9] [text-shadow:1px_0_0_brown,-1px_0_0_brown,0_1px_0_brown,0_-1px_0_brown]">Advanced Mode</span>
                 <button className="absolute -right-[15px] -top-[25px] h-[30px] w-[30px] mt-[9px] pl-[7px]  rounded-full bg-[#ee3333]" onClick={onCloseAdvanced}>
                     <CloseIcon />
                 </button>

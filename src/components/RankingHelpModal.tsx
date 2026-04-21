@@ -1,4 +1,4 @@
-// import ModalHeaderPlate from "./ModalHeaderPlate";
+import ModalHeaderPlate from "./ModalHeaderPlate";
 import { useEffect } from "react";
 import { useGame } from "../hooks/useGameHook";
 
@@ -41,7 +41,10 @@ export default function RankingHelpModal({
     return (
         <div className="relative h-[567px] w-[383px] bg-amber-500 rounded-[20px]">
             <div className="absolute h-[547px] w-[363px] bg-amber-200  rounded-[20px] left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2">
-                <span className="absolute w-[200px] top-[10px] text-center text-[15px] text-[#ffe7ba] left-1/2 -translate-x-1/2 font-bold [text-shadow:1px_0_0_brown,-1px_0_0_brown,0_1px_0_brown,0_-1px_0_brown]">
+                <div className="absolute left-1/2 -translate-x-1/2 -top-[30px] h-[70px] w-[240px]">
+                    <ModalHeaderPlate />
+                </div>
+                <span className="absolute w-[200px] -top-[15px] text-center text-[20px] text-[#ffe7ba] left-1/2 -translate-x-1/2 font-bold [text-shadow:1px_0_0_brown,-1px_0_0_brown,0_1px_0_brown,0_-1px_0_brown]">
                     Prize distribution
                 </span>
                 <button className="absolute -right-[15px] -top-[25px] h-[30px] w-[30px] mt-[9px] pl-[7px]  rounded-full bg-[#ee3333]" onClick={onCloseRankingHelpModal}>

@@ -5,8 +5,8 @@ type ModalHeaderPlateProps = {
 export default function ModalHeaderPlate({ className = "" }: ModalHeaderPlateProps) {
     return (
         <svg
-            width="474"
-            height="122"
+            width="240"
+            height="70"
             viewBox="0 0 474 122"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
@@ -22,8 +22,8 @@ export default function ModalHeaderPlate({ className = "" }: ModalHeaderPlatePro
                     y2="105"
                     gradientUnits="userSpaceOnUse"
                 >
-                    <stop stopColor="#FFD047" />
-                    <stop offset="1" stopColor="#F7AF17" />
+                    <stop stopColor="#ECB213" />
+                    <stop offset="1" stopColor="#ECB213" />
                 </linearGradient>
                 <linearGradient
                     id="yellow-plate-highlight"
@@ -33,8 +33,8 @@ export default function ModalHeaderPlate({ className = "" }: ModalHeaderPlatePro
                     y2="30"
                     gradientUnits="userSpaceOnUse"
                 >
-                    <stop stopColor="#FFF3B0" stopOpacity="0.95" />
-                    <stop offset="1" stopColor="#FFF3B0" stopOpacity="0" />
+                    <stop stopColor="#ECB213" stopOpacity="0.95" />
+                    <stop offset="1" stopColor="#ECB213" stopOpacity="0" />
                 </linearGradient>
                 <linearGradient
                     id="yellow-plate-bottom"
@@ -44,8 +44,8 @@ export default function ModalHeaderPlate({ className = "" }: ModalHeaderPlatePro
                     y2="109"
                     gradientUnits="userSpaceOnUse"
                 >
-                    <stop stopColor="#E2940A" />
-                    <stop offset="1" stopColor="#FFD77D" />
+                    <stop stopColor="#ECB213" />
+                    <stop offset="1" stopColor="#ECB213" />
                 </linearGradient>
                 <filter
                     id="yellow-plate-shadow"
