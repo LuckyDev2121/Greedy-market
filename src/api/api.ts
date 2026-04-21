@@ -202,6 +202,48 @@ export const createRound = async (): Promise<CreateRoundResponse> => {
   return response.data;
 }
 
+
+export type CurrentData={
+  user_id?: number;
+  mode?: string;
+}
+
+export type CurrentModeProps={
+  status?:boolean;
+  message?:string;
+  data?:CurrentData;
+}
+
+export const fetchCurrentMode=async (): Promise<CurrentModeProps> => {
+  const response = await axios.get<CurrentModeProps>(`${CURRENT_MODE_API_URL}/${getUserId()}`);
+
+  if (!response.data.status) {
+    throw new Error(response.data.message || "API returned false status");
+  }
+
+  return response.data;
+};
+
+export type ChangeMode={
+  status:boolean;
+  message: string;
+}
+
+export const changeMode = async (
+  isMode: string,
+): Promise<ChangeMode> => {
+  const response = await axios.post<ChangeMode>(`${CHANGE_MODE_API_URL}?mode=${isMode}?game_id=${GAME_ID}?user_id=${getUserId()}`
+ );
+  if (!response.data.status) {
+    throw new Error(response.data.message || "Failed to save music setting");
+  }
+
+  return response.data;
+};
+
+
+
+
 type SoundSettingResponse = {
   status?: boolean;
   data?: number;
@@ -238,6 +280,8 @@ export const saveSoundSetting = async (
 
   return response.data;
 };
+
+
 
 type MusicSettingResponse = {
   status?: boolean;
@@ -372,43 +416,10 @@ export const fetchRechargeUrl = async (): Promise<RechargeUrlResponse> => {
   return response.data;
 };
 
-export type CurrentData={
-  user_id?: number;
-  mode?: string;
-}
-
-export type CurrentModeProps={
-  status?:boolean;
-  message?:string;
-  data?:CurrentData;
-}
-
-export const fetchCurrentMode=async (): Promise<CurrentModeProps> => {
-  const response = await axios.get<CurrentModeProps>(`${CURRENT_MODE_API_URL}/${getUserId()}`);
-
-  if (!response.data.status) {
-    throw new Error(response.data.message || "API returned false status");
-  }
-
-  return response.data;
-};
 
 
-// export const changeMode = async (
-//   isMusicOn: boolean,
-// ): Promise<SaveMusicSettingResponse> => {
-//   const response = await axios.post<SaveMusicSettingResponse>(MUSIC_SETTING_API_URL, {
-//     game_id: GAME_ID,
-//     user_id: getUserId(),
-//     status: isMusicOn ? 1 : 0,
-//   });
-// console.log("saveMusic-userid",getUserId(),"isMusicOn",isMusicOn)
-//   if (!response.data.status) {
-//     throw new Error(response.data.message || "Failed to save music setting");
-//   }
 
-//   return response.data;
-// };
+
 type Ranks ={
   rank_no:string;
   price:number;

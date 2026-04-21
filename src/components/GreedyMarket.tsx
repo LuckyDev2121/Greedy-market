@@ -1,6 +1,6 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
-// import { useGame } from "../hooks/useGameHook";
+import { useGame } from "../hooks/useGameHook";
 import CoinBoard from "./CoinBoard";
 import CupMenu from "./CupMenu";
 import HelpMenu from "./HelpMenu";
@@ -73,7 +73,7 @@ export default function GreedyMarket({
   // const [repeatRequestId, setRepeatRequestId] = useState(0);
   const [scale, setScale] = useState(1);
   const [isAdvancedMode, setIsAdvancedMode] = useState(false);
-  // const { displayBalance, previousRoundBets } = useGame();
+  const { gameMode, handleGameMode, setGameMode } = useGame();
   const isOverlayOpen = activeModal !== null || activeAlert !== null;
   // const previousRoundTotal = Object.values(previousRoundBets).reduce((sum, amount) => sum + amount, 0);
   // const availableBalance = Number.parseFloat(displayBalance ?? "0");
@@ -81,6 +81,18 @@ export default function GreedyMarket({
   // const triggerRepeatBet = () => {
   //   setRepeatRequestId((prev) => prev + 1);
   // };
+  useEffect(() => {
+    const load = async () => {
+
+      if (!gameMode) {
+        await handleGameMode();
+        if (gameMode === "basic") setIsAdvancedMode(false);
+        else setIsAdvancedMode(true);
+
+      }
+    };
+    void load();
+  }, [handleGameMode, gameMode]);
 
 
   useEffect(() => {
@@ -164,6 +176,7 @@ export default function GreedyMarket({
               <div className="absolute flex top-[20px] left-1/2 -translate-x-1/2">
                 <ToggleRow isOn={isAdvancedMode} onAdvanced={() => { setActiveModal("advanced") }}
                   onBasic={() => {
+                    setGameMode(true);
                     setIsAdvancedMode(false);
                   }} />
               </div>
@@ -220,6 +233,7 @@ export default function GreedyMarket({
                 <AdvancedModal onCloseAdvanced={() => setActiveModal(null)}
                   onOk={() => {
                     // if () setActiveModal(null)
+                    setGameMode(false);
                     setIsAdvancedMode(true);
                     setActiveModal(null);
                   }} />

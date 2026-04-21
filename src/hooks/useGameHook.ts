@@ -15,7 +15,8 @@ import {
   saveSoundSetting,
   saveMusicSetting,
   fetchRankingToday,
-  // fetchCurrentMode,
+  fetchCurrentMode,
+  changeMode,
   fetchPrizeDistribution,
   type PrizeDistributionProps,
   type PlayerLogData,
@@ -62,6 +63,7 @@ type GameStore = {
   soundOverridden: boolean;
 musicOverridden: boolean;
 prizeDistribution:PrizeDistributionProps|null;
+gameMode: string|null;
 };
 
 
@@ -88,6 +90,7 @@ let store: GameStore = {
   soundOverridden: false,
 musicOverridden: false,
 prizeDistribution:null,
+gameMode:null,
   // runtimeConfig: { backendOrigin: "", apiBaseUrl: "" },
 };
 
@@ -139,7 +142,7 @@ async function runRefreshGameData(options?: RefreshGameDataOptions) {
   updateStore({ isLoading: true, isMusicSettingLoading: true });
 
   try {
-    const [gameDetail, player, gameResults,  rankingToday,  winToday, playerLog, url, prizeDistribution, isSoundEnabled, isMusicEnabled, ] = await Promise.all([
+    const [gameDetail, player, gameResults,  rankingToday,  winToday, playerLog, url, prizeDistribution, isSoundEnabled, isMusicEnabled, gameMode] = await Promise.all([
       fetchGameDetail(),
       fetchPlayerInfo(),
       fetchGameResults(),
@@ -150,6 +153,7 @@ async function runRefreshGameData(options?: RefreshGameDataOptions) {
       fetchPrizeDistribution(),
       fetchSoundSetting(),
       fetchMusicSetting(),
+      fetchCurrentMode(),
     ]);
 
   updateStore({
@@ -170,7 +174,8 @@ async function runRefreshGameData(options?: RefreshGameDataOptions) {
       : store.pendingBalanceDeduction,
   previousRoundBets: normalizeBetRecord(gameDetail.options, store.previousRoundBets),
   isSoundEnabled,
-  isMusicEnabled
+  isMusicEnabled,
+  gameMode:gameMode.data?.mode,
 });
   } catch (error) {
     updateStore({ isLoading: false, isMusicSettingLoading: false, isSoundSettingLoading: false });
@@ -261,6 +266,9 @@ const handlePrizeDistribution= useCallback(async () => {
     return data;
   }, []);
 
+  
+
+
   const handleMakeResult = useCallback(async (roundId: number) => {
     const data = await makeGameResult(roundId);
     const [player, gameResults, ranking, playerLog, winToday] = await Promise.all([
@@ -333,7 +341,22 @@ console.log("music",nextValue);
     await saveMusicSetting( nextValue);
     updateStore({ isMusicEnabled: nextValue });
   }, []);
-  
+ 
+  const handleChangeGameMode = useCallback(async (isAdvanceMode: boolean) => {
+    let isMode='';
+    if(isAdvanceMode)isMode="basic"
+    else isMode="advance"
+   await changeMode(isMode);
+    updateStore({
+      gameMode: isMode,
+    });
+  }, []);
+
+const handleGameMode= useCallback(async () => {
+    const data = await fetchCurrentMode();
+    updateStore({ gameMode: data.data?.mode });
+    return data;
+  }, []);
 
   const clearCurrentRoundBets = useCallback(() => {
     updateStore({ currentRoundBets: {} });
@@ -391,6 +414,7 @@ console.log("music",nextValue);
     rankingToday: snapshot.rankingTodays,
     rechargeUrl: snapshot.url?.url || null,
     prizeDistribution:snapshot.prizeDistribution,
+    gameMode:snapshot.gameMode,
     refreshGameData,
     createRound: handleCreateRound,
     makeGameRound:handleGameRound,
@@ -400,6 +424,7 @@ console.log("music",nextValue);
     releaseBetBalance,
     setMusicEnabled: handleSetMusicEnabled,
     setSoundEnabled: handleSetSoundEnabled,
+    setGameMode:handleChangeGameMode,
     clearCurrentRoundBets,
     archiveCurrentRoundBets,
     setPreviousRoundBets,
@@ -407,5 +432,6 @@ console.log("music",nextValue);
     handleWinToday,
     handleRechargeRedirect,
 handlePrizeDistribution,
+handleGameMode,
   };
 }
