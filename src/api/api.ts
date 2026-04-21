@@ -216,7 +216,7 @@ export type CurrentModeProps={
 
 export const fetchCurrentMode=async (): Promise<CurrentModeProps> => {
   const response = await axios.get<CurrentModeProps>(`${CURRENT_MODE_API_URL}/${getUserId()}`);
-
+console.log("fetchgamemode", response)
   if (!response.data.status) {
     throw new Error(response.data.message || "API returned false status");
   }
@@ -232,10 +232,16 @@ export type ChangeMode={
 export const changeMode = async (
   isMode: string,
 ): Promise<ChangeMode> => {
-  const response = await axios.post<ChangeMode>(`${CHANGE_MODE_API_URL}?mode=${isMode}?game_id=${GAME_ID}?user_id=${getUserId()}`
- );
+  console.log("changegamemode", isMode);
+  const response = await axios.post<ChangeMode>(CHANGE_MODE_API_URL, {
+    mode: isMode,
+    game_id: GAME_ID,
+    user_id: getUserId(),
+  });
+
+  console.log("changegamemode", response);
   if (!response.data.status) {
-    throw new Error(response.data.message || "Failed to save music setting");
+    throw new Error(response.data.message || "Failed to change game mode");
   }
 
   return response.data;
@@ -280,8 +286,6 @@ export const saveSoundSetting = async (
 
   return response.data;
 };
-
-
 
 type MusicSettingResponse = {
   status?: boolean;

@@ -94,6 +94,17 @@ export default function GreedyMarket({
     void load();
   }, [handleGameMode, gameMode]);
 
+  useEffect(() => {
+    if (gameMode === "basic") {
+      setIsAdvancedMode(false);
+      return;
+    }
+
+    if (gameMode === "advance") {
+      setIsAdvancedMode(true);
+    }
+  }, [gameMode]);
+
 
   useEffect(() => {
     if (activeModal === "result") {
@@ -176,8 +187,9 @@ export default function GreedyMarket({
               <div className="absolute flex top-[20px] left-1/2 -translate-x-1/2">
                 <ToggleRow isOn={isAdvancedMode} onAdvanced={() => { setActiveModal("advanced") }}
                   onBasic={() => {
-                    setGameMode(true);
-                    setIsAdvancedMode(false);
+                    void (async () => {
+                      await setGameMode(true);
+                    })();
                   }} />
               </div>
               <motion.button className="absolute flex w-[70px] h-[70px] right-[5px]"
@@ -232,10 +244,10 @@ export default function GreedyMarket({
               >
                 <AdvancedModal onCloseAdvanced={() => setActiveModal(null)}
                   onOk={() => {
-                    // if () setActiveModal(null)
-                    setGameMode(false);
-                    setIsAdvancedMode(true);
-                    setActiveModal(null);
+                    void (async () => {
+                      await setGameMode(false);
+                      setActiveModal(null);
+                    })();
                   }} />
               </motion.div>
             )}
