@@ -34,6 +34,12 @@ function sumBetMap(betMap: Record<number, number>): number {
     return Object.values(betMap).reduce((sum, amount) => sum + amount, 0);
 }
 
+const MAX_BET_OPTIONS_PER_ROUND = 6;
+
+function countSelectedOptions(betMap: Record<number, number>): number {
+    return Object.values(betMap).filter((amount) => amount > 0).length;
+}
+
 export default function PlayBoard({
     onOpenModal,
     RoundId,
@@ -81,6 +87,7 @@ export default function PlayBoard({
         handleWinToday,
     } = useGame();
     const queuedBetsRef = useRef<Record<number, number>>({});
+    const displayedBetsRef = useRef<Record<number, number>>({});
     const isSendingBetRef = useRef(false);
     const errorTimeoutRef = useRef<number | null>(null);
     const optionMap = useMemo(() => {
@@ -107,6 +114,10 @@ export default function PlayBoard({
     useEffect(() => {
         queuedBetsRef.current = queuedBets;
     }, [queuedBets]);
+
+    useEffect(() => {
+        displayedBetsRef.current = displayedBets;
+    }, [displayedBets]);
 
     useEffect(() => {
         return () => {
@@ -141,6 +152,7 @@ export default function PlayBoard({
             setShowChooseRectangle(false);
             setDisplayedBets({});
             setQueuedBets({});
+            displayedBetsRef.current = {};
             queuedBetsRef.current = {};
             isSendingBetRef.current = false;
             setHasStartedFinalBetWindow(false);
@@ -159,6 +171,7 @@ export default function PlayBoard({
             setShowHand(false);
             setDisplayedBets({});
             setQueuedBets({});
+            displayedBetsRef.current = {};
             queuedBetsRef.current = {};
             isSendingBetRef.current = false;
             setHasStartedFinalBetWindow(false);
@@ -176,6 +189,7 @@ export default function PlayBoard({
             setShowHand(true);
             setDisplayedBets({});
             setQueuedBets({});
+            displayedBetsRef.current = {};
             queuedBetsRef.current = {};
             isSendingBetRef.current = false;
             setHasStartedFinalBetWindow(false);
@@ -194,6 +208,7 @@ export default function PlayBoard({
             setShowHand(true);
             setDisplayedBets({});
             setQueuedBets({});
+            displayedBetsRef.current = {};
             queuedBetsRef.current = {};
             isSendingBetRef.current = false;
             setHasStartedFinalBetWindow(false);
@@ -209,6 +224,7 @@ export default function PlayBoard({
             setShowHand(false);
             setDisplayedBets({});
             setQueuedBets({});
+            displayedBetsRef.current = {};
             queuedBetsRef.current = {};
             isSendingBetRef.current = false;
             setHasStartedFinalBetWindow(false);
@@ -233,14 +249,24 @@ export default function PlayBoard({
             return;
         }
 
-        setDisplayedBets((prev) => ({
-            ...prev,
-            [optionId]: (prev[optionId] ?? 0) + amount,
-        }));
-        setQueuedBets((prev) => ({
-            ...prev,
-            [optionId]: (prev[optionId] ?? 0) + amount,
-        }));
+        const isNewOption = (queuedBetsRef.current[optionId] ?? 0) <= 0;
+        if (isNewOption && countSelectedOptions(queuedBetsRef.current) >= MAX_BET_OPTIONS_PER_ROUND) {
+            return;
+        }
+
+        const nextDisplayedBets = {
+            ...displayedBetsRef.current,
+            [optionId]: (displayedBetsRef.current[optionId] ?? 0) + amount,
+        };
+        const nextQueuedBets = {
+            ...queuedBetsRef.current,
+            [optionId]: (queuedBetsRef.current[optionId] ?? 0) + amount,
+        };
+
+        displayedBetsRef.current = nextDisplayedBets;
+        queuedBetsRef.current = nextQueuedBets;
+        setDisplayedBets(nextDisplayedBets);
+        setQueuedBets(nextQueuedBets);
         reserveBetBalance(amount);
     };
 
