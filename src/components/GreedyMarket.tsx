@@ -7,7 +7,6 @@ import HelpMenu from "./HelpMenu";
 import NoteMenu from "./NoteMenu";
 import PlayBoard from "./PlayBoard";
 import RechargeMenu from "./RechargeMenu";
-import MusicModal from "./MusicModal";
 import ResultMenu from "./ResultMenu";
 import TopMenu from "./TopMenu";
 import AdvancedModal from "./AdvancedModeModal";
@@ -47,8 +46,6 @@ function ToggleRow({ isOn, onBasic, onAdvanced }: ToggleRowProps) {
 export default function GreedyMarket({
   onToggleMusic,
   isMusicPlaying,
-  onToggleSound,
-  isSoundPlaying,
   onOpenResultMenu,
   onCloseResultMenu,
   TodaysRoundId,
@@ -59,8 +56,6 @@ export default function GreedyMarket({
   RoundTime: number;
   onToggleMusic: () => void;
   isMusicPlaying: boolean;
-  onToggleSound: () => void;
-  isSoundPlaying: boolean;
   onOpenResultMenu: () => void;
   onCloseResultMenu: () => void;
   TodaysRoundId: number | null;
@@ -69,12 +64,11 @@ export default function GreedyMarket({
 }) {
 
   const [activeModal, setActiveModal] = useState<string | null>(null);
-  const [activeAlert, setActiveAlert] = useState<string | null>(null);
   // const [repeatRequestId, setRepeatRequestId] = useState(0);
   const [scale, setScale] = useState(1);
   const [isAdvancedMode, setIsAdvancedMode] = useState(false);
   const { gameMode, handleGameMode, setGameMode } = useGame();
-  const isOverlayOpen = activeModal !== null || activeAlert !== null;
+  const isOverlayOpen = activeModal !== null;
   // const previousRoundTotal = Object.values(previousRoundBets).reduce((sum, amount) => sum + amount, 0);
   // const availableBalance = Number.parseFloat(displayBalance ?? "0");
   // const hasInsufficientBalance = previousRoundTotal > availableBalance;
@@ -112,7 +106,7 @@ export default function GreedyMarket({
     } else {
       onCloseResultMenu();
     }
-  }, [activeModal]);
+  }, [activeModal, onCloseResultMenu, onOpenResultMenu]);
 
   useEffect(() => {
     const updateScale = () => {
@@ -161,7 +155,8 @@ export default function GreedyMarket({
             <div className="ml-auto mr-4 mt-2.5">
               <TopMenu
                 onOpenModal={(modal) => setActiveModal(modal)}
-                onOpenAlert={(alert) => setActiveAlert(alert)}
+                onToggleMusic={onToggleMusic}
+                isMusicPlaying={isMusicPlaying}
               />
             </div>
           </div>
@@ -328,27 +323,6 @@ export default function GreedyMarket({
                 />
               </motion.div>
             )}
-            {activeAlert && (
-              <motion.div
-                key={activeAlert}
-                initial={{ transform: "translate(-50%, -50%)", opacity: 0 }}
-                animate={{ transform: "translate(-50%, -50%)", opacity: 1 }}
-                exit={{ transform: "translate(-50%, -50%)", opacity: 0 }}
-                transition={{ duration: 0.4 }}
-                className="absolute left-1/2 top-1/2 z-50"
-              >
-                {activeAlert === "music" && (
-                  <MusicModal
-                    isMusicPlaying={isMusicPlaying}
-                    isSoundPlaying={isSoundPlaying}
-                    onToggleMusic={onToggleMusic}
-                    onToggleSound={onToggleSound}
-                    onCloseMusicModal={() => setActiveAlert(null)}
-                  />
-                )}
-              </motion.div>
-            )}
-
           </AnimatePresence>
         </div>
       </div>

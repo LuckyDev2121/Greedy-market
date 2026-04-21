@@ -3,7 +3,8 @@ import { closeCurrentView } from "../utils/closeCurrentView";
 
 type TopMenuProps = {
   onOpenModal: (modal: string) => void;
-  onOpenAlert: (alert: string) => void;
+  onToggleMusic: () => void;
+  isMusicPlaying: boolean;
 };
 
 function ClipboardIcon() {
@@ -17,7 +18,31 @@ function ClipboardIcon() {
     </svg>
   );
 }
-
+function SpeakerMuteIcon() {
+  return (
+    <svg width="25" height="25" viewBox="0 0 15 15" fill="none" aria-hidden="true">
+      <path
+        d="M2.2 8.8H4.4L7.45 11V4L4.4 6.2H2.2V8.8Z"
+        fill="white"
+        stroke="white"
+        strokeWidth="0.5"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M9.35 6.05L12.05 8.75"
+        stroke="white"
+        strokeWidth="1.2"
+        strokeLinecap="round"
+      />
+      <path
+        d="M12.05 6.05L9.35 8.75"
+        stroke="white"
+        strokeWidth="1.2"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
 function SpeakerHighIcon() {
   return (
     <svg width="25" height="25" viewBox="0 0 15 15" fill="none" aria-hidden="true">
@@ -78,16 +103,16 @@ function CloseIcon() {
   );
 }
 
-const TopMenu: React.FC<TopMenuProps> = ({ onOpenModal, onOpenAlert }) => {
+const TopMenu: React.FC<TopMenuProps> = ({ onOpenModal, onToggleMusic, isMusicPlaying }) => {
   return (
     <div className="flex gap-[5px]">
 
       <MenuButton
         borderColor="none"
         borderWidth="0px"
-        icon={<SpeakerHighIcon />}
+        icon={isMusicPlaying ? <SpeakerHighIcon /> : <SpeakerMuteIcon />}
         background={"#000000"}
-        onClick={() => onOpenAlert("music")}
+        onClick={onToggleMusic}
       />
 
       <MenuButton

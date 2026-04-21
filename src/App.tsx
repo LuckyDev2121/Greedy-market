@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 
-import { MusicPlayer, SoundPlayer } from "./components/GameMusic";
+import { MusicPlayer } from "./components/GameMusic";
 import LoadingScreen from "./components/LoadingScrean";
 import GreedyMarket from "./components/GreedyMarket";
 import { GAME_ASSETS, getAssetUrl } from "./config/gameConfig";
@@ -45,7 +45,6 @@ async function preloadGameAssets(setProgress: (value: number) => void) {
 }
 
 function App() {
-  const [isOpenResultMenu, setIsOpenResultMenu] = useState(false);
   const [progress, setProgress] = useState(0);
   const [isBootLoading, setIsBootLoading] = useState(true);
   const [audioUnlockVersion, setAudioUnlockVersion] = useState(0);
@@ -53,8 +52,6 @@ function App() {
   const [roundId, setRoundId] = useState<number | null>(null);
   const [isRoundRunning, setIsRoundRunning] = useState(false);
   const [roundTime, setRoundTime] = useState(0)
-  const openResultMenu = () => setIsOpenResultMenu(true);
-  const closeResultMenu = () => setIsOpenResultMenu(false);
   const {
     createRound,
     isMusicEnabled,
@@ -62,7 +59,6 @@ function App() {
     isMusicSettingLoading,
     isSoundSettingLoading,
     setMusicEnabled,
-    setSoundEnabled,
   } = useGame();
   const shouldRequestAudioUnlock =
     !isMusicSettingLoading &&
@@ -163,11 +159,6 @@ function App() {
         isMusicPlaying={!isMusicSettingLoading && isMusicEnabled}
         unlockVersion={audioUnlockVersion}
       />
-      <SoundPlayer
-        isSoundPlaying={!isSoundSettingLoading && isSoundEnabled}
-        isOpenResultMenu={isOpenResultMenu}
-        unlockVersion={audioUnlockVersion}
-      />
       {isBootLoading ? (
         <LoadingScreen
           progress={progress}
@@ -185,15 +176,11 @@ function App() {
             isRoundRunning={isRoundRunning}
             RoundTime={roundTime}
             onRoundFinished={handleRoundFinished}
-            onOpenResultMenu={openResultMenu}
-            onCloseResultMenu={closeResultMenu}
+            onOpenResultMenu={() => undefined}
+            onCloseResultMenu={() => undefined}
             isMusicPlaying={isMusicEnabled}
-            isSoundPlaying={isSoundEnabled}
             onToggleMusic={() => {
               void setMusicEnabled(!isMusicEnabled);
-            }}
-            onToggleSound={() => {
-              void setSoundEnabled(!isSoundEnabled);
             }}
           />
         </div>
