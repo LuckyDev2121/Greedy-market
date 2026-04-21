@@ -68,7 +68,7 @@ const GameElements = ({ controlButtons, currentBetAmount, displayedBets, onBetOp
                         />
                         <span className='absolute top-[60px] m-auto justify-center font-bold left-0 right-0 [text-shadow:1px_0_0_brown,-1px_0_0_brown,0_1px_0_brown,0_-1px_0_brown]'>{element.name}</span>
                         {shownBetAmount > 0 && (
-                            <div className='absolute h-[87px] w-[90px] top-[2px] left-[3px] flex items-center justify-center rounded-[8px]'>
+                            <div className='absolute h-[16px] w-[80px] top-[74px] left-[3px] flex items-center justify-center rounded-[8px] bg-gradient-to-t from-[#20bb2d] to-[#a9ff9d]'>
                                 <img src={getAssetUrl(GAME_ASSETS.diamond)} alt="Diamond Icon" className="flex h-[30px] w-[30px]  " />
                                 <span className='flex font-bold font-sans text-[#fac594] [text-shadow:1px_0_0_brown,-1px_0_0_brown,0_1px_0_brown,0_-1px_0_brown]'>{formatNumber(shownBetAmount)}</span>
                             </div>
