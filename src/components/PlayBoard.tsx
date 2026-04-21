@@ -644,35 +644,33 @@ export default function PlayBoard({
                     <div className={`absolute flex items-center w-[343px] h-[45px] rounded-[12px] ${resultBoard} top-[210px]  border-[2px]  left-1/2 -translate-x-1/2`}>
                         <span className="ml-[10px] text-[16px]">Result</span>
                         <div className="ml-[10px] w-[2px] h-[25px] bg-white/80"></div>
-                        <div className="scrollbar-hidden absolute flex  left-[60px] top-[5px] h-[40px] w-[280px] overflow-y-hidden overflow-x-auto z-20  transform">
-                            <div className="flex items-center h-full whitespace-nowrap ">
-                                {results?.data?.map((result, index) => (
-                                    <div key={index} className={`flex-shrink-0 relative h-[30px] w-[30px] mt-[3px] ${results.data?.length === undefined || index === results.data.length - 1 ? "" : "mr-[12px]"
-                                        }`}>
-                                        {result.is_jackpot === 0 && (
-                                            <img
-                                                src={getResultOptionLogo(result.option_id)}
-                                                alt={result.option_name || `Result ${index + 1}`}
-                                                className="absolute inset-0 h-full w-full"
-                                            />
-                                        )}
-                                        {result.is_jackpot === 1 && (
-                                            <img
-                                                src={getAssetUrl(GAME_ASSETS.drink)}
-                                                alt={result.option_name || `Result ${index + 1}`}
-                                                className="absolute inset-0 h-full w-full"
-                                            />
-                                        )}
-                                        {result.is_jackpot === 2 && (
-                                            <img
-                                                src={getAssetUrl(GAME_ASSETS.veg)}
-                                                alt={result.option_name || `Result ${index + 1}`}
-                                                className="absolute inset-0 h-full w-full"
-                                            />
-                                        )}
-                                    </div>
-                                ))}
-                            </div>
+                        <div className="scrollbar-hidden absolute flex  left-[60px] top-[5px] h-[40px] w-[280px] overflow-y-hidden overflow-x-auto z-20 ">
+                            {results?.data?.map((result, index) => (
+                                <div key={index} className={`flex-shrink-0 relative h-[30px] w-[30px] left-[6px] mt-[0px] ${results.data?.length === undefined || index === results.data.length - 1 ? "" : "mr-[10px]"
+                                    }`}>
+                                    {result.is_jackpot === 0 && (
+                                        <img
+                                            src={getResultOptionLogo(result.option_id)}
+                                            alt={result.option_name || `Result ${index + 1}`}
+                                            className="absolute inset-0 h-full w-full"
+                                        />
+                                    )}
+                                    {result.is_jackpot === 1 && (
+                                        <img
+                                            src={getAssetUrl(GAME_ASSETS.drink)}
+                                            alt={result.option_name || `Result ${index + 1}`}
+                                            className="absolute inset-0 h-full w-full"
+                                        />
+                                    )}
+                                    {result.is_jackpot === 2 && (
+                                        <img
+                                            src={getAssetUrl(GAME_ASSETS.veg)}
+                                            alt={result.option_name || `Result ${index + 1}`}
+                                            className="absolute inset-0 h-full w-full"
+                                        />
+                                    )}
+                                </div>
+                            ))}
                         </div>
                     </div>
                 </div>
