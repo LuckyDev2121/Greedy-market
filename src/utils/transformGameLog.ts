@@ -40,7 +40,7 @@ type PlayerLogData={
 }
 
 
-const ROUND_OPTION_IDS = [5, 6, 7, 8, 9, 10, 11, 12] as const;
+const ROUND_OPTION_IDS = [20, 21, 22, 23, 24, 25, 26, 27] as const;
 
 type MutableRound = {
   round_id: number;

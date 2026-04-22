@@ -355,7 +355,7 @@ export type WinTodayResponse={
   win?:number;
 }
 export const fetchWinToday= async (): Promise<WinTodayResponse> => {
-  const response = await axios.get<WinTodayResponse>(`${WIN_TODAY_API_URL}/${getUserId()}`);
+  const response = await axios.get<WinTodayResponse>(`${WIN_TODAY_API_URL}/${getUserId()}/${GAME_ID}`);
 
   if (!response.data.status) {
     throw new Error(response.data.status || "Failed to load ranking today");
