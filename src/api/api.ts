@@ -218,7 +218,6 @@ export type CurrentModeProps={
 
 export const fetchCurrentMode=async (): Promise<CurrentModeProps> => {
   const response = await axios.get<CurrentModeProps>(`${CURRENT_MODE_API_URL}/${getUserId()}`);
-console.log("fetchgamemode", response)
   if (!response.data.status) {
     throw new Error(response.data.message || "API returned false status");
   }
@@ -235,7 +234,6 @@ export type ChangeMode={
 export const changeMode = async (
   isMode: string,
 ): Promise<ChangeMode> => {
-  console.log("changegamemode", isMode);
   try {
     const response = await axios.post<ChangeMode>(CHANGE_MODE_API_URL, {
       mode: isMode,
@@ -243,11 +241,9 @@ export const changeMode = async (
       user_id: getUserId(),
     });
 
-    console.log("changegamemode", response);
     return response.data;
   } catch (error) {
     if (axios.isAxiosError<ChangeMode>(error) && error.response?.data) {
-      console.log("changegamemode-error", error.response.data);
       return error.response.data;
     }
 
@@ -266,7 +262,6 @@ type SoundSettingResponse = {
 
 export const fetchSoundSetting = async (): Promise<boolean> => {
   const response = await axios.get<SoundSettingResponse>(`${SOUND_SETTING_API_URL}/${GAME_ID}/${getUserId()}`);
-console.log("userid", getUserId(),"fetchMusic",response.data);
   if (!response.data.status) {
     throw new Error(response.data.message || "Failed to load sound setting");
   }
@@ -287,7 +282,6 @@ export const saveSoundSetting = async (
     user_id: getUserId(),
     status: isSoundOn ? 1 : 0,
   });
-  console.log("saveSound-userid",getUserId(),"isSoundOn",isSoundOn)
   if (!response.data.status) {
     throw new Error(response.data.message || "Failed to save sound setting");
   }
@@ -307,7 +301,6 @@ export const fetchMusicSetting = async (): Promise<boolean> => {
   if (!response.data.status) {
     throw new Error(response.data.message || "Failed to load music setting");
   }
-console.log("userid", getUserId(),"fetchMusic",response.data);
   return response.data.data === 1;
 };
 
@@ -324,7 +317,6 @@ export const saveMusicSetting = async (
     user_id: getUserId(),
     status: isMusicOn ? 1 : 0,
   });
-console.log("saveMusic-userid",getUserId(),"isMusicOn",isMusicOn)
   if (!response.data.status) {
     throw new Error(response.data.message || "Failed to save music setting");
   }

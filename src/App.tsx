@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import { MusicPlayer } from "./components/GameMusic";
 import LoadingScreen from "./components/LoadingScrean";
@@ -51,7 +51,9 @@ function App() {
   const [hasAudioGesture, setHasAudioGesture] = useState(false);
   const [roundId, setRoundId] = useState<number | null>(null);
   const [isRoundRunning, setIsRoundRunning] = useState(false);
-  const [roundTime, setRoundTime] = useState(0)
+  const [roundTime, setRoundTime] = useState(0);
+  const isAttemptingRoundRef = useRef(false);
+  const activeRoundIdRef = useRef<number | null>(null);
   const {
     createRound,
     isMusicEnabled,
@@ -71,28 +73,55 @@ function App() {
     setAudioUnlockVersion((current) => current + 1);
   }, []);
 
+  const isRoundStartable = useCallback((remainingSeconds: number | undefined) => {
+    if (remainingSeconds === undefined) {
+      return false;
+    }
+
+    return remainingSeconds >= 7 && remainingSeconds < 39;
+  }, []);
+
+  const applyRoundState = useCallback((nextRoundId: number | null, nextRoundTime: number, running: boolean) => {
+    activeRoundIdRef.current = nextRoundId;
+    setRoundId(nextRoundId);
+    setRoundTime(nextRoundTime);
+    setIsRoundRunning(running);
+  }, []);
+
   const attemptStartRound = useCallback(async () => {
+    if (isAttemptingRoundRef.current) {
+      return false;
+    }
+
+    isAttemptingRoundRef.current = true;
+
     try {
       const res = await createRound();
-
-      if (res?.remaining_seconds >= 37 || res?.remaining_seconds < 7) {
+      if (!isRoundStartable(res?.remaining_seconds)) {
         return false;
       }
-      setRoundTime(res?.remaining_seconds + 3)
-      setRoundId(res.round_no);
-      setIsRoundRunning(true);
+
+      if (activeRoundIdRef.current === res.round_no && isRoundRunning) {
+        return true;
+      }
+
+      applyRoundState(res.round_no, res.remaining_seconds + 3, true);
       return true;
     } catch (err) {
       console.error(err);
       return false;
+    } finally {
+      isAttemptingRoundRef.current = false;
     }
-  }, [createRound]);
+  }, [applyRoundState, createRound, isRoundRunning, isRoundStartable]);
 
-  const handleRoundFinished = useCallback(() => {
-    setRoundId(null);
-    setIsRoundRunning(false);
-    void attemptStartRound();
-  }, [attemptStartRound]);
+  const handleRoundFinished = useCallback((finishedRoundId: number | null) => {
+    if (finishedRoundId === null || activeRoundIdRef.current !== finishedRoundId) {
+      return;
+    }
+
+    applyRoundState(null, 0, false);
+  }, [applyRoundState]);
 
   useEffect(() => {
     let cancelled = false;
@@ -114,15 +143,10 @@ function App() {
         if (cancelled) {
           return;
         }
-
-
-        if (res.remaining_seconds >= 37 || res?.remaining_seconds < 7) {
-          setRoundId(null);
-          setIsRoundRunning(false);
+        if (!isRoundStartable(res?.remaining_seconds)) {
+          applyRoundState(null, 0, false);
         } else {
-          setRoundId(res?.round_no);
-          setIsRoundRunning(true);
-          setRoundTime(res?.remaining_seconds + 3)
+          applyRoundState(res.round_no, res.remaining_seconds + 3, true);
         }
       } catch (err) {
         console.error(err);
@@ -139,14 +163,16 @@ function App() {
     return () => {
       cancelled = true;
     };
-  }, [createRound]);
+  }, [applyRoundState, createRound, isRoundStartable]);
 
   useEffect(() => {
+    console.log("roundRunning:", isRoundRunning)
     if (isBootLoading || isRoundRunning) {
       return;
     }
 
     const timer = window.setInterval(() => {
+      console.log("stemp");
       void attemptStartRound();
     }, 1000);
 

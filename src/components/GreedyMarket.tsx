@@ -60,7 +60,7 @@ export default function GreedyMarket({
   onCloseResultMenu: () => void;
   TodaysRoundId: number | null;
   isRoundRunning: boolean;
-  onRoundFinished: () => void;
+  onRoundFinished: (finishedRoundId: number | null) => void;
 }) {
 
   const [activeModal, setActiveModal] = useState<string | null>(null);

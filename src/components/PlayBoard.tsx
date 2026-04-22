@@ -13,7 +13,7 @@ type PlayBoardProps = {
     onOpenModal: (modal: string) => void;
     RoundId: number | null;
     isRoundRunning: boolean;
-    onRoundFinished: () => void;
+    onRoundFinished: (finishedRoundId: number | null) => void;
     // repeatRequestId: number;
     RoundTime: number;
     isAdvanced: boolean;
@@ -124,6 +124,7 @@ export default function PlayBoard({
     const vegButtonRef = useRef<HTMLImageElement | null>(null);
     const drinkButtonRef = useRef<HTMLImageElement | null>(null);
     const optionButtonRefs = useRef<Record<number, HTMLButtonElement | null>>({});
+    const initializedRoundRef = useRef<number | null>(null);
     const optionMap = useMemo(() => {
         return Object.fromEntries(
             options.map(o => [o.id, o.logo])
@@ -225,6 +226,32 @@ export default function PlayBoard({
     }, [handleWinToday, winToday]);
 
     useEffect(() => {
+        if (isRoundRunning) {
+            return;
+        }
+
+        setRoundStart(false);
+        setShowLedTimer(false);
+        setShowChooseTimer(false);
+        setShowHiddenTimer(false);
+        setShowResultTimer(false);
+        setShowChooseRectangle(false);
+        setShowBoardOpacity(false);
+        setShowHand(false);
+        setBlockClick("none");
+    }, [isRoundRunning]);
+
+    useEffect(() => {
+        if (!isRoundRunning || RoundId === null) {
+            initializedRoundRef.current = null;
+            return;
+        }
+
+        if (initializedRoundRef.current === RoundId) {
+            return;
+        }
+
+        initializedRoundRef.current = RoundId;
 
         if (RoundTime >= 12) {
             setLedTime(Math.floor(RoundTime) - 11);
@@ -321,7 +348,7 @@ export default function PlayBoard({
             setHasStartedFinalBetWindow(false);
             return;
         }
-    }, [RoundId, isRoundRunning]);
+    }, [RoundId, RoundTime, isRoundRunning, onOpenModal]);
     useEffect(() => {
         if (isRoundRunning && RoundId) {
             clearCurrentRoundBets();
@@ -668,7 +695,7 @@ export default function PlayBoard({
                     <div className={`absolute flex items-center w-[343px] h-[45px] rounded-[12px] ${resultBoard} top-[210px]  border-[2px]  left-1/2 -translate-x-1/2`}>
                         <span className="ml-[10px] text-[16px]">Result</span>
                         <div className="ml-[10px] w-[2px] h-[25px] bg-white/80"></div>
-                        <div className="scrollbar-hidden absolute flex  left-[60px] top-[5px] h-[40px] w-[280px] overflow-y-hidden overflow-x-auto z-20 ">
+                        <div className=" scrollbar-hidden absolute flex  left-[65px] top-[5px] h-[40px] w-[270px] overflow-y-hidden overflow-x-auto z-20 ">
                             {results?.data?.map((result, index) => (
                                 <div key={index} className={`flex-shrink-0 relative h-[30px] w-[30px] left-[6px] mt-[0px] ${results.data?.length === undefined || index === results.data.length - 1 ? "" : "mr-[10px]"
                                     }`}>
@@ -766,7 +793,7 @@ export default function PlayBoard({
                                 setShowHiddenTimer(false);
                                 setShowHand(false);
                                 setBlockClick("none");
-                                onRoundFinished();
+                                onRoundFinished(RoundId);
                             }}
                         />
                     </div>

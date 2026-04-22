@@ -11,10 +11,8 @@ async function bootstrap() {
 
   const userId = Number(params.get("userid"));
   const token = Number(params.get("token"));
-  console.log("Extracted params", { userId, token });
   try {
     const res = await checkIntroIntegration(userId, token);
-    console.log("Intro check result", res);
     if (!res.status || !res.user_id) {
       closeCurrentView();
       return;
