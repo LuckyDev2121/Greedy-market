@@ -70,9 +70,7 @@ export default function NoteMenu({ onCloseNote }: NoteMenuProps) {
     const rounds = useMemo(() => {
         return transformGameLog(playerLog);
     }, [playerLog]);
-    useEffect(() => {
-        console.log("logs", transformGameLog(playerLog))
-    }, [playerLog])
+
     const optionById = useMemo(() => {
         return new Map(options.map((option) => [option.id, option]));
     }, [options]);
@@ -92,7 +90,23 @@ export default function NoteMenu({ onCloseNote }: NoteMenuProps) {
                         const winningOption = item.winning_option_id[0]
                             ? optionById.get(item.winning_option_id[0])
                             : undefined;
+                        let total = 0;
+                        item.winning_option_id.forEach((optionId) => {
+                            let timer = 0;
+                            let betAmount = 0;
 
+                            if (optionId < 24) timer = 5;
+                            else if (optionId === 24) timer = 10;
+                            else if (optionId === 25) timer = 15;
+                            else if (optionId === 26) timer = 25;
+                            else if (optionId === 27) timer = 45;
+
+                            item.detail.map((item) => {
+                                if (item.option_id === optionId)
+                                    betAmount = item.bet_amount;
+                            })
+                            total += timer * betAmount;
+                        });
                         return (
                             <div key={item.round_id} className="relative mt-[5px] bg-amber-300/30 rounded-[20px] w-[325px] h-[150px] border-t-[1px] border-t-amber-600">
                                 <div className="absolute w-[325px] flex justify-between mx-[20px] mt-[5px]">
@@ -139,7 +153,7 @@ export default function NoteMenu({ onCloseNote }: NoteMenuProps) {
                                         />
                                     )}
                                 </span>
-                                <span className=" absolute left-[5px] top-[110px] text-[12px] text-[#bb8000] ">Win diamonds:{formatNumber(1)}</span>
+                                <span className=" absolute left-[5px] top-[110px] text-[12px] text-[#bb8000] ">Win diamonds:{formatNumber(total)}</span>
                             </div>
                         )
                     })}
