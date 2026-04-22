@@ -45,11 +45,11 @@ export default function ResultMenu({ start, onResultTimeUp }: ResultMenuProps) {
         activeResult.winning_option_id.forEach((optionId) => {
             let timer = 0;
 
-            if (optionId < 9) timer = 5;
-            else if (optionId === 9) timer = 10;
-            else if (optionId === 10) timer = 15;
-            else if (optionId === 11) timer = 25;
-            else if (optionId === 12) timer = 45;
+            if (optionId < 24) timer = 5;
+            else if (optionId === 24) timer = 10;
+            else if (optionId === 25) timer = 15;
+            else if (optionId === 26) timer = 25;
+            else if (optionId === 27) timer = 45;
 
             const betAmount = previousRoundBets[optionId] ?? 0;
 
