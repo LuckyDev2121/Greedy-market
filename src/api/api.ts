@@ -19,6 +19,8 @@ import {
   GET_GIFT_API_URL,
   RANKING_YESTERDAY_API_URL,
   REMAINING_API_URL,
+  HISTORY_API_URL,
+  MY_RANKING_API_URL,
 } from "../config/gameConfig";
 import { getUserId } from "../utils/user";
 
@@ -494,4 +496,118 @@ export const fetchRemainingToday =async()=>{
   }
 
   return response.data;
+}
+
+type SelectedOptions={
+  option_id?:number;
+  option_logo?:string;
+  total_amount?:number;
+}
+type RawHistoryData={
+  round_no?:number;
+  win_amount?:number;
+  post_balance?:string;
+  new_balance?:string;
+  round_created_at?:string;
+  selected_options?:SelectedOptions[];
+  winning_option_id?:string | string[];
+}
+type HistoryData={
+  round_no?:number;
+  win_amount?:number;
+  post_balance?:string;
+  new_balance?:string;
+  round_created_at?:string;
+  selected_options?:SelectedOptions[];
+  winning_option_id:number[];
+}
+export type History={
+  status:boolean;
+  count?:number;
+  data:HistoryData[];
+  message:string;
+}
+
+type RawHistory = {
+  status:boolean;
+  count?:number;
+  data:RawHistoryData[];
+  message:string;
+}
+
+function normalizeWinningOptionIds(value?: string | string[]): number[] {
+  if (!value) {
+    return [];
+  }
+
+  if (Array.isArray(value)) {
+    return value.map(Number).filter((item) => !Number.isNaN(item));
+  }
+
+  const trimmedValue = value.trim();
+
+  try {
+    const parsedValue = JSON.parse(trimmedValue);
+    if (Array.isArray(parsedValue)) {
+      return parsedValue.map(Number).filter((item) => !Number.isNaN(item));
+    }
+  } catch {
+    // Fallback to comma-separated or single-value parsing.
+  }
+
+  return trimmedValue
+    .replace(/^\[|\]$/g, "")
+    .split(",")
+    .map((item) => Number(item.trim().replace(/^"|"$/g, "")))
+    .filter((item) => !Number.isNaN(item));
+}
+
+export const fetchHistoryBasic =async()=>{
+  const response = await axios.get<RawHistory>(`${HISTORY_API_URL}/${getUserId()}/basic`);
+
+  if (!response.data.status) {
+    throw new Error(response.data.message || "API returned false status");
+  }
+
+  return {
+    ...response.data,
+    data: response.data.data.map((item) => ({
+      ...item,
+      winning_option_id: normalizeWinningOptionIds(item.winning_option_id),
+    })),
+  };
+}
+
+export const fetchHistoryAdvance =async()=>{
+  const response = await axios.get<RawHistory>(`${HISTORY_API_URL}/${getUserId()}/advance`);
+
+  if (!response.data.status) {
+    throw new Error(response.data.message || "API returned false status");
+  }
+
+  return {
+    ...response.data,
+    data: response.data.data.map((item) => ({
+      ...item,
+      winning_option_id: normalizeWinningOptionIds(item.winning_option_id),
+    })),
+  };
+}
+
+export type MyRanking={
+  status:boolean;
+  data:{
+    ranking_position:number;
+    total_players:number;
+  }
+  message:string;
+}
+export const fetchMyRanking =async()=>{
+  const response = await axios.get<MyRanking>(`${MY_RANKING_API_URL}/${getUserId()}/${GAME_ID}`);
+
+  if (!response.data.status) {
+    throw new Error(response.data.message || "API returned false status");
+  }
+
+  return response.data
 }

@@ -1,23 +1,26 @@
-import { useEffect, useMemo, } from "react";
+import { useMemo } from "react";
 import { getAssetUrl, GAME_ASSETS } from "../config/gameConfig";
 import { useGame } from "../hooks/useGameHook";
-import { transformGameLog, } from "../utils/transformGameLog";
 import ModalHeaderPlate from "./ModalHeaderPlate";
+
 type NoteMenuProps = {
     onCloseNote: () => void;
+    isAdvanced: boolean;
 };
+
 function formatNumber(num: number): string {
     if (num >= 1_000_000_000) {
-        return (num / 1_000_000_000).toFixed(1).replace(/\.0$/, '') + 'B';
+        return (num / 1_000_000_000).toFixed(1).replace(/\.0$/, "") + "B";
     }
     if (num >= 1_000_000) {
-        return (num / 1_000_000).toFixed(1).replace(/\.0$/, '') + 'M';
+        return (num / 1_000_000).toFixed(1).replace(/\.0$/, "") + "M";
     }
     if (num >= 1_000) {
-        return (num / 1_000).toFixed(1).replace(/\.0$/, '') + 'K';
+        return (num / 1_000).toFixed(1).replace(/\.0$/, "") + "K";
     }
     return num.toString();
 }
+
 function formatCreatedAt(value?: string) {
     if (!value) {
         return "--/--/---- --:--:--";
@@ -50,30 +53,14 @@ function CloseIcon() {
     );
 }
 
-export default function NoteMenu({ onCloseNote }: NoteMenuProps) {
-    const { options, playerLog, winToday, handlePlayerLog, handleWinToday } = useGame();
-
-    useEffect(() => {
-        const load = async () => {
-            if (playerLog.length === 0) {
-                await handlePlayerLog();
-            }
-
-            if (!winToday) {
-                await handleWinToday();
-            }
-
-        };
-        void load();
-    }, [handlePlayerLog, handleWinToday, playerLog.length, winToday]);
-
-    const rounds = useMemo(() => {
-        return transformGameLog(playerLog);
-    }, [playerLog]);
+export default function NoteMenu({ onCloseNote, isAdvanced }: NoteMenuProps) {
+    const { options, basicHistory, advanceHistory, } = useGame();
 
     const optionById = useMemo(() => {
         return new Map(options.map((option) => [option.id, option]));
     }, [options]);
+
+    const historyData = isAdvanced ? (advanceHistory?.data ?? []) : (basicHistory?.data ?? []);
 
     return (
         <div className="h-[567px] bg-amber-500 w-[355px] rounded-[20px]">
@@ -86,46 +73,53 @@ export default function NoteMenu({ onCloseNote }: NoteMenuProps) {
                     <CloseIcon />
                 </button>
                 <div className="scrollbar-hidden absolute top-[30px]  left-1/2 transform -translate-x-1/2 w-[325px] h-[500px] grip overflow-x-hidden overflow-y-auto">
-                    {rounds.map((item) => {
-                        const winningOption = item.winning_option_id[0]
-                            ? optionById.get(item.winning_option_id[0])
-                            : undefined;
-                        let total = 0;
-                        item.winning_option_id.forEach((optionId) => {
-                            let timer = 0;
-                            let betAmount = 0;
+                    {historyData.map((item) => {
+                        const winningOption = optionById.get(item.winning_option_id[0]);
+                        // let total = 0;
 
-                            if (optionId < 24) timer = 5;
-                            else if (optionId === 24) timer = 10;
-                            else if (optionId === 25) timer = 15;
-                            else if (optionId === 26) timer = 25;
-                            else if (optionId === 27) timer = 45;
+                        // item.winning_option_id.forEach((optionId) => {
+                        //     let timer = 0;
+                        //     let betAmount = 0;
 
-                            item.detail.map((item) => {
-                                if (item.option_id === optionId)
-                                    betAmount = item.bet_amount;
-                            })
-                            total += timer * betAmount;
-                        });
+                        //     if (optionId < 24) timer = 5;
+                        //     else if (optionId === 24) timer = 10;
+                        //     else if (optionId === 25) timer = 15;
+                        //     else if (optionId === 26) timer = 25;
+                        //     else if (optionId === 27) timer = 45;
+
+                        //     item.selected_options?.forEach((selectedOption) => {
+                        //         if (selectedOption.option_id === optionId && selectedOption.total_amount) {
+                        //             betAmount = selectedOption.total_amount;
+                        //         }
+                        //     });
+
+                        //     total += timer * betAmount;
+                        // });
+
                         return (
-                            <div key={item.round_id} className="relative mt-[5px] bg-amber-300/30 rounded-[20px] w-[325px] h-[150px] border-t-[1px] border-t-amber-600">
+                            <div key={item.round_no} className="relative mt-[5px] bg-amber-300/30 rounded-[20px] w-[325px] h-[150px] border-t-[1px] border-t-amber-600">
                                 <div className="absolute w-[325px] flex justify-between mx-[20px] mt-[5px]">
-                                    <span className=" relative text-[15px] text-[#bb8000] ">Round: {item.round_id}</span>
-                                    <span className=" relative text-[15px] pr-[30px] text-[#bb8000]  ">{formatCreatedAt(item.created_at)}</span>
+                                    <span className=" relative text-[15px] text-[#bb8000] ">Round: {item.round_no}</span>
+                                    <span className=" relative text-[15px] pr-[30px] text-[#bb8000]  ">{formatCreatedAt(item.round_created_at)}</span>
                                 </div>
                                 <div className="absolute w-[300px] top-[25px] h-[1px] left-1/2 -translate-x-1/2 bg-amber-600/50"></div>
                                 <span className=" absolute left-[5px] top-[30px] text-[12px] text-[#bb8000]" >Selected option:</span>
                                 <div className="absolute top-[45px]  grid grid-cols-4 grid-rows-2 gap-[0px] ">
-                                    {item.detail.map((element) => {
-                                        const option = optionById.get(element.option_id);
-                                        if (element.bet_amount && option) {
+                                    {item.selected_options?.map((element) => {
+                                        const option = element.option_id !== undefined
+                                            ? optionById.get(element.option_id)
+                                            : undefined;
+
+                                        if (element.total_amount && option) {
                                             return (
-                                                <div key={element.option_id} className="relative w-[75px] h-[20px] bg-[#e4a553] rounded-[8px] justify-center items-center flex " >
+                                                <div key={element.option_id} className="relative w-[75px] h-[20px] bg-[#e4a553] rounded-[8px] justify-center items-center flex ">
                                                     <img src={getAssetUrl(option.logo)} alt={option.name} className="h-4 w-4 mr-[2px]" />
-                                                    <span className=" items-center ml-[2px]">{formatNumber(element.bet_amount)}</span>
+                                                    <span className=" items-center ml-[2px]">{formatNumber(element.total_amount)}</span>
                                                 </div>
                                             );
                                         }
+
+                                        return null;
                                     })}
                                 </div>
                                 <span className=" absolute flex left-[5px] top-[90px] text-[12px] text-[#bb8000] ">Winning items:
@@ -153,12 +147,13 @@ export default function NoteMenu({ onCloseNote }: NoteMenuProps) {
                                         />
                                     )}
                                 </span>
-                                <span className=" absolute left-[5px] top-[110px] text-[12px] text-[#bb8000] ">Win diamonds:{formatNumber(total)}</span>
+                                <span className=" absolute left-[5px] top-[110px] text-[12px] text-[#bb8000] ">Win diamonds:{formatNumber(item.win_amount ?? 0)}</span>
+                                <span className=" absolute left-[5px] top-[130px] text-[12px] text-[#bb8000] ">Diamond Balance: {`${formatNumber(Number.parseInt(item.post_balance ?? "0", 10))}-->${formatNumber(Number.parseInt(item.new_balance ?? "0", 10))}`}</span>
                             </div>
-                        )
+                        );
                     })}
                 </div>
             </div >
         </div >
-    )
+    );
 }

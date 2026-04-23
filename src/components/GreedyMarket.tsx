@@ -278,6 +278,7 @@ export default function GreedyMarket({
               >
                 <NoteMenu
                   onCloseNote={() => setActiveModal(null)}
+                  isAdvanced={isAdvancedMode}
                 />
               </motion.div>
             )}

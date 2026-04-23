@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { echo,  } from "./echo";
 import {
-  fetchPlayerLog,
   fetchWinToday,
   fetchGameDetail,
   fetchPlayerInfo,
@@ -21,8 +20,12 @@ import {
   fetchPrizeDistribution,
   fetchGetGift,
   fetchRemainingToday,
+  fetchHistoryAdvance,
+  fetchHistoryBasic,
+  fetchMyRanking,
+  type MyRanking,
+  type History,
   type PrizeDistributionProps,
-  type PlayerLogData,
   type WinTodayResponse,
   type GameDetailsData,
   type PlayerDetailsData,
@@ -62,13 +65,15 @@ type GameStore = {
   rankingTodays: RankingTodayItem[];
   rankingYesterdays:RankingTodayItem[];
   winToday: WinTodayResponse|null;
-  playerLog: PlayerLogData[];
   url?:RechargeUrlResponse | null;
   soundOverridden: boolean;
 musicOverridden: boolean;
 prizeDistribution:PrizeDistributionProps|null;
 gameMode: string|null;
 remaining:number;
+basicHistory:History|null;
+advanceHistory:History|null;
+myRanking:MyRanking|null;
 };
 
 
@@ -91,14 +96,15 @@ let store: GameStore = {
   rankingTodays: [],
   rankingYesterdays: [],
   winToday:null,
-  playerLog:[],
   url:null,
   soundOverridden: false,
 musicOverridden: false,
 prizeDistribution:null,
 gameMode:null,
 remaining:0,
-  // runtimeConfig: { backendOrigin: "", apiBaseUrl: "" },
+basicHistory:null,
+advanceHistory:null,
+myRanking:null,
 };
 
 let hasInitialized = false;
@@ -149,14 +155,16 @@ async function runRefreshGameData(options?: RefreshGameDataOptions) {
   updateStore({ isLoading: true, isMusicSettingLoading: true });
 
   try {
-    const [gameDetail, player, gameResults,  rankingToday, rankingYesterday,  winToday, playerLog, url, prizeDistribution, isSoundEnabled, isMusicEnabled, gameMode] = await Promise.all([
+    const [myRanking, basicHistory, advanceHistory, gameDetail, player, gameResults,  rankingToday, rankingYesterday,  winToday,  url, prizeDistribution, isSoundEnabled, isMusicEnabled, gameMode] = await Promise.all([
+      fetchMyRanking(),
+      fetchHistoryBasic(),
+      fetchHistoryAdvance(),
       fetchGameDetail(),
       fetchPlayerInfo(),
       fetchGameResults(),
       fetchRankingToday(),
       fetchRankingYesterday(),
       fetchWinToday(),
-      fetchPlayerLog(),
       fetchRechargeUrl(),
       fetchPrizeDistribution(),
       fetchSoundSetting(),
@@ -165,16 +173,17 @@ async function runRefreshGameData(options?: RefreshGameDataOptions) {
     ]);
 
   updateStore({
-  gameDetails: gameDetail,
+    myRanking:myRanking,
+    basicHistory:basicHistory,
+    advanceHistory:advanceHistory,
+    gameDetails: gameDetail,
   playerInfo: player,
   results: gameResults,
-
   isLoading: false,
   isSoundSettingLoading: false,
   isMusicSettingLoading: false,
   rankingTodays: rankingToday,
   rankingYesterdays: rankingYesterday,
-  playerLog:playerLog,
   winToday:winToday,
   url: url,
   prizeDistribution:prizeDistribution,
@@ -236,11 +245,6 @@ export function useGame() {
     return data;
   }, []);
 
-  const handlePlayerLog = useCallback(async () => {
-    const data = await fetchPlayerLog();
-    updateStore({ playerLog: data });
-    return data;
-  }, []);
 
   const handleWinToday= useCallback(async () => {
     const data = await fetchWinToday();
@@ -287,23 +291,27 @@ const handlePrizeDistribution= useCallback(async () => {
 
   const handleMakeResult = useCallback(async (roundId: number) => {
     const data = await makeGameResult(roundId);
-    const [player, gameResults, rankingToday,rankingYesterday, playerLog, winToday] = await Promise.all([
+    const [myRanking, player, gameResults, rankingToday,rankingYesterday,  winToday, basicHistory, advancdHistory] = await Promise.all([
+      fetchMyRanking(),
       fetchPlayerInfo(),
       fetchGameResults(),
       fetchRankingToday(),
       fetchRankingYesterday(),
-      fetchPlayerLog(),
       fetchWinToday(),
+      fetchHistoryAdvance(),
+      fetchHistoryBasic(),
     ]);
 
     updateStore({
+      myRanking: myRanking,
       makeResult: data,
       playerInfo: player,
       results: gameResults,
       rankingTodays: rankingToday,
       rankingYesterdays: rankingYesterday,
-      playerLog:playerLog,
       winToday:winToday,
+      basicHistory:basicHistory,
+      advanceHistory:advancdHistory,
     });
 
     return data;
@@ -420,7 +428,6 @@ const handleRemainingToday= useCallback(async () => {
   );
 
   return {
-    playerLog: snapshot.playerLog ?? [],
     winToday: snapshot.winToday,
     betAmounts: snapshot.gameDetails?.bet_amounts ?? [],
     options: snapshot.gameDetails?.options ?? [],
@@ -445,6 +452,9 @@ const handleRemainingToday= useCallback(async () => {
     rechargeUrl: snapshot.url?.url || null,
     prizeDistribution:snapshot.prizeDistribution,
     gameMode:snapshot.gameMode,
+    basicHistory:snapshot.basicHistory,
+    advanceHistory:snapshot.advanceHistory,
+    myRanking:snapshot.myRanking,
     refreshGameData,
     createRound: handleCreateRound,
     makeGameRound:handleGameRound,
@@ -458,7 +468,6 @@ const handleRemainingToday= useCallback(async () => {
     clearCurrentRoundBets,
     archiveCurrentRoundBets,
     setPreviousRoundBets,
-    handlePlayerLog,
     handleWinToday,
     handleRechargeRedirect,
     handlePrizeDistribution,

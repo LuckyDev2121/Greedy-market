@@ -69,7 +69,7 @@ export default function CupMenu({ onCloseCup }: CupMenuProps) {
     const [isRankingHelpOpen, setIsRankingHelpOpen] = useState(false);
     const [isYesterdayRanking, setIsYesterdayRanking] = useState(false);
     const [result, setResult] = useState(0);
-    const { rankingToday, rankingYesterday, handleRemainingToday } = useGame();
+    const { rankingToday, rankingYesterday, handleRemainingToday, myRanking, winToday, playerInfo } = useGame();
     const [time, setTime] = useState("");
     useEffect(() => {
         const load = async () => {
@@ -241,12 +241,13 @@ export default function CupMenu({ onCloseCup }: CupMenuProps) {
                     </div>
                 </div>
                 <div className="absolute flex items-center top-[480px] left-1/2 -translate-x-1/2 w-[346px] h-[48px] bg-gradient-to-br bg-[#fcbd5f] rounded-[9px]">
-                    <div className="absolute h-[48px] w-[48px] bg-[#ffaa2c] rounded-l-[9px]">
-                        <span className="absolute text-[#FDF4C1]  font-bold text-[16px] top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2">99+</span>
+                    <div className="h-[48px] w-[48px] bg-[#ffaa2c] rounded-l-[9px]">
+                        <span className="absolute text-[#FDF4C1]  font-bold text-[16px] top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 [text-shadow:1px_0_0_brown,-1px_0_0_brown,0_1px_0_brown,0_-1px_0_brown]">{myRanking?.data.ranking_position}</span>
                     </div>
-                    <span className="absolute text-[#A45721] font-bold left-[48px]">Sumiya BD</span>
-                    {/* <img src="" alt="" /> */}
-                    <span></span>
+                    <img src={resolveAssetUrl(playerInfo?.avater ?? "")} alt="avatar" className="absolute left-[50px]  h-[45px] w-[45px] rounded-full" />
+                    <span className="absolute text-[#A45721] font-bold left-[100px]">{playerInfo?.username}</span>
+                    <img src={getAssetUrl(GAME_ASSETS.diamond)} alt="diamond" className="absolute left-[220px] h-[40px] w-[40px]" />
+                    <span className="absolute left-[260px] text-[#fde4c7] font-bold  h-[40px] w-[80px] content-center">{winToday?.win}</span>
                 </div>
                 {/* <div className="scrollbar-hidden absolute top-[30px] h-[312px] w-[393px] overflow-y-auto overflow-x-hidden pt-[15px]">
                     {rankingToday.map((item, index) => {
