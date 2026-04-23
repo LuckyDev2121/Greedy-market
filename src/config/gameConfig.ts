@@ -46,8 +46,8 @@ export const CHANGE_MODE_API_URL= `${API_BASE_URL.replace(/\/$/, "")}/change-mod
 export const PRIZE_DISTRIBUTIONS_API_URL= `${API_BASE_URL.replace(/\/$/, "")}/prize-distributions/${GAME_ID}`;
 export const GET_GIFT_API_URL= `${API_BASE_URL.replace(/\/$/, "")}/get-gift`;
 export const REMAINING_API_URL= `${API_BASE_URL.replace(/\/$/, "")}/remaining_today`
-export const HISTORY_API_URL= `${API_BASE_URL.replace(/\/$/, "")}/gready-market-history/`
-export const MY_RANKING_API_URL= `${API_BASE_URL.replace(/\/$/, "")}/my-ranking}`
+export const HISTORY_API_URL= `${API_BASE_URL.replace(/\/$/, "")}/gready-market-history`
+export const MY_RANKING_API_URL= `${API_BASE_URL.replace(/\/$/, "")}/my-ranking`
 
 
 export const REVERB_KEY =
