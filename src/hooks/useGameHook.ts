@@ -10,6 +10,7 @@ import {
   fetchRechargeUrl,
   fetchSoundSetting,
   fetchMusicSetting,
+  fetchRankingYesterday,
   placeBet as placeBetRequest,
   makeGameResult,
   saveSoundSetting,
@@ -58,6 +59,7 @@ type GameStore = {
   isMusicEnabled: boolean;
   isMusicSettingLoading: boolean;
   rankingTodays: RankingTodayItem[];
+  rankingYesterdays:RankingTodayItem[];
   winToday: WinTodayResponse|null;
   playerLog: PlayerLogData[];
   url?:RechargeUrlResponse | null;
@@ -86,6 +88,7 @@ let store: GameStore = {
   isSoundSettingLoading: true,
   isSoundEnabled: true,
   rankingTodays: [],
+  rankingYesterdays: [],
   winToday:null,
   playerLog:[],
   url:null,
@@ -145,11 +148,12 @@ async function runRefreshGameData(options?: RefreshGameDataOptions) {
   updateStore({ isLoading: true, isMusicSettingLoading: true });
 
   try {
-    const [gameDetail, player, gameResults,  rankingToday,  winToday, playerLog, url, prizeDistribution, isSoundEnabled, isMusicEnabled, gameMode] = await Promise.all([
+    const [gameDetail, player, gameResults,  rankingToday, rankingYesterday,  winToday, playerLog, url, prizeDistribution, isSoundEnabled, isMusicEnabled, gameMode] = await Promise.all([
       fetchGameDetail(),
       fetchPlayerInfo(),
       fetchGameResults(),
       fetchRankingToday(),
+      fetchRankingYesterday(),
       fetchWinToday(),
       fetchPlayerLog(),
       fetchRechargeUrl(),
@@ -168,6 +172,7 @@ async function runRefreshGameData(options?: RefreshGameDataOptions) {
   isSoundSettingLoading: false,
   isMusicSettingLoading: false,
   rankingTodays: rankingToday,
+  rankingYesterdays: rankingYesterday,
   playerLog:playerLog,
   winToday:winToday,
   url: url,
@@ -281,10 +286,11 @@ const handlePrizeDistribution= useCallback(async () => {
 
   const handleMakeResult = useCallback(async (roundId: number) => {
     const data = await makeGameResult(roundId);
-    const [player, gameResults, ranking, playerLog, winToday] = await Promise.all([
+    const [player, gameResults, rankingToday,rankingYesterday, playerLog, winToday] = await Promise.all([
       fetchPlayerInfo(),
       fetchGameResults(),
       fetchRankingToday(),
+      fetchRankingYesterday(),
       fetchPlayerLog(),
       fetchWinToday(),
     ]);
@@ -293,7 +299,8 @@ const handlePrizeDistribution= useCallback(async () => {
       makeResult: data,
       playerInfo: player,
       results: gameResults,
-      rankingTodays: ranking,
+      rankingTodays: rankingToday,
+      rankingYesterdays: rankingYesterday,
       playerLog:playerLog,
       winToday:winToday,
     });
@@ -430,6 +437,7 @@ const handleGameMode= useCallback(async () => {
     isSoundEnabled: snapshot.isSoundEnabled,
     isSoundSettingLoading: snapshot.isSoundSettingLoading,
     rankingToday: snapshot.rankingTodays,
+    rankingYesterday: snapshot.rankingYesterdays,
     rechargeUrl: snapshot.url?.url || null,
     prizeDistribution:snapshot.prizeDistribution,
     gameMode:snapshot.gameMode,

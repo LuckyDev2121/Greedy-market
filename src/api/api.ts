@@ -17,6 +17,7 @@ import {
   CHANGE_MODE_API_URL,
   PRIZE_DISTRIBUTIONS_API_URL,
   GET_GIFT_API_URL,
+  RANKING_YESTERDAY_API_URL,
 } from "../config/gameConfig";
 import { getUserId } from "../utils/user";
 
@@ -342,6 +343,14 @@ type RankingTodayResponse = {
 
 export const fetchRankingToday = async (): Promise<RankingTodayItem[]> => {
   const response = await axios.get<RankingTodayResponse>(RANKING_TODAY_API_URL);
+
+  if (!response.data.status) {
+    throw new Error(response.data.message || "Failed to load ranking today");
+  }
+  return response.data.data ?? [];
+};
+export const fetchRankingYesterday = async (): Promise<RankingTodayItem[]> => {
+  const response = await axios.get<RankingTodayResponse>(RANKING_YESTERDAY_API_URL);
 
   if (!response.data.status) {
     throw new Error(response.data.message || "Failed to load ranking today");

@@ -68,7 +68,7 @@ function ToggleRow({ isOn, onToggle }: ToggleRowProps) {
 export default function CupMenu({ onCloseCup }: CupMenuProps) {
     const [isRankingHelpOpen, setIsRankingHelpOpen] = useState(false);
     const [isYesterdayRanking, setIsYesterdayRanking] = useState(false);
-    const { rankingToday } = useGame();
+    const { rankingToday, rankingYesterday } = useGame();
     const [time, setTime] = useState("");
 
     useEffect(() => {
@@ -111,64 +111,123 @@ export default function CupMenu({ onCloseCup }: CupMenuProps) {
                         <span className=" absolute left-[200px] top-[5px] font-bold font-sans">Diamonds Play</span>
                     </div>
                     <div className="absolute top-[35px] w-[292px] h-[411px] left-1/2 -translate-x-1/2 scrollbar-hidden overflow-x-hidden overflow-y-auto">
-                        {rankingToday.map((item, index) => {
-                            return (
-                                <>
-                                    {index === 0 && (
-                                        <div className="relative w-[312px] h-[47px] mt-[5px]  ">
-                                            <div className="absolute left-[0px] h-[47px] w-[47px] bg-gradient-to-br from-[#cf9800] from-1%  via-50% via-[#FFF987] to-[#fdc21f] to-90% rounded-l-[10px]">
-                                                <img src={getAssetUrl(GAME_ASSETS.prize1)} alt="prize" className=" absolute h-[35px] w-[35px] left-1/2 top-1/2 -translate-y-1/2 -translate-x-1/2" />
+                        {isYesterdayRanking ?
+                            (rankingYesterday.map((item, index) => {
+                                return (
+                                    <>
+                                        {index === 0 && (
+                                            <div className="relative w-[312px] h-[47px] mt-[5px]  ">
+                                                <div className="absolute left-[0px] h-[47px] w-[47px] bg-gradient-to-br from-[#cf9800] from-1%  via-50% via-[#FFF987] to-[#fdc21f] to-90% rounded-l-[10px]">
+                                                    <img src={getAssetUrl(GAME_ASSETS.prize1)} alt="prize" className=" absolute h-[35px] w-[35px] left-1/2 top-1/2 -translate-y-1/2 -translate-x-1/2" />
+                                                </div>
+                                                <div className="absolute left-[47px] flex h-[47px] w-[245px] bg-gradient-to-t from-[#FBBA07]   to-[#FFF987] items-center rounded-r-[10px]">
+                                                    <img src={resolveAssetUrl(item.player?.avater ?? "")} alt="avatar" className="h-[45px] w-[45px]" />
+                                                    <span className="absolute left-[50px] text-[#fde4c7] font-bold  h-[40px] w-[80px] content-center">{item.player?.username}</span>
+                                                    <img src={getAssetUrl(GAME_ASSETS.diamond)} alt="diamond" className="absolute left-[130px] h-[40px] w-[40px]" />
+                                                    <span className="absolute left-[160px] text-[#fde4c7] font-bold  h-[40px] w-[80px] content-center">{item.total_win}</span>
+                                                </div>
                                             </div>
-                                            <div className="absolute left-[47px] flex h-[47px] w-[245px] bg-gradient-to-t from-[#FBBA07]   to-[#FFF987] items-center rounded-r-[10px]">
-                                                <img src={resolveAssetUrl(item.player?.avater ?? "")} alt="avatar" className="h-[45px] w-[45px]" />
-                                                <span className="absolute left-[50px] text-[#fde4c7] font-bold  h-[40px] w-[80px] content-center">{item.player?.username}</span>
-                                                <img src={getAssetUrl(GAME_ASSETS.diamond)} alt="diamond" className="absolute left-[130px] h-[40px] w-[40px]" />
-                                                <span className="absolute left-[160px] text-[#fde4c7] font-bold  h-[40px] w-[80px] content-center">{item.total_win}</span>
+                                        )}
+                                        {index === 1 && (
+                                            <div className="relative w-[292px] h-[47px] mt-[5px] flex">
+                                                <div className="relative h-[47px] w-[47px] bg-gradient-to-br from-[#44aedf] from-1%  via-50% via-[#b8d6f8] to-[#72ccf7] to-90% rounded-l-[10px]">
+                                                    <img src={getAssetUrl(GAME_ASSETS.prize2)} alt="prize" className="absolute h-[35px] w-[35px] left-1/2 top-1/2 -translate-y-1/2 -translate-x-1/2 " />
+                                                </div>
+                                                <div className="relative flex h-[47px] w-[245px] bg-gradient-to-t from-[#7fd5fd]   to-[#b8d6f8] items-center rounded-r-[10px]">
+                                                    <img src={resolveAssetUrl(item.player?.avater ?? "")} alt="avatar" />
+                                                    <span className="absolute left-[50px] text-[#fde4c7] font-bold  h-[40px] w-[80px] content-center">{item.player?.username}</span>
+                                                    <img src={getAssetUrl(GAME_ASSETS.diamond)} alt="diamond" className="absolute left-[130px] h-[40px] w-[40px]" />
+                                                    <span className="absolute left-[160px] text-[#fde4c7] font-bold  h-[40px] w-[80px] content-center">{item.total_win}</span>
+                                                </div>
                                             </div>
-                                        </div>
-                                    )}
-                                    {index === 1 && (
-                                        <div className="relative w-[292px] h-[47px] mt-[5px] flex">
-                                            <div className="relative h-[47px] w-[47px] bg-gradient-to-br from-[#44aedf] from-1%  via-50% via-[#b8d6f8] to-[#72ccf7] to-90% rounded-l-[10px]">
-                                                <img src={getAssetUrl(GAME_ASSETS.prize2)} alt="prize" className="absolute h-[35px] w-[35px] left-1/2 top-1/2 -translate-y-1/2 -translate-x-1/2 " />
+                                        )}
+                                        {index === 2 && (
+                                            <div className="relative w-[292px] h-[47px] mt-[5px] flex">
+                                                <div className="relative h-[47px] w-[47px] bg-gradient-to-br from-[#d47e37] from-1%  via-50% via-[#fec79a] to-[#eea162] to-90% rounded-l-[10px]">
+                                                    <img src={getAssetUrl(GAME_ASSETS.prize3)} alt="prize2" className="absolute h-[35px] w-[35px] left-1/2 top-1/2 -translate-y-1/2 -translate-x-1/2" />
+                                                </div>
+                                                <div className="relative flex h-[47px] w-[245px] bg-gradient-to-t from-[#f1a362]   to-[#fec79a] items-center rounded-r-[10px]">
+                                                    <img src={resolveAssetUrl(item.player?.avater ?? "")} alt="avatar" />
+                                                    <span className="absolute left-[50px] text-[#fde4c7] font-bold  h-[40px] w-[80px] content-center">{item.player?.username}</span>
+                                                    <img src={getAssetUrl(GAME_ASSETS.diamond)} alt="diamond" className="absolute left-[130px] h-[40px] w-[40px]" />
+                                                    <span className="absolute left-[160px] text-[#fde4c7] font-bold  h-[40px] w-[80px] content-center">{item.total_win}</span>
+                                                </div>
                                             </div>
-                                            <div className="relative flex h-[47px] w-[245px] bg-gradient-to-t from-[#7fd5fd]   to-[#b8d6f8] items-center rounded-r-[10px]">
-                                                <img src={resolveAssetUrl(item.player?.avater ?? "")} alt="avatar" />
-                                                <span className="absolute left-[50px] text-[#fde4c7] font-bold  h-[40px] w-[80px] content-center">{item.player?.username}</span>
-                                                <img src={getAssetUrl(GAME_ASSETS.diamond)} alt="diamond" className="absolute left-[130px] h-[40px] w-[40px]" />
-                                                <span className="absolute left-[160px] text-[#fde4c7] font-bold  h-[40px] w-[80px] content-center">{item.total_win}</span>
+                                        )}
+                                        {index > 2 && (
+                                            <div className="relative w-[292px] h-[47px] mt-[5px] flex">
+                                                <div className="relative content-center pl-[20px] h-[47px] w-[47px] text-[#ffcf68] text-[20px] bg-[#ffe2ad] [text-shadow:1px_0_0_brown,-1px_0_0_brown,0_1px_0_brown,0_-1px_0_brown] rounded-l-[10px]">
+                                                    {index}
+                                                </div>
+                                                <div className="relative flex h-[47px] w-[245px] bg-gradient-to-t from-[#d6b579]   to-[#fffae6] items-center rounded-r-[10px]">
+                                                    <img src={resolveAssetUrl(item.player?.avater ?? "")} alt="avatar" />
+                                                    <span className="absolute left-[50px] text-[#fde4c7] font-bold  h-[40px] w-[80px] content-center">{item.player?.username}</span>
+                                                    <img src={getAssetUrl(GAME_ASSETS.diamond)} alt="diamond" className="absolute left-[130px] h-[40px] w-[40px]" />
+                                                    <span className="absolute left-[160px] text-[#fde4c7] font-bold  h-[40px] w-[80px] content-center">{item.total_win}</span>
+                                                </div>
                                             </div>
-                                        </div>
-                                    )}
-                                    {index === 2 && (
-                                        <div className="relative w-[292px] h-[47px] mt-[5px] flex">
-                                            <div className="relative h-[47px] w-[47px] bg-gradient-to-br from-[#d47e37] from-1%  via-50% via-[#fec79a] to-[#eea162] to-90% rounded-l-[10px]">
-                                                <img src={getAssetUrl(GAME_ASSETS.prize3)} alt="prize2" className="absolute h-[35px] w-[35px] left-1/2 top-1/2 -translate-y-1/2 -translate-x-1/2" />
+                                        )}
+                                    </>
+                                );
+                            }))
+                            : (rankingToday.map((item, index) => {
+                                return (
+                                    <>
+                                        {index === 0 && (
+                                            <div className="relative w-[312px] h-[47px] mt-[5px]  ">
+                                                <div className="absolute left-[0px] h-[47px] w-[47px] bg-gradient-to-br from-[#cf9800] from-1%  via-50% via-[#FFF987] to-[#fdc21f] to-90% rounded-l-[10px]">
+                                                    <img src={getAssetUrl(GAME_ASSETS.prize1)} alt="prize" className=" absolute h-[35px] w-[35px] left-1/2 top-1/2 -translate-y-1/2 -translate-x-1/2" />
+                                                </div>
+                                                <div className="absolute left-[47px] flex h-[47px] w-[245px] bg-gradient-to-t from-[#FBBA07]   to-[#FFF987] items-center rounded-r-[10px]">
+                                                    <img src={resolveAssetUrl(item.player?.avater ?? "")} alt="avatar" className="h-[45px] w-[45px]" />
+                                                    <span className="absolute left-[50px] text-[#fde4c7] font-bold  h-[40px] w-[80px] content-center">{item.player?.username}</span>
+                                                    <img src={getAssetUrl(GAME_ASSETS.diamond)} alt="diamond" className="absolute left-[130px] h-[40px] w-[40px]" />
+                                                    <span className="absolute left-[160px] text-[#fde4c7] font-bold  h-[40px] w-[80px] content-center">{item.total_win}</span>
+                                                </div>
                                             </div>
-                                            <div className="relative flex h-[47px] w-[245px] bg-gradient-to-t from-[#f1a362]   to-[#fec79a] items-center rounded-r-[10px]">
-                                                <img src={resolveAssetUrl(item.player?.avater ?? "")} alt="avatar" />
-                                                <span className="absolute left-[50px] text-[#fde4c7] font-bold  h-[40px] w-[80px] content-center">{item.player?.username}</span>
-                                                <img src={getAssetUrl(GAME_ASSETS.diamond)} alt="diamond" className="absolute left-[130px] h-[40px] w-[40px]" />
-                                                <span className="absolute left-[160px] text-[#fde4c7] font-bold  h-[40px] w-[80px] content-center">{item.total_win}</span>
+                                        )}
+                                        {index === 1 && (
+                                            <div className="relative w-[292px] h-[47px] mt-[5px] flex">
+                                                <div className="relative h-[47px] w-[47px] bg-gradient-to-br from-[#44aedf] from-1%  via-50% via-[#b8d6f8] to-[#72ccf7] to-90% rounded-l-[10px]">
+                                                    <img src={getAssetUrl(GAME_ASSETS.prize2)} alt="prize" className="absolute h-[35px] w-[35px] left-1/2 top-1/2 -translate-y-1/2 -translate-x-1/2 " />
+                                                </div>
+                                                <div className="relative flex h-[47px] w-[245px] bg-gradient-to-t from-[#7fd5fd]   to-[#b8d6f8] items-center rounded-r-[10px]">
+                                                    <img src={resolveAssetUrl(item.player?.avater ?? "")} alt="avatar" />
+                                                    <span className="absolute left-[50px] text-[#fde4c7] font-bold  h-[40px] w-[80px] content-center">{item.player?.username}</span>
+                                                    <img src={getAssetUrl(GAME_ASSETS.diamond)} alt="diamond" className="absolute left-[130px] h-[40px] w-[40px]" />
+                                                    <span className="absolute left-[160px] text-[#fde4c7] font-bold  h-[40px] w-[80px] content-center">{item.total_win}</span>
+                                                </div>
                                             </div>
-                                        </div>
-                                    )}
-                                    {index > 2 && (
-                                        <div className="relative w-[292px] h-[47px] mt-[5px] flex">
-                                            <div className="relative content-center pl-[20px] h-[47px] w-[47px] text-[#ffcf68] text-[20px] bg-[#ffe2ad] [text-shadow:1px_0_0_brown,-1px_0_0_brown,0_1px_0_brown,0_-1px_0_brown] rounded-l-[10px]">
-                                                {index}
+                                        )}
+                                        {index === 2 && (
+                                            <div className="relative w-[292px] h-[47px] mt-[5px] flex">
+                                                <div className="relative h-[47px] w-[47px] bg-gradient-to-br from-[#d47e37] from-1%  via-50% via-[#fec79a] to-[#eea162] to-90% rounded-l-[10px]">
+                                                    <img src={getAssetUrl(GAME_ASSETS.prize3)} alt="prize2" className="absolute h-[35px] w-[35px] left-1/2 top-1/2 -translate-y-1/2 -translate-x-1/2" />
+                                                </div>
+                                                <div className="relative flex h-[47px] w-[245px] bg-gradient-to-t from-[#f1a362]   to-[#fec79a] items-center rounded-r-[10px]">
+                                                    <img src={resolveAssetUrl(item.player?.avater ?? "")} alt="avatar" />
+                                                    <span className="absolute left-[50px] text-[#fde4c7] font-bold  h-[40px] w-[80px] content-center">{item.player?.username}</span>
+                                                    <img src={getAssetUrl(GAME_ASSETS.diamond)} alt="diamond" className="absolute left-[130px] h-[40px] w-[40px]" />
+                                                    <span className="absolute left-[160px] text-[#fde4c7] font-bold  h-[40px] w-[80px] content-center">{item.total_win}</span>
+                                                </div>
                                             </div>
-                                            <div className="relative flex h-[47px] w-[245px] bg-gradient-to-t from-[#d6b579]   to-[#fffae6] items-center rounded-r-[10px]">
-                                                <img src={resolveAssetUrl(item.player?.avater ?? "")} alt="avatar" />
-                                                <span className="absolute left-[50px] text-[#fde4c7] font-bold  h-[40px] w-[80px] content-center">{item.player?.username}</span>
-                                                <img src={getAssetUrl(GAME_ASSETS.diamond)} alt="diamond" className="absolute left-[130px] h-[40px] w-[40px]" />
-                                                <span className="absolute left-[160px] text-[#fde4c7] font-bold  h-[40px] w-[80px] content-center">{item.total_win}</span>
+                                        )}
+                                        {index > 2 && (
+                                            <div className="relative w-[292px] h-[47px] mt-[5px] flex">
+                                                <div className="relative content-center pl-[20px] h-[47px] w-[47px] text-[#ffcf68] text-[20px] bg-[#ffe2ad] [text-shadow:1px_0_0_brown,-1px_0_0_brown,0_1px_0_brown,0_-1px_0_brown] rounded-l-[10px]">
+                                                    {index}
+                                                </div>
+                                                <div className="relative flex h-[47px] w-[245px] bg-gradient-to-t from-[#d6b579]   to-[#fffae6] items-center rounded-r-[10px]">
+                                                    <img src={resolveAssetUrl(item.player?.avater ?? "")} alt="avatar" />
+                                                    <span className="absolute left-[50px] text-[#fde4c7] font-bold  h-[40px] w-[80px] content-center">{item.player?.username}</span>
+                                                    <img src={getAssetUrl(GAME_ASSETS.diamond)} alt="diamond" className="absolute left-[130px] h-[40px] w-[40px]" />
+                                                    <span className="absolute left-[160px] text-[#fde4c7] font-bold  h-[40px] w-[80px] content-center">{item.total_win}</span>
+                                                </div>
                                             </div>
-                                        </div>
-                                    )}
-                                </>
-                            );
-                        })}
+                                        )}
+                                    </>
+                                );
+                            }))}
                     </div>
                 </div>
                 <div className="absolute flex items-center top-[480px] left-1/2 -translate-x-1/2 w-[346px] h-[48px] bg-gradient-to-br bg-[#fcbd5f] rounded-[9px]">
