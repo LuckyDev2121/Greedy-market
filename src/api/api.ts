@@ -18,6 +18,7 @@ import {
   PRIZE_DISTRIBUTIONS_API_URL,
   GET_GIFT_API_URL,
   RANKING_YESTERDAY_API_URL,
+  REMAINING_API_URL,
 } from "../config/gameConfig";
 import { getUserId } from "../utils/user";
 
@@ -475,3 +476,22 @@ export const fetchGetGift=async (giftId:number): Promise<getGift> => {
 
   return response.data;
 };
+type RemainingTodayData={
+  server_time:string;
+  end_time:string;
+  remaining_seconds:number;
+}
+type RemainingToday={
+  status: boolean;
+  data:RemainingTodayData;
+  message:string;
+}
+export const fetchRemainingToday =async()=>{
+  const response = await axios.get<RemainingToday>(REMAINING_API_URL);
+
+  if (!response.data.status) {
+    throw new Error(response.data.message || "API returned false status");
+  }
+
+  return response.data;
+}

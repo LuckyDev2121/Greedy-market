@@ -45,7 +45,7 @@ export const CURRENT_MODE_API_URL= `${API_BASE_URL.replace(/\/$/, "")}/current-m
 export const CHANGE_MODE_API_URL= `${API_BASE_URL.replace(/\/$/, "")}/change-mode`;
 export const PRIZE_DISTRIBUTIONS_API_URL= `${API_BASE_URL.replace(/\/$/, "")}/prize-distributions/${GAME_ID}`;
 export const GET_GIFT_API_URL= `${API_BASE_URL.replace(/\/$/, "")}/get-gift`;
-
+export const REMAINING_API_URL= `${API_BASE_URL.replace(/\/$/, "")}/remaining_today`
 
 
 export const REVERB_KEY =

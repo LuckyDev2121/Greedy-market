@@ -198,6 +198,15 @@ export default function PlayBoard({
             setFlyingBets((prev) => prev.filter((item) => item.id !== animationId));
         }, 220);
     };
+    useEffect(() => {
+        const matched = betAmounts.find((element) =>
+            isAdvanced ? element.mode === "advance" : element.mode === "basic"
+        );
+
+        if (!matched) return;
+
+        setCurrentBetAmount(Number.parseInt(matched.amount, 10));
+    }, [isAdvanced,]);
 
     useEffect(() => {
         queuedBetsRef.current = queuedBets;

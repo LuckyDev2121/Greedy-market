@@ -20,6 +20,7 @@ import {
   changeMode,
   fetchPrizeDistribution,
   fetchGetGift,
+  fetchRemainingToday,
   type PrizeDistributionProps,
   type PlayerLogData,
   type WinTodayResponse,
@@ -382,7 +383,10 @@ const handleGameMode= useCallback(async () => {
      });
     return data;
   }, []);
-
+const handleRemainingToday= useCallback(async () => {
+    const data = await fetchRemainingToday();
+    return data;
+  }, []);
   const clearCurrentRoundBets = useCallback(() => {
     updateStore({ currentRoundBets: {} });
   }, []);
@@ -460,5 +464,6 @@ const handleGameMode= useCallback(async () => {
     handlePrizeDistribution,
     handleGameMode,
     handleGetGift,
+    handleRemainingToday,
   };
 }

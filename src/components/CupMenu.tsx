@@ -68,16 +68,26 @@ function ToggleRow({ isOn, onToggle }: ToggleRowProps) {
 export default function CupMenu({ onCloseCup }: CupMenuProps) {
     const [isRankingHelpOpen, setIsRankingHelpOpen] = useState(false);
     const [isYesterdayRanking, setIsYesterdayRanking] = useState(false);
-    const { rankingToday, rankingYesterday } = useGame();
+    const [result, setResult] = useState(0);
+    const { rankingToday, rankingYesterday, handleRemainingToday } = useGame();
     const [time, setTime] = useState("");
+    useEffect(() => {
+        const load = async () => {
+            const data = await handleRemainingToday();
+            const now = new Date();
+            const res = new Date(data.data.server_time).getTime() - now.getTime()
+            setResult(res);
+        };
+        void load();
+    }, []);
 
     useEffect(() => {
         const updateTime = () => {
             const now = new Date();
-
-            const hours = String(now.getHours()).padStart(2, "0");
-            const minutes = String(now.getMinutes()).padStart(2, "0");
-            const seconds = String(now.getSeconds()).padStart(2, "0");
+            const res = new Date(now.getTime() + result);
+            const hours = String(res.getHours()).padStart(2, "0");
+            const minutes = String(res.getMinutes()).padStart(2, "0");
+            const seconds = String(res.getSeconds()).padStart(2, "0");
 
             setTime(`${hours}:${minutes}:${seconds}`);
         };

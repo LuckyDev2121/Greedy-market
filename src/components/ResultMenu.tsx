@@ -146,7 +146,7 @@ export default function ResultMenu({ start, onResultTimeUp }: ResultMenuProps) {
                             <img src={getAssetUrl(GAME_ASSETS.prize1)} alt="prize" className=" absolute h-[35px] w-[35px] left-1/2 top-1/2 -translate-y-1/2 -translate-x-1/2" />
                         </div>
                         <div className="absolute left-[47px] flex h-[47px] w-[245px] items-center rounded-r-[10px]">
-                            <img src={resolveAssetUrl(activeResult?.winners?.[0]?.avater ?? "")} alt="avatar" className="absolute  left-[0px] h-[40px] w-[40px]" />
+                            <img src={resolveAssetUrl(activeResult?.winners?.[0]?.avater ?? "")} alt="avatar" className="absolute  left-[0px] h-[40px] w-[40px] rounded-full" />
                             <span className="absolute left-[50px] text-[#fde4c7] font-bold  h-[40px] w-[80px] content-center">{activeResult?.winners?.[0]?.username}</span>
                             <img src={getAssetUrl(GAME_ASSETS.diamond)} alt="diamond" className="absolute left-[130px] h-[40px] w-[40px]" />
                             <span className="absolute left-[160px] text-[#fde4c7] font-bold  h-[40px] w-[80px] content-center">{activeResult?.winners?.[0]?.win_amount ? formatDiamondAmount(activeResult?.winners?.[0]?.win_amount) : "0"}</span>
@@ -159,9 +159,9 @@ export default function ResultMenu({ start, onResultTimeUp }: ResultMenuProps) {
                             <img src={getAssetUrl(GAME_ASSETS.prize2)} alt="prize" className="absolute h-[35px] w-[35px] left-1/2 top-1/2 -translate-y-1/2 -translate-x-1/2 " />
                         </div>
                         <div className="relative flex h-[47px] w-[245px]  items-center rounded-r-[10px]">
-                            <img src={resolveAssetUrl(activeResult?.winners?.[1]?.avater ?? "")} alt="avatar" className="absolute  left-[0px] h-[40px] w-[40px]" />
+                            <img src={resolveAssetUrl(activeResult?.winners?.[1]?.avater ?? "")} alt="avatar" className="absolute  left-[0px] h-[40px] w-[40px] rounded-full" />
                             <span className="absolute left-[50px] text-[#fde4c7] font-bold  h-[40px] w-[80px] content-center">{activeResult?.winners?.[1]?.username}</span>
-                            <img src={getAssetUrl(GAME_ASSETS.diamond)} alt="diamond" className="absolute left-[130px] h-[40px] w-[40px]" />
+                            <img src={getAssetUrl(GAME_ASSETS.diamond)} alt="diamond" className="absolute left-[130px] h-[40px] w-[40px] " />
                             <span className="absolute left-[160px] text-[#fde4c7] font-bold  h-[40px] w-[80px] content-center">{activeResult?.winners?.[1]?.win_amount ? formatDiamondAmount(activeResult?.winners?.[1]?.win_amount) : "0"}</span>
                         </div>
                     </div>
@@ -172,7 +172,7 @@ export default function ResultMenu({ start, onResultTimeUp }: ResultMenuProps) {
                             <img src={getAssetUrl(GAME_ASSETS.prize3)} alt="prize2" className="absolute h-[35px] w-[35px] left-1/2 top-1/2 -translate-y-1/2 -translate-x-1/2" />
                         </div>
                         <div className="relative flex h-[47px] w-[245px]  items-center rounded-r-[10px]">
-                            <img src={resolveAssetUrl(activeResult?.winners?.[2]?.avater ?? "")} alt="avatar" className="absolute  left-[0px] h-[40px] w-[40px]" />
+                            <img src={resolveAssetUrl(activeResult?.winners?.[2]?.avater ?? "")} alt="avatar" className="absolute  left-[0px] h-[40px] w-[40px] rounded-full" />
                             <span className="absolute left-[50px] text-[#fde4c7] font-bold  h-[40px] w-[80px] content-center">{activeResult?.winners?.[2]?.username}</span>
                             <img src={getAssetUrl(GAME_ASSETS.diamond)} alt="diamond" className="absolute left-[130px] h-[40px] w-[40px]" />
                             <span className="absolute left-[160px] text-[#fde4c7] font-bold  h-[40px] w-[80px] content-center">{activeResult?.winners?.[2]?.win_amount ? formatDiamondAmount(activeResult?.winners?.[2]?.win_amount) : "0"}</span>
