@@ -166,13 +166,11 @@ function App() {
   }, [applyRoundState, createRound, isRoundStartable]);
 
   useEffect(() => {
-    console.log("roundRunning:", isRoundRunning)
     if (isBootLoading || isRoundRunning) {
       return;
     }
 
     const timer = window.setInterval(() => {
-      console.log("stemp");
       void attemptStartRound();
     }, 1000);
 

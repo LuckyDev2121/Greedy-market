@@ -24,6 +24,10 @@ import {
 } from "../config/gameConfig";
 import { getUserId } from "../utils/user";
 
+function isNoRecordsResponse(status?: boolean, message?: string): boolean {
+  return status === false && /no records found/i.test(message ?? "");
+}
+
 type GameOption = {
   id: number;
   name: string;
@@ -64,7 +68,7 @@ type GameDetails = {
 
 export const fetchGameDetail = async (): Promise<GameDetailsData> => {
   const response = await axios.get<GameDetails>(GAME_DETAILS_API_URL);
-  console.log("game Details", response)
+
   if (!response.data.status) {
     throw new Error(response.data.message || "API returned false status");
   }
@@ -110,6 +114,14 @@ export type GameResults = {
 
 export const fetchGameResults = async (): Promise<GameResults> => {
   const response = await axios.get<GameResults>(GAME_RESULTS_API_URL);
+
+  if (isNoRecordsResponse(response.data.status, response.data.message)) {
+    return {
+      status: true,
+      data: [],
+      message: response.data.message,
+    };
+  }
 
   if (!response.data.status) {
     throw new Error(response.data.message || "API returned false status");
@@ -347,6 +359,10 @@ type RankingTodayResponse = {
 export const fetchRankingToday = async (): Promise<RankingTodayItem[]> => {
   const response = await axios.get<RankingTodayResponse>(RANKING_TODAY_API_URL);
 
+  if (isNoRecordsResponse(response.data.status, response.data.message)) {
+    return [];
+  }
+
   if (!response.data.status) {
     throw new Error(response.data.message || "Failed to load ranking today");
   }
@@ -354,6 +370,10 @@ export const fetchRankingToday = async (): Promise<RankingTodayItem[]> => {
 };
 export const fetchRankingYesterday = async (): Promise<RankingTodayItem[]> => {
   const response = await axios.get<RankingTodayResponse>(RANKING_YESTERDAY_API_URL);
+
+  if (isNoRecordsResponse(response.data.status, response.data.message)) {
+    return [];
+  }
 
   if (!response.data.status) {
     throw new Error(response.data.message || "Failed to load ranking today");
@@ -365,12 +385,21 @@ export type WinTodayResponse={
   status?:boolean;
   user_id?:number;
   win?:number;
+  message?: string;
 }
 export const fetchWinToday= async (): Promise<WinTodayResponse> => {
   const response = await axios.get<WinTodayResponse>(`${WIN_TODAY_API_URL}/${getUserId()}/${GAME_ID}`);
 
+  if (isNoRecordsResponse(response.data.status, response.data.message)) {
+    return {
+      status: true,
+      user_id: getUserId(),
+      win: 0,
+    };
+  }
+
   if (!response.data.status) {
-    throw new Error(response.data.status || "Failed to load ranking today");
+    throw new Error(response.data.message || "Failed to load win today");
   }
   return response.data;
 };
@@ -411,8 +440,12 @@ type PlayerLogResponse={
 export const fetchPlayerLog= async (): Promise<PlayerLogData[]> => {
   const response = await axios.get<PlayerLogResponse>(`${PLAYER_LOG_API_URL}/${getUserId()}`);
 
+  if (isNoRecordsResponse(response.data.status, response.data.message)) {
+    return [];
+  }
+
   if (!response.data.status) {
-    throw new Error(response.data.status || "Failed to load ranking today");
+    throw new Error(response.data.message || "Failed to load player log");
   }
   return response.data.data ?? [];
 };
@@ -565,13 +598,22 @@ function normalizeWinningOptionIds(value?: string | string[]): number[] {
 export const fetchHistoryBasic =async()=>{
   const response = await axios.get<RawHistory>(`${HISTORY_API_URL}/${getUserId()}/basic`);
 
+  if (isNoRecordsResponse(response.data.status, response.data.message)) {
+    return {
+      status: true,
+      count: 0,
+      data: [],
+      message: response.data.message,
+    };
+  }
+
   if (!response.data.status) {
     throw new Error(response.data.message || "API returned false status");
   }
 
   return {
     ...response.data,
-    data: response.data.data.map((item) => ({
+    data: (response.data.data ?? []).map((item) => ({
       ...item,
       winning_option_id: normalizeWinningOptionIds(item.winning_option_id),
     })),
@@ -581,13 +623,22 @@ export const fetchHistoryBasic =async()=>{
 export const fetchHistoryAdvance =async()=>{
   const response = await axios.get<RawHistory>(`${HISTORY_API_URL}/${getUserId()}/advance`);
 
+  if (isNoRecordsResponse(response.data.status, response.data.message)) {
+    return {
+      status: true,
+      count: 0,
+      data: [],
+      message: response.data.message,
+    };
+  }
+
   if (!response.data.status) {
     throw new Error(response.data.message || "API returned false status");
   }
 
   return {
     ...response.data,
-    data: response.data.data.map((item) => ({
+    data: (response.data.data ?? []).map((item) => ({
       ...item,
       winning_option_id: normalizeWinningOptionIds(item.winning_option_id),
     })),
@@ -604,6 +655,17 @@ export type MyRanking={
 }
 export const fetchMyRanking =async()=>{
   const response = await axios.get<MyRanking>(`${MY_RANKING_API_URL}/${getUserId()}/${GAME_ID}`);
+
+  if (isNoRecordsResponse(response.data.status, response.data.message)) {
+    return {
+      status: true,
+      data: {
+        ranking_position: 0,
+        total_players: 0,
+      },
+      message: response.data.message,
+    };
+  }
 
   if (!response.data.status) {
     throw new Error(response.data.message || "API returned false status");
