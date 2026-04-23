@@ -134,7 +134,7 @@ export default function CupMenu({ onCloseCup }: CupMenuProps) {
                                                     <img src={getAssetUrl(GAME_ASSETS.prize2)} alt="prize" className="absolute h-[35px] w-[35px] left-1/2 top-1/2 -translate-y-1/2 -translate-x-1/2 " />
                                                 </div>
                                                 <div className="relative flex h-[47px] w-[245px] bg-gradient-to-t from-[#7fd5fd]   to-[#b8d6f8] items-center rounded-r-[10px]">
-                                                    <img src={resolveAssetUrl(item.player?.avater ?? "")} alt="avatar" />
+                                                    <img src={resolveAssetUrl(item.player?.avater ?? "")} alt="avatar" className="h-[45px] w-[45px]" />
                                                     <span className="absolute left-[50px] text-[#fde4c7] font-bold  h-[40px] w-[80px] content-center">{item.player?.username}</span>
                                                     <img src={getAssetUrl(GAME_ASSETS.diamond)} alt="diamond" className="absolute left-[130px] h-[40px] w-[40px]" />
                                                     <span className="absolute left-[160px] text-[#fde4c7] font-bold  h-[40px] w-[80px] content-center">{item.total_win}</span>
@@ -147,7 +147,7 @@ export default function CupMenu({ onCloseCup }: CupMenuProps) {
                                                     <img src={getAssetUrl(GAME_ASSETS.prize3)} alt="prize2" className="absolute h-[35px] w-[35px] left-1/2 top-1/2 -translate-y-1/2 -translate-x-1/2" />
                                                 </div>
                                                 <div className="relative flex h-[47px] w-[245px] bg-gradient-to-t from-[#f1a362]   to-[#fec79a] items-center rounded-r-[10px]">
-                                                    <img src={resolveAssetUrl(item.player?.avater ?? "")} alt="avatar" />
+                                                    <img src={resolveAssetUrl(item.player?.avater ?? "")} alt="avatar" className="h-[45px] w-[45px]" />
                                                     <span className="absolute left-[50px] text-[#fde4c7] font-bold  h-[40px] w-[80px] content-center">{item.player?.username}</span>
                                                     <img src={getAssetUrl(GAME_ASSETS.diamond)} alt="diamond" className="absolute left-[130px] h-[40px] w-[40px]" />
                                                     <span className="absolute left-[160px] text-[#fde4c7] font-bold  h-[40px] w-[80px] content-center">{item.total_win}</span>
@@ -160,7 +160,7 @@ export default function CupMenu({ onCloseCup }: CupMenuProps) {
                                                     {index}
                                                 </div>
                                                 <div className="relative flex h-[47px] w-[245px] bg-gradient-to-t from-[#d6b579]   to-[#fffae6] items-center rounded-r-[10px]">
-                                                    <img src={resolveAssetUrl(item.player?.avater ?? "")} alt="avatar" />
+                                                    <img src={resolveAssetUrl(item.player?.avater ?? "")} alt="avatar" className="h-[45px] w-[45px]" />
                                                     <span className="absolute left-[50px] text-[#fde4c7] font-bold  h-[40px] w-[80px] content-center">{item.player?.username}</span>
                                                     <img src={getAssetUrl(GAME_ASSETS.diamond)} alt="diamond" className="absolute left-[130px] h-[40px] w-[40px]" />
                                                     <span className="absolute left-[160px] text-[#fde4c7] font-bold  h-[40px] w-[80px] content-center">{item.total_win}</span>
@@ -192,7 +192,7 @@ export default function CupMenu({ onCloseCup }: CupMenuProps) {
                                                     <img src={getAssetUrl(GAME_ASSETS.prize2)} alt="prize" className="absolute h-[35px] w-[35px] left-1/2 top-1/2 -translate-y-1/2 -translate-x-1/2 " />
                                                 </div>
                                                 <div className="relative flex h-[47px] w-[245px] bg-gradient-to-t from-[#7fd5fd]   to-[#b8d6f8] items-center rounded-r-[10px]">
-                                                    <img src={resolveAssetUrl(item.player?.avater ?? "")} alt="avatar" />
+                                                    <img src={resolveAssetUrl(item.player?.avater ?? "")} alt="avatar" className="h-[45px] w-[45px]" />
                                                     <span className="absolute left-[50px] text-[#fde4c7] font-bold  h-[40px] w-[80px] content-center">{item.player?.username}</span>
                                                     <img src={getAssetUrl(GAME_ASSETS.diamond)} alt="diamond" className="absolute left-[130px] h-[40px] w-[40px]" />
                                                     <span className="absolute left-[160px] text-[#fde4c7] font-bold  h-[40px] w-[80px] content-center">{item.total_win}</span>
@@ -205,7 +205,7 @@ export default function CupMenu({ onCloseCup }: CupMenuProps) {
                                                     <img src={getAssetUrl(GAME_ASSETS.prize3)} alt="prize2" className="absolute h-[35px] w-[35px] left-1/2 top-1/2 -translate-y-1/2 -translate-x-1/2" />
                                                 </div>
                                                 <div className="relative flex h-[47px] w-[245px] bg-gradient-to-t from-[#f1a362]   to-[#fec79a] items-center rounded-r-[10px]">
-                                                    <img src={resolveAssetUrl(item.player?.avater ?? "")} alt="avatar" />
+                                                    <img src={resolveAssetUrl(item.player?.avater ?? "")} alt="avatar" className="h-[45px] w-[45px]" />
                                                     <span className="absolute left-[50px] text-[#fde4c7] font-bold  h-[40px] w-[80px] content-center">{item.player?.username}</span>
                                                     <img src={getAssetUrl(GAME_ASSETS.diamond)} alt="diamond" className="absolute left-[130px] h-[40px] w-[40px]" />
                                                     <span className="absolute left-[160px] text-[#fde4c7] font-bold  h-[40px] w-[80px] content-center">{item.total_win}</span>
@@ -218,7 +218,7 @@ export default function CupMenu({ onCloseCup }: CupMenuProps) {
                                                     {index}
                                                 </div>
                                                 <div className="relative flex h-[47px] w-[245px] bg-gradient-to-t from-[#d6b579]   to-[#fffae6] items-center rounded-r-[10px]">
-                                                    <img src={resolveAssetUrl(item.player?.avater ?? "")} alt="avatar" />
+                                                    <img src={resolveAssetUrl(item.player?.avater ?? "")} alt="avatar" className="h-[45px] w-[45px]" />
                                                     <span className="absolute left-[50px] text-[#fde4c7] font-bold  h-[40px] w-[80px] content-center">{item.player?.username}</span>
                                                     <img src={getAssetUrl(GAME_ASSETS.diamond)} alt="diamond" className="absolute left-[130px] h-[40px] w-[40px]" />
                                                     <span className="absolute left-[160px] text-[#fde4c7] font-bold  h-[40px] w-[80px] content-center">{item.total_win}</span>
