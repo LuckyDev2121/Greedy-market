@@ -27,6 +27,7 @@ const GameElements = ({ controlButtons, currentBetAmount, displayedBets, onBetOp
     const { options, playerInfo } = useGame();
 
     useEffect(() => {
+        console.log("details", options);
         if (!options.length) return;
         options.forEach((element) => {
             const img = new Image();
