@@ -68,7 +68,7 @@ export default function GreedyMarket({
   const [scale, setScale] = useState(1);
   const [isAdvancedMode, setIsAdvancedMode] = useState(false);
   const [remainingAmount, setRemainingAmount] = useState(0);
-  const { gameMode, handleGameMode, setGameMode } = useGame();
+  const { gameMode, handleGameMode, setGameMode, myRanking } = useGame();
   const isOverlayOpen = activeModal !== null;
   // const previousRoundTotal = Object.values(previousRoundBets).reduce((sum, amount) => sum + amount, 0);
   // const availableBalance = Number.parseFloat(displayBalance ?? "0");
@@ -177,7 +177,7 @@ export default function GreedyMarket({
                     rotate: { repeat: Infinity, duration: 5, ease: "linear" },
                   }} />
                 <img src={getAssetUrl(GAME_ASSETS.trofy)} alt="cup" className="absolute h-[50px] w-[50px] left-[11px] top-[11px]" />
-                <span className="absolute font-bold left-[25px] top-[55px] [text-shadow:1px_0_0_brown,-1px_0_0_brown,0_1px_0_brown,0_-1px_0_brown]">99+</span>
+                <span className="absolute font-bold left-[25px] top-[55px] [text-shadow:1px_0_0_brown,-1px_0_0_brown,0_1px_0_brown,0_-1px_0_brown]">{myRanking?.data.ranking_position}</span>
               </motion.button>
 
               <div className="absolute flex top-[20px] left-1/2 -translate-x-1/2">
