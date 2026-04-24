@@ -19,7 +19,7 @@ export default function CoinBoard({ onOpenModal }: CoinBoardProps) {
 
   return (
     <div className="z-[530] flex items-center" style={{ height: "26px" }}>
-      <button className="flex items-center relative" style={{ width: "107px", height: "26px" }} onClick={() => onOpenModal("recharge")}>
+      <div className="flex items-center relative" style={{ width: "107px", height: "26px" }}>
         <CoinBoardPlate className="z-10 absolute inset-0 h-full w-full" />
         <div className="relative z-20 flex w-full items-center">
           <div className=" justify-center items-center flex ">
@@ -28,13 +28,20 @@ export default function CoinBoard({ onOpenModal }: CoinBoardProps) {
           <span className="pointer-events-none absolute ml-[10px] inset-0 flex items-center justify-center font-bold">
             {displayBalance}
           </span>
-          <button className="absolute left-[85px] flex items-center justify-center size-[24px] rounded-full
+          <button
+            type="button"
+            className="absolute inset-0 z-10"
+            aria-label="Open recharge"
+            onClick={() => onOpenModal("recharge")}
+          />
+          <button className="absolute left-[85px] z-20 flex items-center justify-center size-[24px] rounded-full
 leading-none px-[5px] bg-[radial-gradient(circle_at_50%_25%,#86efac,#22c55e,#14532d)]"
+            type="button"
             onClick={() => onOpenModal("recharge")}>
             <span className="text-[20px] ">+</span>
           </button>
         </div>
-      </button>
+      </div>
     </div>
   )
 }

@@ -28,6 +28,23 @@ function isNoRecordsResponse(status?: boolean, message?: string): boolean {
   return status === false && /no records found/i.test(message ?? "");
 }
 
+function getErrorMessage(error: unknown, fallback: string): string {
+  if (axios.isAxiosError(error)) {
+    const apiMessage =
+      typeof error.response?.data?.message === "string"
+        ? error.response.data.message
+        : undefined;
+
+    return apiMessage || error.message || fallback;
+  }
+
+  if (error instanceof Error) {
+    return error.message;
+  }
+
+  return fallback;
+}
+
 type GameOption = {
   id: number;
   name: string;
@@ -92,7 +109,6 @@ type PlayerDetails = {
 
 export const fetchPlayerInfo = async (): Promise<PlayerDetailsData> => {
   const response = await axios.get<PlayerDetails>(`${PLAYER_API_URL}/${getUserId()}`);
-
   if (!response.data.status) {
     throw new Error(response.data.message || "API returned false status");
   }
@@ -596,53 +612,71 @@ function normalizeWinningOptionIds(value?: string | string[]): number[] {
 }
 
 export const fetchHistoryBasic =async()=>{
-  const response = await axios.get<RawHistory>(`${HISTORY_API_URL}/${getUserId()}/basic`);
+  try {
+    const response = await axios.get<RawHistory>(`${HISTORY_API_URL}/${getUserId()}/basic`);
 
-  if (isNoRecordsResponse(response.data.status, response.data.message)) {
+    if (isNoRecordsResponse(response.data.status, response.data.message)) {
+      return {
+        status: true,
+        count: 0,
+        data: [],
+        message: response.data.message,
+      };
+    }
+
+    if (!response.data.status) {
+      throw new Error(response.data.message || "API returned false status");
+    }
+
+    return {
+      ...response.data,
+      data: (response.data.data ?? []).map((item) => ({
+        ...item,
+        winning_option_id: normalizeWinningOptionIds(item.winning_option_id),
+      })),
+    };
+  } catch (error) {
     return {
       status: true,
       count: 0,
       data: [],
-      message: response.data.message,
+      message: getErrorMessage(error, "Failed to load basic history"),
     };
   }
-
-  if (!response.data.status) {
-    throw new Error(response.data.message || "API returned false status");
-  }
-
-  return {
-    ...response.data,
-    data: (response.data.data ?? []).map((item) => ({
-      ...item,
-      winning_option_id: normalizeWinningOptionIds(item.winning_option_id),
-    })),
-  };
 }
 
 export const fetchHistoryAdvance =async()=>{
-  const response = await axios.get<RawHistory>(`${HISTORY_API_URL}/${getUserId()}/advance`);
+  try {
+    const response = await axios.get<RawHistory>(`${HISTORY_API_URL}/${getUserId()}/advance`);
 
-  if (isNoRecordsResponse(response.data.status, response.data.message)) {
+    if (isNoRecordsResponse(response.data.status, response.data.message)) {
+      return {
+        status: true,
+        count: 0,
+        data: [],
+        message: response.data.message,
+      };
+    }
+
+    if (!response.data.status) {
+      throw new Error(response.data.message || "API returned false status");
+    }
+
+    return {
+      ...response.data,
+      data: (response.data.data ?? []).map((item) => ({
+        ...item,
+        winning_option_id: normalizeWinningOptionIds(item.winning_option_id),
+      })),
+    };
+  } catch (error) {
     return {
       status: true,
       count: 0,
       data: [],
-      message: response.data.message,
+      message: getErrorMessage(error, "Failed to load advance history"),
     };
   }
-
-  if (!response.data.status) {
-    throw new Error(response.data.message || "API returned false status");
-  }
-
-  return {
-    ...response.data,
-    data: (response.data.data ?? []).map((item) => ({
-      ...item,
-      winning_option_id: normalizeWinningOptionIds(item.winning_option_id),
-    })),
-  };
 }
 
 export type MyRanking={
