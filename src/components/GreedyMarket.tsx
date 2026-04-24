@@ -126,7 +126,7 @@ export default function GreedyMarket({
   }, []);
 
   return (
-    <div className="fixed inset-0 flex items-end justify-center overflow-hidden ">
+    <div className="fixed inset-0 flex items-center justify-center overflow-hidden ">
       <div
         className="relative"
         style={{

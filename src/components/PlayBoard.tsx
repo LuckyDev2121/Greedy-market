@@ -59,10 +59,12 @@ function getElementCenterWithinContainer(
 ): Point {
     const containerRect = container.getBoundingClientRect();
     const elementRect = element.getBoundingClientRect();
+    const scaleX = container.offsetWidth > 0 ? containerRect.width / container.offsetWidth : 1;
+    const scaleY = container.offsetHeight > 0 ? containerRect.height / container.offsetHeight : 1;
 
     return {
-        x: elementRect.left - containerRect.left + (elementRect.width / 2),
-        y: elementRect.top - containerRect.top + (elementRect.height / 2),
+        x: (elementRect.left - containerRect.left + (elementRect.width / 2)) / scaleX,
+        y: (elementRect.top - containerRect.top + (elementRect.height / 2)) / scaleY,
     };
 }
 
