@@ -243,7 +243,7 @@ export default function CupMenu({ onCloseCup }: CupMenuProps) {
                 <div className="absolute flex items-center top-[480px] left-1/2 -translate-x-1/2 w-[346px] h-[48px] bg-gradient-to-br bg-[#fcbd5f] rounded-[9px]">
                     {myRanking?.data.ranking_position && myRanking?.data.ranking_position === 1 && (
                         <div className="h-[48px] w-[48px] bg-[#ffaa2c] rounded-l-[9px]">
-                            <img src={getAssetUrl(GAME_ASSETS.prize1)} alt="prize" className=" absolute h-[45px] w-[45px] top-1/2 " />
+                            <img src={getAssetUrl(GAME_ASSETS.prize1)} alt="prize" className=" absolute h-[45px] w-[45px] top-1/2 -translate-y-1/2" />
                         </div>
                     )}
                     {myRanking?.data.ranking_position && myRanking?.data.ranking_position === 2 && (
@@ -271,43 +271,6 @@ export default function CupMenu({ onCloseCup }: CupMenuProps) {
                     <img src={getAssetUrl(GAME_ASSETS.diamond)} alt="diamond" className="absolute left-[220px] h-[40px] w-[40px]" />
                     <span className="absolute left-[260px] text-[#fde4c7] font-bold  h-[40px] w-[80px] content-center">{winToday?.win}</span>
                 </div>
-                {/* <div className="scrollbar-hidden absolute top-[30px] h-[312px] w-[393px] overflow-y-auto overflow-x-hidden pt-[15px]">
-                    {rankingToday.map((item, index) => {
-                        const rankIcon = getRankIcon(index);
-                        return (
-                            <div key={`${item.player_id}-${index}`} className="relative flex h-[40px] w-[393px]">
-                                {rankIcon ? (
-                                    <img
-                                        src={getAssetUrl(rankIcon)}
-                                        alt={`Rank ${index + 1}`}
-                                        className="absolute my-[2px] ml-[23px] mr-[15px]"
-                                    />
-                                ) : (
-                                    <span className="absolute inline-flex h-[36px] w-[36px] ml-[23px] mr-[15px] items-center justify-center">
-                                        {index + 1}
-                                    </span>
-                                )}
-                                <img
-                                    src={resolveAssetUrl(item.player?.avater ?? "")}
-                                    alt={item.player?.username ?? "Player"}
-                                    className="absolute left-[74px] h-[36px] w-[36px] rounded-full object-cover"
-                                />
-                                <div className="absolute left-[123px] flex h-[40px] w-[198px] flex-col justify-center">
-                                    <span className="my-[2px] text-[20px] leading-none">{item.player?.username ?? "***"}</span>
-                                    <span className="my-[2px] text-[10px] leading-none">ID:{item.player?.id ?? "***"}</span>
-                                </div>
-                                <div className="absolute justify-between right-[22px] flex h-[22px] w-[105px] rounded-full bg-[#39064B]/70 my-[9px]">
-                                    <div className="relative ml-[5px] mr-[3px] mt-[6px] h-[9px] w-[16px]">
-                                        <img src={getAssetUrl(GAME_ASSETS.diamondIcon)} alt="Diamond Icon" />
-                                    </div>
-                                    <span className="relative inline-flex items-center justify-center text-[12px] mr-[7px] ">
-                                        {item.total_win}
-                                    </span>
-                                </div>
-                            </div>
-                        );
-                    })}
-                </div> */}
                 {isRankingHelpOpen && (
                     <>
                         <div className="absolute inset-0 z-[60] rounded-t-[20px] bg-black/30" />
