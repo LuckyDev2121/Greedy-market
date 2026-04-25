@@ -230,12 +230,12 @@ export default function PlayBoard({
     };
 
     useEffect(() => {
-        if (gift_boxes[0].is_claimed) setBox1(true);
-        if (gift_boxes[1].is_claimed) setBox2(true);
-        if (gift_boxes[2].is_claimed) setBox3(true);
-        if (gift_boxes[3].is_claimed) setBox4(true);
-        if (gift_boxes[4].is_claimed) setBox5(true);
-    }, [])
+        setBox1(Boolean(gift_boxes[0]?.is_claimed));
+        setBox2(Boolean(gift_boxes[1]?.is_claimed));
+        setBox3(Boolean(gift_boxes[2]?.is_claimed));
+        setBox4(Boolean(gift_boxes[3]?.is_claimed));
+        setBox5(Boolean(gift_boxes[4]?.is_claimed));
+    }, [gift_boxes])
 
 
     useEffect(() => {
