@@ -172,7 +172,7 @@ export default function GreedyMarket({
                     rotate: { repeat: Infinity, duration: 5, ease: "linear" },
                   }} />
                 <img src={getAssetUrl(GAME_ASSETS.trofy)} alt="cup" className="absolute h-[50px] w-[50px] left-[11px] top-[11px]" />
-                <span className="absolute font-bold left-1/3 -translate-x-1/2 top-[55px] [text-shadow:1px_0_0_brown,-1px_0_0_brown,0_1px_0_brown,0_-1px_0_brown]">{myRanking?.data.ranking_position && myRanking?.data.ranking_position > 98 ? +99 : myRanking?.data.ranking_position}</span>
+                <span className="absolute font-bold left-1/3 -translate-x-1/2 top-[55px] [text-shadow:1px_0_0_brown,-1px_0_0_brown,0_1px_0_brown,0_-1px_0_brown]">{myRanking?.data.ranking_position && myRanking?.data.ranking_position && (myRanking?.data.ranking_position > 98 || myRanking?.data.ranking_position === 0) ? +99 : myRanking?.data.ranking_position}</span>
               </motion.button>
 
               <div key="mode-toggle" className="absolute flex top-[20px] left-1/2 -translate-x-1/2">
