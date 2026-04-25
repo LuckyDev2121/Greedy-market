@@ -34,6 +34,34 @@ function formatCreatedAt(value?: string) {
     return `${String(date.getMonth() + 1).padStart(2, "0")}/${String(date.getDate()).padStart(2, "0")}/${date.getFullYear()} ${String(date.getHours()).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}:${String(date.getSeconds()).padStart(2, "0")}`;
 }
 
+function normalizeWinningOptionIds(value: unknown): number[] {
+    if (Array.isArray(value)) {
+        return value.map(Number).filter((item) => !Number.isNaN(item));
+    }
+
+    if (typeof value !== "string") {
+        return [];
+    }
+
+    const trimmedValue = value.trim();
+    if (!trimmedValue) {
+        return [];
+    }
+
+    try {
+        const parsedValue = JSON.parse(trimmedValue);
+        if (Array.isArray(parsedValue)) {
+            return parsedValue.map(Number).filter((item) => !Number.isNaN(item));
+        }
+
+        const singleValue = Number(parsedValue);
+        return Number.isNaN(singleValue) ? [] : [singleValue];
+    } catch {
+        const singleValue = Number(trimmedValue);
+        return Number.isNaN(singleValue) ? [] : [singleValue];
+    }
+}
+
 function CloseIcon() {
     return (
         <svg width="15" height="15" viewBox="0 0 15 15" fill="none" aria-hidden="true">
@@ -74,7 +102,8 @@ export default function NoteMenu({ onCloseNote, isAdvanced }: NoteMenuProps) {
                 </button>
                 <div className="scrollbar-hidden absolute top-[30px]  left-1/2 transform -translate-x-1/2 w-[325px] h-[500px] grip overflow-x-hidden overflow-y-auto">
                     {historyData.map((item) => {
-                        const winningOption = optionById.get(item.winning_option_id[0]);
+                        const winningOptionIds = normalizeWinningOptionIds(item.winning_option_id);
+                        const winningOption = optionById.get(winningOptionIds[0]);
                         return (
                             <div key={item.round_no} className="relative mt-[5px] bg-amber-300/30 rounded-[20px] w-[325px] h-[150px] border-t-[1px] border-t-amber-600">
                                 <div className="absolute w-[325px] flex justify-between mx-[20px] mt-[5px]">
@@ -102,24 +131,24 @@ export default function NoteMenu({ onCloseNote, isAdvanced }: NoteMenuProps) {
                                     })}
                                 </div>
                                 <span className=" absolute flex left-[5px] top-[90px] text-[12px] text-[#bb8000] ">Winning items:
-                                    {item.winning_option_id.length === 1 && winningOption && (
+                                    {winningOptionIds.length === 1 && winningOption && (
                                         <img
                                             src={getAssetUrl(winningOption.logo)}
                                             alt="a"
                                             className="w-[20px] h-[20px] ml-[10px]"
                                         />
                                     )}
-                                    {item.winning_option_id.length > 1 && item.winning_option_id[0] === 20 && (
+                                    {winningOptionIds.length > 1 && winningOptionIds[0] === 20 && (
                                         <img
-                                            key={item.winning_option_id[0]}
+                                            key={winningOptionIds[0]}
                                             src={getAssetUrl(GAME_ASSETS.veg)}
                                             alt="a"
                                             className="w-[20px] h-[20px] ml-[10px]"
                                         />
                                     )}
-                                    {item.winning_option_id.length > 1 && item.winning_option_id[0] === 24 && (
+                                    {winningOptionIds.length > 1 && winningOptionIds[0] === 24 && (
                                         <img
-                                            key={item.winning_option_id[0]}
+                                            key={winningOptionIds[0]}
                                             src={getAssetUrl(GAME_ASSETS.drink)}
                                             alt="a"
                                             className="w-[20px] h-[20px] ml-[10px]"
