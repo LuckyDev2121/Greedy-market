@@ -89,7 +89,6 @@ export default function PlayBoard({
     const [showChooseRectangle, setShowChooseRectangle] = useState(false);
     const [currentBetAmount, setCurrentBetAmount] = useState(100);
     const [displayedBets, setDisplayedBets] = useState<Record<number, number>>({});
-    const [queuedBets, setQueuedBets] = useState<Record<number, number>>({});
     const [hasStartedFinalBetWindow, setHasStartedFinalBetWindow] = useState(false);
     const [ledTime, setLedTime] = useState(0);
     const [chooseTime, setChooseTime] = useState(0);
@@ -124,9 +123,7 @@ export default function PlayBoard({
         handleWinToday,
         handleGetGift,
     } = useGame();
-    const queuedBetsRef = useRef<Record<number, number>>({});
     const displayedBetsRef = useRef<Record<number, number>>({});
-    const isSendingBetRef = useRef(false);
     const errorTimeoutRef = useRef<number | null>(null);
     const animationIdRef = useRef(0);
     const boardRef = useRef<HTMLDivElement | null>(null);
@@ -249,10 +246,6 @@ export default function PlayBoard({
     }, [isAdvanced,]);
 
     useEffect(() => {
-        queuedBetsRef.current = queuedBets;
-    }, [queuedBets]);
-
-    useEffect(() => {
         displayedBetsRef.current = displayedBets;
     }, [displayedBets]);
 
@@ -314,11 +307,8 @@ export default function PlayBoard({
             setShowBoardOpacity(true);
             setShowChooseRectangle(false);
             setDisplayedBets({});
-            setQueuedBets({});
             setFlyingBets([]);
             displayedBetsRef.current = {};
-            queuedBetsRef.current = {};
-            isSendingBetRef.current = false;
             setHasStartedFinalBetWindow(false);
         } else if (RoundTime < 12 && RoundTime >= 5) {
             setLedTime(27);
@@ -333,11 +323,8 @@ export default function PlayBoard({
             setShowChooseRectangle(true);
             setShowHand(false);
             setDisplayedBets({});
-            setQueuedBets({});
             setFlyingBets([]);
             displayedBetsRef.current = {};
-            queuedBetsRef.current = {};
-            isSendingBetRef.current = false;
             setHasStartedFinalBetWindow(false);
         } else if (RoundTime < 5 && RoundTime >= 4) {
             setLedTime(27);
@@ -352,11 +339,8 @@ export default function PlayBoard({
             setShowChooseRectangle(false);
             setShowHand(true);
             setDisplayedBets({});
-            setQueuedBets({});
             setFlyingBets([]);
             displayedBetsRef.current = {};
-            queuedBetsRef.current = {};
-            isSendingBetRef.current = false;
             setHasStartedFinalBetWindow(false);
             setShowResultTimer(true)
         } else if (RoundTime < 4 && RoundTime >= 1) {
@@ -372,11 +356,8 @@ export default function PlayBoard({
             setShowChooseRectangle(false);
             setShowHand(true);
             setDisplayedBets({});
-            setQueuedBets({});
             setFlyingBets([]);
             displayedBetsRef.current = {};
-            queuedBetsRef.current = {};
-            isSendingBetRef.current = false;
             setHasStartedFinalBetWindow(false);
             onOpenModal("result");
             setShowResultTimer(false)
@@ -389,11 +370,8 @@ export default function PlayBoard({
             setShowChooseRectangle(false);
             setShowHand(false);
             setDisplayedBets({});
-            setQueuedBets({});
             setFlyingBets([]);
             displayedBetsRef.current = {};
-            queuedBetsRef.current = {};
-            isSendingBetRef.current = false;
             setHasStartedFinalBetWindow(false);
             return;
         }
@@ -404,20 +382,20 @@ export default function PlayBoard({
         }
     }, [RoundId, isRoundRunning, clearCurrentRoundBets]);
 
-    const handleBetOption = (optionId: number, amount: number) => {
+    const handleBetOption = async (optionId: number, amount: number, startElement: HTMLElement | null) => {
         if (blockClick === "none" || hasStartedFinalBetWindow) {
             return false;
         }
 
-        const queuedTotal = sumBetMap(queuedBetsRef.current);
+        const displayedTotal = sumBetMap(displayedBetsRef.current);
 
-        if ((playerBalance - queuedTotal) < amount) {
+        if ((playerBalance - displayedTotal) < amount) {
             onOpenModal("recharge");
             return false;
         }
 
-        const isNewOption = (queuedBetsRef.current[optionId] ?? 0) <= 0;
-        if (isNewOption && countSelectedOptions(queuedBetsRef.current) >= MAX_BET_OPTIONS_PER_ROUND) {
+        const isNewOption = (displayedBetsRef.current[optionId] ?? 0) <= 0;
+        if (isNewOption && countSelectedOptions(displayedBetsRef.current) >= MAX_BET_OPTIONS_PER_ROUND) {
             return false;
         }
 
@@ -425,56 +403,32 @@ export default function PlayBoard({
             ...displayedBetsRef.current,
             [optionId]: (displayedBetsRef.current[optionId] ?? 0) + amount,
         };
-        const nextQueuedBets = {
-            ...queuedBetsRef.current,
-            [optionId]: (queuedBetsRef.current[optionId] ?? 0) + amount,
-        };
 
         displayedBetsRef.current = nextDisplayedBets;
-        queuedBetsRef.current = nextQueuedBets;
         setDisplayedBets(nextDisplayedBets);
-        setQueuedBets(nextQueuedBets);
         reserveBetBalance(amount);
-        return true;
-    };
-    useEffect(() => {
-        if (!hasStartedFinalBetWindow) {
-            return;
+        startBetFlight(startElement, optionId);
+
+        try {
+            await placeBet(optionId, amount, isAdvanced);
+            return true;
+        } catch (error) {
+            console.error("Failed to place bet", error);
+            const revertedDisplayedBets = {
+                ...displayedBetsRef.current,
+                [optionId]: Math.max(0, (displayedBetsRef.current[optionId] ?? 0) - amount),
+            };
+
+            if (revertedDisplayedBets[optionId] === 0) {
+                delete revertedDisplayedBets[optionId];
+            }
+
+            displayedBetsRef.current = revertedDisplayedBets;
+            setDisplayedBets(revertedDisplayedBets);
+            releaseBetBalance(amount);
+            return false;
         }
-
-        const intervalId = window.setInterval(() => {
-            if (isSendingBetRef.current) return;
-
-            const batch = { ...queuedBetsRef.current };
-
-            const hasBets = Object.values(batch).some((amount) => amount > 0);
-            if (!hasBets) return;
-
-            //  clear queue immediately
-            queuedBetsRef.current = {};
-            setQueuedBets({});
-
-            isSendingBetRef.current = true;
-
-            Promise.all(
-                Object.entries(batch).map(([optionId, amount]) =>
-                    placeBet(Number(optionId), amount, isAdvanced)
-                )
-            )
-                .catch((error) => {
-                    console.error("Failed to place queued bets", error);
-                    const total = Object.values(batch).reduce((a, b) => a + b, 0);
-                    releaseBetBalance(total);
-                })
-                .finally(() => {
-                    isSendingBetRef.current = false;
-                });
-        }, 30);
-
-        return () => {
-            window.clearInterval(intervalId);
-        };
-    }, [hasStartedFinalBetWindow, placeBet, releaseBetBalance]);
+    };
 
     useEffect(() => {
         if (isAdvanced) {
@@ -509,9 +463,7 @@ export default function PlayBoard({
                     currentBetAmount={currentBetAmount}
                     displayedBets={displayedBets}
                     onBetOption={(optionId, amount) => {
-                        if (handleBetOption(optionId, amount)) {
-                            startBetFlight(currentBetButtonRef.current, optionId);
-                        }
+                        void handleBetOption(optionId, amount, currentBetButtonRef.current);
                     }}
                     registerOptionRef={registerOptionRef}
                 />
