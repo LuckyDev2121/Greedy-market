@@ -251,6 +251,11 @@ export default function CupMenu({ onCloseCup }: CupMenuProps) {
                     </div>
                 </div>
                 <div className="absolute flex items-center top-[480px] left-1/2 -translate-x-1/2 w-[346px] h-[48px] bg-gradient-to-br bg-[#fcbd5f] rounded-[9px]">
+                    {myRanking?.data.ranking_position && myRanking?.data.ranking_position === 0 && (
+                        <div className="absolute left-0 top-0 h-[48px] w-[48px] bg-[#ffaa2c] rounded-l-[9px]">
+                            <span className="absolute text-[#FDF4C1]  font-bold text-[16px] top-1/2 -translate-y-1/2  [text-shadow:1px_0_0_brown,-1px_0_0_brown,0_1px_0_brown,0_-1px_0_brown]">+99</span>
+                        </div>
+                    )}
                     {myRanking?.data.ranking_position && myRanking?.data.ranking_position === 1 && (
                         <div className="h-[48px] w-[48px] bg-[#ffaa2c] rounded-l-[9px]">
                             <img src={getAssetUrl(GAME_ASSETS.prize1)} alt="prize" className=" absolute h-[45px] w-[45px] top-1/2 -translate-y-1/2" />
