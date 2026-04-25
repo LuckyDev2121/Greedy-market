@@ -21,8 +21,10 @@ import {
   REMAINING_API_URL,
   HISTORY_API_URL,
   MY_RANKING_API_URL,
+  JACKPOT_FIRE_API_URL,
 } from "../config/gameConfig";
 import { getUserId } from "../utils/user";
+import JackpotMenu from "../components/Jackpot";
 
 function isNoRecordsResponse(status?: boolean, message?: string): boolean {
   return status === false && /no records found/i.test(message ?? "");
@@ -151,12 +153,13 @@ export type PlaceBet = {
   message?: string;
 };
 
-export const placeBet = async (betId: number, amount: number): Promise<PlaceBet> => {
+export const placeBet = async (betId: number, amount: number,isMode: string,): Promise<PlaceBet> => {
   const response = await axios.post<PlaceBet>(PLACE_BET_API_URL, {
     game_id: GAME_ID,
     option_id: betId,
     amount: amount,
     user_id: getUserId(),
+    mode:isMode,
   });
 
   if (!response.data.status) {
@@ -706,4 +709,19 @@ export const fetchMyRanking =async()=>{
   }
 
   return response.data
+}
+export type Jackpot={
+  status: boolean;
+  mode:string;
+  last_7_days_total:string
+  message:string;
+}
+export const fetchJackpot =async(Mode:string)=>{
+  const response = await axios.get<Jackpot>(`${JACKPOT_FIRE_API_URL}/${Mode}`);
+
+  if (!response.data.status) {
+    throw new Error(response.data.message || "API returned false status");
+  }
+
+  return response.data;
 }

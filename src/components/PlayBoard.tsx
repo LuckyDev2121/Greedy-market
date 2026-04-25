@@ -428,7 +428,7 @@ export default function PlayBoard({
 
             Promise.all(
                 Object.entries(batch).map(([optionId, amount]) =>
-                    placeBet(Number(optionId), amount)
+                    placeBet(Number(optionId), amount, isAdvanced)
                 )
             )
                 .catch(() => {

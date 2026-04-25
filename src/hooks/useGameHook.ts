@@ -23,6 +23,7 @@ import {
   fetchHistoryAdvance,
   fetchHistoryBasic,
   fetchMyRanking,
+  fetchJackpot,
   type MyRanking,
   type History,
   type PrizeDistributionProps,
@@ -74,6 +75,8 @@ remaining:number;
 basicHistory:History|null;
 advanceHistory:History|null;
 myRanking:MyRanking|null;
+JackpotBasic:string|null;
+JackpotAdvance:string|null;
 };
 
 
@@ -105,6 +108,8 @@ remaining:0,
 basicHistory:null,
 advanceHistory:null,
 myRanking:null,
+JackpotBasic: null,
+JackpotAdvance:null,
 };
 
 let hasInitialized = false;
@@ -155,7 +160,9 @@ async function runRefreshGameData(options?: RefreshGameDataOptions) {
   updateStore({ isLoading: true, isMusicSettingLoading: true });
 
   try {
-    const [myRanking, basicHistory, advanceHistory, gameDetail, player, gameResults,  rankingToday, rankingYesterday,  winToday,  url, prizeDistribution, isSoundEnabled, isMusicEnabled, gameMode] = await Promise.all([
+    const [jackpotBasic, jackpotAdvance, myRanking, basicHistory, advanceHistory, gameDetail, player, gameResults,  rankingToday, rankingYesterday,  winToday,  url, prizeDistribution, isSoundEnabled, isMusicEnabled, gameMode] = await Promise.all([
+      fetchJackpot("basic"),
+      fetchJackpot("advance"),
       fetchMyRanking(),
       fetchHistoryBasic(),
       fetchHistoryAdvance(),
@@ -173,6 +180,8 @@ async function runRefreshGameData(options?: RefreshGameDataOptions) {
     ]);
 
   updateStore({
+    JackpotBasic:jackpotBasic.last_7_days_total,
+    JackpotAdvance:jackpotAdvance.last_7_days_total,
     myRanking:myRanking,
     basicHistory:basicHistory,
     advanceHistory:advanceHistory,
@@ -317,14 +326,17 @@ const handlePrizeDistribution= useCallback(async () => {
     return data;
   }, []);
 
-  const handlePlaceBet = useCallback(async (optionId: number, amount: number) => {
+  const handlePlaceBet = useCallback(async (optionId: number, amount: number,isAdvanceMode: boolean,) => {
+    let isMode='';
+    if(isAdvanceMode)isMode="advance"
+    else isMode="basic"
     const currentBalance = Number.parseFloat(store.playerInfo?.balance ?? "0");
 
     if (currentBalance < amount) {
       throw new Error("Insufficient balance");
     }
 
-    const response: PlaceBet = await placeBetRequest(optionId, amount);
+    const response: PlaceBet = await placeBetRequest(optionId, amount,isMode);
     updateStore((current) => ({
       currentRoundBets: {
         ...current.currentRoundBets,
@@ -426,7 +438,14 @@ const handleRemainingToday= useCallback(async () => {
   const displayBalance = formatBalanceValue(
     Math.max(0, rawBalance - snapshot.pendingBalanceDeduction),
   );
-
+const handleJackpot= useCallback(async (mode:string) => {
+    const data = await fetchJackpot(mode);
+    if(mode==="advance")
+    updateStore({JackpotAdvance:data.last_7_days_total});
+    else updateStore({JackpotBasic:data.last_7_days_total});
+    return data;
+  }, []);
+  
   return {
     winToday: snapshot.winToday,
     betAmounts: snapshot.gameDetails?.bet_amounts ?? [],
@@ -455,6 +474,8 @@ const handleRemainingToday= useCallback(async () => {
     basicHistory:snapshot.basicHistory,
     advanceHistory:snapshot.advanceHistory,
     myRanking:snapshot.myRanking,
+    JackpotAdvance:snapshot.JackpotAdvance,
+    JackpotBasic:snapshot.JackpotBasic,
     refreshGameData,
     createRound: handleCreateRound,
     makeGameRound:handleGameRound,
@@ -474,5 +495,6 @@ const handleRemainingToday= useCallback(async () => {
     handleGameMode,
     handleGetGift,
     handleRemainingToday,
+handleJackpot
   };
 }

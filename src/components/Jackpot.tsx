@@ -1,8 +1,9 @@
 // import { useEffect, useMemo, } from "react";
 import { getAssetUrl, GAME_ASSETS } from "../config/gameConfig";
-
+import { useGame } from "../hooks/useGameHook";
 type JackpotMenuProps = {
     onCloseJackpot: () => void;
+    isAdvance: boolean;
 };
 
 function CloseIcon() {
@@ -24,8 +25,8 @@ function CloseIcon() {
     );
 }
 
-export default function JackpotMenu({ onCloseJackpot }: JackpotMenuProps) {
-
+export default function JackpotMenu({ onCloseJackpot, isAdvance }: JackpotMenuProps) {
+    const { JackpotAdvance, JackpotBasic } = useGame()
     return (
         <div className="h-[567px] bg-amber-500 w-[355px] rounded-[20px]">
             <div className="absolute bg-[#fadbad] h-[547px] w-[335px] left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 rounded-[20px]">
@@ -37,7 +38,7 @@ export default function JackpotMenu({ onCloseJackpot }: JackpotMenuProps) {
                 <img src={getAssetUrl(GAME_ASSETS.congraDiamond)} alt="leaderPart" className="absolute scale-x-125 left-1/2 -translate-x-1/2 top-[10px]" />
                 <img src={getAssetUrl(GAME_ASSETS.leaderPart)} alt="leaderPart" className="absolute scale-y-75 left-1/2 -translate-x-1/2 top-[80px]" />
                 <img src={getAssetUrl(GAME_ASSETS.diamond)} alt="leaderPart" className="absolute h-[70px] w-[70px] top-[95px] left-[30px]" />
-                <span className="absolute left-[90px] top-[110px] text-[#ffd991] text-[32px] [text-shadow:1px_0_0_brown,-1px_0_0_brown,0_1px_0_brown,0_-1px_0_brown]">00000000000</span>
+                <span className="absolute right-[40px] top-[110px] text-[#ffd991] text-[32px] [text-shadow:1px_0_0_brown,-1px_0_0_brown,0_1px_0_brown,0_-1px_0_brown]">{isAdvance ? JackpotAdvance : JackpotBasic}</span>
                 <span className="absolute left-[10px] top-[200px]  text-[#d37c0a] text-[14px] font-sans justify-center content-center">All players can win the Jackpot. The more you play,</span>
                 <span className="absolute  left-1/2 -translate-x-1/2 top-[220px]  text-[#d37c0a] text-[14px] font-sans justify-center content-center">the higher your chances.</span>
                 <span className="absolute  left-1/2 -translate-x-1/2 top-[275px]  text-[#d37c0a] text-[20px] font-sans font-extrabold justify-center content-center">Awards</span>

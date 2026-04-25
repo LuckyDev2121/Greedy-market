@@ -48,6 +48,7 @@ export const GET_GIFT_API_URL= `${API_BASE_URL.replace(/\/$/, "")}/get-gift`;
 export const REMAINING_API_URL= `${API_BASE_URL.replace(/\/$/, "")}/remaining_today`
 export const HISTORY_API_URL= `${API_BASE_URL.replace(/\/$/, "")}/gready-market-history`
 export const MY_RANKING_API_URL= `${API_BASE_URL.replace(/\/$/, "")}/my-ranking`
+export const JACKPOT_FIRE_API_URL= `${API_BASE_URL.replace(/\/$/, "")}/jackpot-fire`
 
 
 export const REVERB_KEY =

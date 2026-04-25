@@ -70,7 +70,7 @@ export default function GreedyMarket({
   const [isAdvancedMode, setIsAdvancedMode] = useState(false);
   const [remainingAmount, setRemainingAmount] = useState(0);
   const [giftAmount, setGiftAmount] = useState(0);
-  const { gameMode, handleGameMode, setGameMode, myRanking } = useGame();
+  const { gameMode, handleGameMode, setGameMode, myRanking, JackpotAdvance, JackpotBasic } = useGame();
   const isOverlayOpen = activeModal !== null;
   // const previousRoundTotal = Object.values(previousRoundBets).reduce((sum, amount) => sum + amount, 0);
   // const availableBalance = Number.parseFloat(displayBalance ?? "0");
@@ -214,7 +214,7 @@ export default function GreedyMarket({
                     rotate: { repeat: Infinity, duration: 5, ease: "linear" },
                   }} />
                 <img src={getAssetUrl(GAME_ASSETS.jackpotCounter)} alt="jackpot" className="absolute h-[70px] w-[70px] scale-x-125" />
-                <span className="absolute font-bold left-1/2 -translate-x-1/2 text-[12px] text-[#ffe033] top-[40px] [text-shadow:1px_0_0_brown,-1px_0_0_brown,0_1px_0_brown,0_-1px_0_brown]">12372634910</span>
+                <span className="absolute font-bold left-1/2 -translate-x-1/2 text-[12px] text-[#ffe033] top-[40px] [text-shadow:1px_0_0_brown,-1px_0_0_brown,0_1px_0_brown,0_-1px_0_brown]">{isAdvancedMode ? JackpotAdvance : JackpotBasic}</span>
               </motion.button>
             </AnimatePresence>
           </div>
@@ -332,6 +332,7 @@ export default function GreedyMarket({
               >
                 <JackpotMenu
                   onCloseJackpot={() => setActiveModal(null)}
+                  isAdvance={isAdvancedMode}
                 />
               </motion.div>
             )}
