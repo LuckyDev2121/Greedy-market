@@ -169,9 +169,29 @@ export default function PlayBoard({
         optionButtonRefs.current[optionId] = element;
     };
 
-    const handleClaimGift = async (giftId: number) => {
+    const setClaimedBox = (index: number) => {
+        if (index === 0) setBox1(true);
+        if (index === 1) setBox2(true);
+        if (index === 2) setBox3(true);
+        if (index === 3) setBox4(true);
+        if (index === 4) setBox5(true);
+    };
+
+    const handleClaimGift = async (giftId: number, index: number) => {
         try {
-            await handleGetGift(giftId);
+            const response = await handleGetGift(giftId);
+            if (response.status) {
+                giftAmount(response.data?.gift_amount ?? 0);
+                setClaimedBox(index);
+                onOpenModal("gift");
+                return;
+            }
+
+            if (response.message === "Gift already claimed") {
+                setClaimedBox(index);
+            }
+
+            console.warn("Gift claim rejected:", response.message ?? "Unknown reason");
         } catch (error) {
             console.error("Failed to claim gift", error);
         }
@@ -461,28 +481,6 @@ export default function PlayBoard({
         setScoreBoard("bg-[#0F6095] border-[#1087C6]");
         setResultBoard("bg-[#0F6095] border-[#1087C6]");
     }, [isAdvanced]);
-    useEffect(() => {
-        void handleGetGift(2).then((response) => {
-            if (response.message === "Gift already claimed")
-                setBox1(true)
-        })
-        void handleGetGift(3).then((response) => {
-            if (response.message === "Gift already claimed")
-                setBox2(true)
-        })
-        void handleGetGift(4).then((response) => {
-            if (response.message === "Gift already claimed")
-                setBox3(true)
-        })
-        void handleGetGift(5).then((response) => {
-            if (response.message === "Gift already claimed")
-                setBox4(true)
-        })
-        void handleGetGift(6).then((response) => {
-            if (response.message === "Gift already claimed")
-                setBox5(true)
-        })
-    }, [])
     return (
         <div className="absolute z-20 object-contain top-[90px]" style={{ width: "100%", height: "100%" }}>
             <div ref={boardRef} className="relative inset-0 z-20">
@@ -598,15 +596,7 @@ export default function PlayBoard({
                                 <>
                                     {index === 0 && (
                                         <button onClick={() => {
-                                            onOpenModal("gift")
-                                            void handleGetGift(index + 2).then((response) => {
-                                                if (response.status) {
-                                                    giftAmount(response.data?.gift_amount ?? 0)
-                                                    setBox1(true);
-                                                }
-                                            })
-                                            // void handleClaimGift(index + 2);
-
+                                            void handleClaimGift(element.id, index);
                                         }}>
                                             <motion.img src={getAssetUrl(GAME_ASSETS.RotatedInstant)} alt="RotatedInstant" className="absolute left-[32px] top-[0px] w-[60px]"
                                                 animate={{ rotate: 360 }}
@@ -631,13 +621,7 @@ export default function PlayBoard({
                                     )}
                                     {index === 1 && (
                                         <button onClick={() => {
-                                            onOpenModal("gift")
-                                            void handleGetGift(index + 2).then((response) => {
-                                                if (response.status) {
-                                                    giftAmount(response.data?.gift_amount ?? 0)
-                                                    setBox2(true);
-                                                }
-                                            })
+                                            void handleClaimGift(element.id, index);
                                         }}>
                                             <motion.img src={getAssetUrl(GAME_ASSETS.RotatedInstant)} alt="RotatedInstant" className="absolute left-[100px] top-[0px] w-[60px]"
                                                 animate={{ rotate: 360 }}
@@ -664,13 +648,7 @@ export default function PlayBoard({
                                     )}
                                     {index === 2 && (
                                         <button onClick={() => {
-                                            onOpenModal("gift")
-                                            void handleGetGift(index + 2).then((response) => {
-                                                if (response.status) {
-                                                    giftAmount(response.data?.gift_amount ?? 0)
-                                                    setBox3(true);
-                                                }
-                                            })
+                                            void handleClaimGift(element.id, index);
                                         }}>
                                             <motion.img src={getAssetUrl(GAME_ASSETS.RotatedInstant)} alt="RotatedInstant" className="absolute left-[168px] top-[0px] w-[60px]"
                                                 animate={{ rotate: 360 }}
@@ -683,7 +661,7 @@ export default function PlayBoard({
                                                 alt="box"
                                                 className={`absolute left-[174px] top-[12px] cursor-pointer`}
                                                 onClick={() => {
-                                                    void handleClaimGift(element.id);
+                                                    void handleClaimGift(element.id, index);
                                                 }}
                                             />
                                                 : <img
@@ -697,15 +675,9 @@ export default function PlayBoard({
                                     )}
                                     {index === 3 && (
                                         <button onClick={() => {
-                                            onOpenModal("gift")
-                                            void handleGetGift(index + 2).then((response) => {
-                                                if (response.status) {
-                                                    giftAmount(response.data?.gift_amount ?? 0)
-                                                    setBox4(true);
-                                                }
-                                            })
+                                            void handleClaimGift(element.id, index);
                                         }}>
-                                            <motion.img src={getAssetUrl(GAME_ASSETS.RotatedInstant)} alt="RotatedInstant" className="absolute left-[136px] top-[0px] w-[60px]"
+                                            <motion.img src={getAssetUrl(GAME_ASSETS.RotatedInstant)} alt="RotatedInstant" className="absolute left-[236px] top-[0px] w-[60px]"
                                                 animate={{ rotate: 360 }}
                                                 transition={{
                                                     rotate: { repeat: Infinity, duration: 5, ease: "linear" },
@@ -716,7 +688,7 @@ export default function PlayBoard({
                                                 alt="box"
                                                 className={`absolute left-[242px] top-[12px] cursor-pointer`}
                                                 onClick={() => {
-                                                    void handleClaimGift(element.id);
+                                                    void handleClaimGift(element.id, index);
                                                 }}
                                             />
                                                 : <img
@@ -730,15 +702,9 @@ export default function PlayBoard({
                                     )}
                                     {index === 4 && (
                                         <button onClick={() => {
-                                            onOpenModal("gift")
-                                            void handleGetGift(index + 2).then((response) => {
-                                                if (response.status) {
-                                                    giftAmount(response.data?.gift_amount ?? 0)
-                                                    setBox5(true);
-                                                }
-                                            })
+                                            void handleClaimGift(element.id, index);
                                         }}>
-                                            <motion.img src={getAssetUrl(GAME_ASSETS.RotatedInstant)} alt="RotatedInstant" className="absolute left-[204px] top-[0px] w-[60px]"
+                                            <motion.img src={getAssetUrl(GAME_ASSETS.RotatedInstant)} alt="RotatedInstant" className="absolute left-[304px] top-[0px] w-[60px]"
                                                 animate={{ rotate: 360 }}
                                                 transition={{
                                                     rotate: { repeat: Infinity, duration: 5, ease: "linear" },
@@ -749,7 +715,7 @@ export default function PlayBoard({
                                                 alt="box"
                                                 className={`absolute left-[310px] top-[12px] cursor-pointer`}
                                                 onClick={() => {
-                                                    void handleClaimGift(element.id);
+                                                    void handleClaimGift(element.id, index);
                                                 }}
                                             />
                                                 : <img

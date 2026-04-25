@@ -521,13 +521,17 @@ type getGift={
 }
 
 export const fetchGetGift=async (giftId:number): Promise<getGift> => {
-  const response = await axios.get<getGift>(`${GET_GIFT_API_URL}/${getUserId()}/${giftId}/${GAME_ID}`);
+  try {
+    const response = await axios.get<getGift>(`${GET_GIFT_API_URL}/${getUserId()}/${giftId}/${GAME_ID}`);
 
-  if (!response.data.status) {
-    throw new Error(response.data.message || "API returned false status");
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError<getGift>(error) && error.response?.data) {
+      return error.response.data;
+    }
+
+    throw error;
   }
-
-  return response.data;
 };
 type RemainingTodayData={
   server_time:string;

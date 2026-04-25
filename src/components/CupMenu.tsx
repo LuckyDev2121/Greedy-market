@@ -74,7 +74,6 @@ export default function CupMenu({ onCloseCup }: CupMenuProps) {
     useEffect(() => {
         const load = async () => {
             const data = await handleRemainingToday();
-            console.log("time:", data,)
             setResult(Math.floor(Number(data.data.remaining_seconds)));
         };
         void load();
@@ -85,7 +84,6 @@ export default function CupMenu({ onCloseCup }: CupMenuProps) {
 
         const updateTime = () => {
             const res = result;
-
             const hours = Math.floor(res / 3600);
             const minutes = Math.floor((res % 3600) / 60);
             const seconds = res % 60;
