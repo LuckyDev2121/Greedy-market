@@ -19,14 +19,14 @@ export default function ResultTimer({ start, onResultTimeUp }: ResultTimerProps)
             : [];
 
     const gridMap = [
-        { id: 27, top: 25, left: 50 },
-        { id: 26, top: 140, left: 2 },
-        { id: 25, top: 245, left: 50 },
-        { id: 24, top: 275, left: 155 },
-        { id: 23, top: 245, left: 262 },
-        { id: 22, top: 140, left: 310 },
-        { id: 21, top: 25, left: 262 },
-        { id: 20, top: 5, left: 155 },
+        { id: 27, height: 87, width: 97, top: 28, left: 47 },
+        { id: 26, height: 87, width: 96, top: 140, left: 3 },
+        { id: 25, height: 84, width: 98, top: 248, left: 47 },
+        { id: 24, height: 85, width: 98, top: 277, left: 152 },
+        { id: 23, height: 84, width: 99, top: 248, left: 259 },
+        { id: 22, height: 87, width: 96, top: 140, left: 305 },
+        { id: 21, height: 87, width: 98, top: 28, left: 260 },
+        { id: 20, height: 82, width: 98, top: 8, left: 153 },
     ];
 
     useEffect(() => {
@@ -56,8 +56,8 @@ export default function ResultTimer({ start, onResultTimeUp }: ResultTimerProps)
                 ) : (
                     <div
                         key={item.id}
-                        className={`absolute h-[87px] w-[90px] z-40 bg-black/30 rounded-[8px]`}
-                        style={{ top: `${item.top}px`, left: `${item.left}px` }}
+                        className={`absolute z-40 bg-black/30 rounded-t-[15px] rounded-b-[28px] [clip-path:polygon(5%_0%,92%_0%,100%_100%,0%_100%)]`}
+                        style={{ height: `${item.height}px`, width: `${item.width}px`, top: `${item.top}px`, left: `${item.left}px` }}
                     />
                 )
             ))}

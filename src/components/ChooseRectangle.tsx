@@ -11,7 +11,14 @@ const fruits = [
     { id: 25, element_name: "B", top: 257, left: 50 },
     { id: 26, element_name: "A", top: 147, left: 2 },
 ];
-
+// { id: 27, height: 87, width: 97, top: 28, left: 47 },
+//         { id: 26, height: 87, width: 96, top: 140, left: 3 },
+//         { id: 25, height: 84, width: 98, top: 248, left: 47 },
+//         { id: 24, height: 85, width: 98, top: 277, left: 152 },
+//         { id: 23, height: 84, width: 99, top: 248, left: 259 },
+//         { id: 22, height: 87, width: 96, top: 140, left: 305 },
+//         { id: 21, height: 87, width: 98, top: 28, left: 260 },
+//         { id: 20, height: 82, width: 98, top: 8, left: 153 },
 export default function ChooseRectangle({ onChooseTimeUp, RoundId }: { onChooseTimeUp?: () => void; RoundId?: number | null; onResult?: (fruit: string) => void }) {
     const [time, setTime] = useState(0);
     const [second, setSecond] = useState(0);

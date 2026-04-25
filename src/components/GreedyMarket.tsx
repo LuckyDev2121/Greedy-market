@@ -121,7 +121,7 @@ export default function GreedyMarket({
   }, []);
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center overflow-hidden ">
+    <div className="fixed inset-0 flex items-end justify-center overflow-hidden ">
       <div
         className="relative"
         style={{
@@ -130,14 +130,14 @@ export default function GreedyMarket({
         }}
       >
         <div
-          className="absolute left-0 top-0 origin-top-left rounded-t-[20px]"
+          className="absolute left-0 top-0 origin-top-left overflow-hidden rounded-[20px]"
           style={{
             width: `${GAME_WIDTH}px`,
             height: `${GAME_HEIGHT}px`,
             transform: `scale(${scale})`,
           }}
         >
-          <div className="absolute flex -z-100 blur-[3px]">
+          <div className="absolute inset-0 -z-100 blur-[3px]" >
             {isAdvancedMode ? <img src={getAssetUrl(GAME_ASSETS.advanceBg)} alt="advanced" />
               : <img src={getAssetUrl(GAME_ASSETS.normalBg)} alt="normal" />}
             {isAdvancedMode === false && (
@@ -231,7 +231,7 @@ export default function GreedyMarket({
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.25 }}
-                className="absolute inset-0 z-40 rounded-t-[20px] bg-black/60 "
+                className="absolute inset-0 z-40 rounded-[20px] bg-black/60 "
               />
             )}
             {activeModal === "advanced" && (
