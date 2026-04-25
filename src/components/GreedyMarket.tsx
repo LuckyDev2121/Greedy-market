@@ -11,6 +11,7 @@ import ResultMenu from "./ResultMenu";
 import TopMenu from "./TopMenu";
 import AdvancedModal from "./AdvancedModeModal";
 import JackpotMenu from "./Jackpot";
+import GiftMenu from "./GiftMenu";
 import { GAME_ASSETS, getAssetUrl } from "../config/gameConfig";
 type ToggleRowProps = {
   isOn: boolean;
@@ -68,6 +69,7 @@ export default function GreedyMarket({
   const [scale, setScale] = useState(1);
   const [isAdvancedMode, setIsAdvancedMode] = useState(false);
   const [remainingAmount, setRemainingAmount] = useState(0);
+  const [giftAmount, setGiftAmount] = useState(0);
   const { gameMode, handleGameMode, setGameMode, myRanking } = useGame();
   const isOverlayOpen = activeModal !== null;
   // const previousRoundTotal = Object.values(previousRoundBets).reduce((sum, amount) => sum + amount, 0);
@@ -206,7 +208,8 @@ export default function GreedyMarket({
                   repeatType: "reverse"
                 }}
                 onClick={() => setActiveModal("jackpot")}>
-                <motion.img src={getAssetUrl(GAME_ASSETS.RotatedInstant)} alt="shine" className="absolute h-[70px] w-[70px] " animate={{ rotate: 360 }}
+                <motion.img src={getAssetUrl(GAME_ASSETS.RotatedInstant)} alt="shine" className="absolute h-[70px] w-[70px] "
+                  animate={{ rotate: 360 }}
                   transition={{
                     rotate: { repeat: Infinity, duration: 5, ease: "linear" },
                   }} />
@@ -223,6 +226,7 @@ export default function GreedyMarket({
               onRoundFinished={onRoundFinished}
               onOpenModal={(modal) => setActiveModal(modal)}
               isAdvanced={isAdvancedMode}
+              giftAmount={(gift) => setGiftAmount(gift)}
             // repeatRequestId={repeatRequestId}
             />
           </div>
@@ -328,6 +332,21 @@ export default function GreedyMarket({
               >
                 <JackpotMenu
                   onCloseJackpot={() => setActiveModal(null)}
+                />
+              </motion.div>
+            )}
+            {activeModal === "gift" && (
+              <motion.div
+                key={activeModal}
+                initial={{ y: GAME_HEIGHT, opacity: 0 }}
+                animate={{ y: 100, opacity: 1 }}
+                exit={{ y: GAME_HEIGHT, opacity: 0 }}
+                transition={{ duration: 0.4 }}
+                className="absolute z-50 h-[567px] w-[355px] left-[20px]"
+              >
+                <GiftMenu
+                  onCloseGift={() => setActiveModal(null)}
+                  giftAmount={giftAmount}
                 />
               </motion.div>
             )}

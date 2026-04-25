@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { getAssetUrl, GAME_ASSETS } from "../config/gameConfig";
+import { motion } from "framer-motion";
 import ChooseRectangle from "./ChooseRectangle";
 import ChooseTimer from "./ChooseTimer";
 import ResultTimer from "./ResultTimer"
@@ -17,6 +18,7 @@ type PlayBoardProps = {
     // repeatRequestId: number;
     RoundTime: number;
     isAdvanced: boolean;
+    giftAmount: (gift: number) => void;
 };
 function formatNumber(num: number): string {
     if (num >= 1_000_000_000) {
@@ -69,6 +71,7 @@ function getElementCenterWithinContainer(
 }
 
 export default function PlayBoard({
+    giftAmount,
     onOpenModal,
     RoundId,
     isRoundRunning,
@@ -100,6 +103,11 @@ export default function PlayBoard({
     const [scoreBoard, setScoreBoard] = useState('');
     const [resultBoard, setResultBoard] = useState('');
     const [flyingBets, setFlyingBets] = useState<FlyingBet[]>([]);
+    const [box1, setBox1] = useState(false);
+    const [box2, setBox2] = useState(false);
+    const [box3, setBox3] = useState(false);
+    const [box4, setBox4] = useState(false);
+    const [box5, setBox5] = useState(false);
     const {
         betAmounts,
         options,
@@ -453,6 +461,28 @@ export default function PlayBoard({
         setScoreBoard("bg-[#0F6095] border-[#1087C6]");
         setResultBoard("bg-[#0F6095] border-[#1087C6]");
     }, [isAdvanced]);
+    useEffect(() => {
+        void handleGetGift(2).then((response) => {
+            if (response.message === "Gift already claimed")
+                setBox1(true)
+        })
+        void handleGetGift(3).then((response) => {
+            if (response.message === "Gift already claimed")
+                setBox2(true)
+        })
+        void handleGetGift(4).then((response) => {
+            if (response.message === "Gift already claimed")
+                setBox3(true)
+        })
+        void handleGetGift(5).then((response) => {
+            if (response.message === "Gift already claimed")
+                setBox4(true)
+        })
+        void handleGetGift(6).then((response) => {
+            if (response.message === "Gift already claimed")
+                setBox5(true)
+        })
+    }, [])
     return (
         <div className="absolute z-20 object-contain top-[90px]" style={{ width: "100%", height: "100%" }}>
             <div ref={boardRef} className="relative inset-0 z-20">
@@ -567,39 +597,87 @@ export default function PlayBoard({
                             return currentWinToday >= amountValue ? (
                                 <>
                                     {index === 0 && (
-                                        <>
-                                            <img src={getAssetUrl(GAME_ASSETS.RotatedInstant)} alt="RotatedInstant" className="absolute left-[5px] -top-[30px] scale-50" />
-                                            <img
+                                        <button onClick={() => {
+                                            onOpenModal("gift")
+                                            void handleGetGift(index + 2).then((response) => {
+                                                if (response.status) {
+                                                    giftAmount(response.data?.gift_amount ?? 0)
+                                                    setBox1(true);
+                                                }
+                                            })
+                                            // void handleClaimGift(index + 2);
+
+                                        }}>
+                                            <motion.img src={getAssetUrl(GAME_ASSETS.RotatedInstant)} alt="RotatedInstant" className="absolute left-[32px] top-[0px] w-[60px]"
+                                                animate={{ rotate: 360 }}
+                                                transition={{
+                                                    rotate: { repeat: Infinity, duration: 5, ease: "linear" },
+                                                }} />
+                                            {box1 ? <img
                                                 key={index}
                                                 src={`${gameDetails?.gift_boxes_asset_base_path}${element.box_opened}`}
                                                 alt="box"
-                                                className={`absolute left-[38px] top-[12px] cursor-pointer`}
-                                                onClick={() => {
-                                                    void handleClaimGift(element.id);
-                                                }}
+                                                className={`absolute left-[38px] top-[12px] cursor-pointer `}
                                             />
+                                                : <img
+                                                    key={index}
+                                                    src={`${gameDetails?.gift_boxes_asset_base_path}${element.box_closed}`}
+                                                    alt="box"
+                                                    className={`absolute left-[38px] top-[12px]`}
+                                                />
+                                            }
                                             <span className={`absolute left-[48px] top-[45px] text-[#f0d457] [text-shadow:1px_0_0_brown,-1px_0_0_brown,0_1px_0_brown,0_-1px_0_brown]`}>{formatNumber(amountValue)}</span>
-                                        </>
+                                        </button >
                                     )}
                                     {index === 1 && (
-                                        <>
-                                            <img src={getAssetUrl(GAME_ASSETS.RotatedInstant)} alt="RotatedInstant" className="absolute left-[73px] -top-[30px] scale-50" />
-                                            <img
+                                        <button onClick={() => {
+                                            onOpenModal("gift")
+                                            void handleGetGift(index + 2).then((response) => {
+                                                if (response.status) {
+                                                    giftAmount(response.data?.gift_amount ?? 0)
+                                                    setBox2(true);
+                                                }
+                                            })
+                                        }}>
+                                            <motion.img src={getAssetUrl(GAME_ASSETS.RotatedInstant)} alt="RotatedInstant" className="absolute left-[100px] top-[0px] w-[60px]"
+                                                animate={{ rotate: 360 }}
+                                                transition={{
+                                                    rotate: { repeat: Infinity, duration: 5, ease: "linear" },
+                                                }} />
+                                            {box2 ? <img
                                                 key={index}
                                                 src={`${gameDetails?.gift_boxes_asset_base_path}${element.box_opened}`}
                                                 alt="box"
                                                 className={`absolute left-[106px] top-[12px] cursor-pointer`}
-                                                onClick={() => {
-                                                    void handleClaimGift(element.id);
-                                                }}
+                                            // onClick={() => {
+                                            //     void handleClaimGift(element.id);
+                                            // }}
                                             />
+                                                : <img
+                                                    key={index}
+                                                    src={`${gameDetails?.gift_boxes_asset_base_path}${element.box_closed}`}
+                                                    alt="box"
+                                                    className={`absolute left-[106px] top-[12px]`}
+                                                />}
                                             <span className={`absolute left-[116px] top-[45px] text-[#f0d457] [text-shadow:1px_0_0_brown,-1px_0_0_brown,0_1px_0_brown,0_-1px_0_brown]`}>{formatNumber(amountValue)}</span>
-                                        </>
+                                        </button>
                                     )}
                                     {index === 2 && (
-                                        <>
-                                            <img src={getAssetUrl(GAME_ASSETS.RotatedInstant)} alt="RotatedInstant" className="absolute left-[141px] -top-[30px] scale-50" />
-                                            <img
+                                        <button onClick={() => {
+                                            onOpenModal("gift")
+                                            void handleGetGift(index + 2).then((response) => {
+                                                if (response.status) {
+                                                    giftAmount(response.data?.gift_amount ?? 0)
+                                                    setBox3(true);
+                                                }
+                                            })
+                                        }}>
+                                            <motion.img src={getAssetUrl(GAME_ASSETS.RotatedInstant)} alt="RotatedInstant" className="absolute left-[168px] top-[0px] w-[60px]"
+                                                animate={{ rotate: 360 }}
+                                                transition={{
+                                                    rotate: { repeat: Infinity, duration: 5, ease: "linear" },
+                                                }} />
+                                            {box3 ? <img
                                                 key={index}
                                                 src={`${gameDetails?.gift_boxes_asset_base_path}${element.box_opened}`}
                                                 alt="box"
@@ -608,13 +686,31 @@ export default function PlayBoard({
                                                     void handleClaimGift(element.id);
                                                 }}
                                             />
+                                                : <img
+                                                    key={index}
+                                                    src={`${gameDetails?.gift_boxes_asset_base_path}${element.box_closed}`}
+                                                    alt="box"
+                                                    className={`absolute left-[174px] top-[12px]`}
+                                                />}
                                             <span className={`absolute left-[184px] top-[45px] text-[#f0d457] [text-shadow:1px_0_0_brown,-1px_0_0_brown,0_1px_0_brown,0_-1px_0_brown]`}>{formatNumber(amountValue)}</span>
-                                        </>
+                                        </button>
                                     )}
                                     {index === 3 && (
-                                        <>
-                                            <img src={getAssetUrl(GAME_ASSETS.RotatedInstant)} alt="RotatedInstant" className="absolute left-[209px] -top-[30px] scale-50" />
-                                            <img
+                                        <button onClick={() => {
+                                            onOpenModal("gift")
+                                            void handleGetGift(index + 2).then((response) => {
+                                                if (response.status) {
+                                                    giftAmount(response.data?.gift_amount ?? 0)
+                                                    setBox4(true);
+                                                }
+                                            })
+                                        }}>
+                                            <motion.img src={getAssetUrl(GAME_ASSETS.RotatedInstant)} alt="RotatedInstant" className="absolute left-[136px] top-[0px] w-[60px]"
+                                                animate={{ rotate: 360 }}
+                                                transition={{
+                                                    rotate: { repeat: Infinity, duration: 5, ease: "linear" },
+                                                }} />
+                                            {box4 ? <img
                                                 key={index}
                                                 src={`${gameDetails?.gift_boxes_asset_base_path}${element.box_opened}`}
                                                 alt="box"
@@ -623,13 +719,31 @@ export default function PlayBoard({
                                                     void handleClaimGift(element.id);
                                                 }}
                                             />
+                                                : <img
+                                                    key={index}
+                                                    src={`${gameDetails?.gift_boxes_asset_base_path}${element.box_closed}`}
+                                                    alt="box"
+                                                    className={`absolute left-[242px] top-[12px]`}
+                                                />}
                                             <span className={`absolute left-[252px] top-[45px] text-[#f0d457] [text-shadow:1px_0_0_brown,-1px_0_0_brown,0_1px_0_brown,0_-1px_0_brown]`}>{formatNumber(amountValue)}</span>
-                                        </>
+                                        </button>
                                     )}
                                     {index === 4 && (
-                                        <>
-                                            <img src={getAssetUrl(GAME_ASSETS.RotatedInstant)} alt="RotatedInstant" className="absolute left-[277px] -top-[30px] scale-50" />
-                                            <img
+                                        <button onClick={() => {
+                                            onOpenModal("gift")
+                                            void handleGetGift(index + 2).then((response) => {
+                                                if (response.status) {
+                                                    giftAmount(response.data?.gift_amount ?? 0)
+                                                    setBox5(true);
+                                                }
+                                            })
+                                        }}>
+                                            <motion.img src={getAssetUrl(GAME_ASSETS.RotatedInstant)} alt="RotatedInstant" className="absolute left-[204px] top-[0px] w-[60px]"
+                                                animate={{ rotate: 360 }}
+                                                transition={{
+                                                    rotate: { repeat: Infinity, duration: 5, ease: "linear" },
+                                                }} />
+                                            {box5 ? <img
                                                 key={index}
                                                 src={`${gameDetails?.gift_boxes_asset_base_path}${element.box_opened}`}
                                                 alt="box"
@@ -638,8 +752,14 @@ export default function PlayBoard({
                                                     void handleClaimGift(element.id);
                                                 }}
                                             />
+                                                : <img
+                                                    key={index}
+                                                    src={`${gameDetails?.gift_boxes_asset_base_path}${element.box_closed}`}
+                                                    alt="box"
+                                                    className={`absolute left-[310px] top-[12px]`}
+                                                />}
                                             <span className={`absolute left-[320px] top-[45px] text-[#f0d457] [text-shadow:1px_0_0_brown,-1px_0_0_brown,0_1px_0_brown,0_-1px_0_brown]`}>{formatNumber(amountValue)}</span>
-                                        </>
+                                        </button>
                                     )}
                                 </>
                             ) : (

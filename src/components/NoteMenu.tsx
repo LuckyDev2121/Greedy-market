@@ -148,7 +148,7 @@ export default function NoteMenu({ onCloseNote, isAdvanced }: NoteMenuProps) {
                                     )}
                                 </span>
                                 <span className=" absolute left-[5px] top-[110px] text-[12px] text-[#bb8000] ">Win diamonds:{formatNumber(item.win_amount ?? 0)}</span>
-                                <span className=" absolute left-[5px] top-[130px] text-[12px] text-[#bb8000] ">Diamond Balance: {`${formatNumber(Number.parseInt(item.post_balance ?? "0", 10))}-->${formatNumber(Number.parseInt(item.new_balance ?? "0", 10))}`}</span>
+                                <span className=" absolute left-[5px] top-[130px] text-[12px] text-[#bb8000] ">Diamond Balance: {`${formatNumber(Number.parseInt(item.post_balance ?? "0", 10))}=>${formatNumber(Number.parseInt(item.new_balance ?? "0", 10))}`}</span>
                             </div>
                         );
                     })}
