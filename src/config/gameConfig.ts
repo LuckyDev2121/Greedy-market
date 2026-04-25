@@ -27,7 +27,7 @@ const API_BASE_URL =
   (import.meta.env.DEV ? "/api" : `${BACKEND_ORIGIN}/api`);
 
 
-export const GAME_DETAILS_API_URL = `${API_BASE_URL.replace(/\/$/, "")}/game-details/${GAME_ID}`;
+export const GAME_DETAILS_API_URL = `${API_BASE_URL.replace(/\/$/, "")}/gready-market/${GAME_ID}`;
 export const PLAYER_API_URL = `${API_BASE_URL.replace(/\/$/, "")}/player`;
 export const GAME_RESULTS_API_URL = `${API_BASE_URL.replace(/\/$/, "")}/game/${GAME_ID}/results`;
 export const ROUND_RESULT_API_URL = `${API_BASE_URL.replace(/\/$/, "")}/round-result`;

@@ -461,7 +461,8 @@ export default function PlayBoard({
                     placeBet(Number(optionId), amount, isAdvanced)
                 )
             )
-                .catch(() => {
+                .catch((error) => {
+                    console.error("Failed to place queued bets", error);
                     const total = Object.values(batch).reduce((a, b) => a + b, 0);
                     releaseBetBalance(total);
                 })
