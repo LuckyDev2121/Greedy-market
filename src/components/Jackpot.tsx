@@ -50,7 +50,7 @@ export default function JackpotMenu({ onCloseJackpot, isAdvance }: JackpotMenuPr
                         <span className=" absolute left-[250px] top-[5px] text-[15px] text-[#ffde96] ">Time</span>
                     </div>
                     <div className="scrollbar-hidden absolute top-[33px] bg-amber-50/60 left-1/2 rounded-b-[20px] -translate-x-1/2 w-[321px] h-[204px] grip overflow-x-hidden overflow-y-auto">
-                        <span className=" absolute left-[5px] top-[30px] text-[12px] text-[#bb8000]" >s:</span>
+                        <span className=" absolute left-[5px] top-[30px] text-[12px] text-[#bb8000]" ></span>
                     </div>
                 </div>
             </div >
