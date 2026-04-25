@@ -23,13 +23,15 @@ const shouldEnableRealtime =
 
 type EchoLike = Pick<Echo<"reverb">, "channel">;
 
+const noopChannel = {
+  listen: (_event: string, _callback: CallableFunction) => noopChannel,
+  stopListening: (_event: string, _callback?: CallableFunction) => noopChannel,
+  subscribed: (_callback: CallableFunction) => noopChannel,
+  error: (_callback: CallableFunction) => noopChannel,
+};
+
 const noopEcho: EchoLike = {
-  channel: () => ({
-    listen: () => noopEcho.channel(""),
-    stopListening: () => noopEcho.channel(""),
-    subscribed: () => noopEcho.channel(""),
-    error: () => noopEcho.channel(""),
-  }),
+  channel: (_name: string) => noopChannel,
 };
 
 export const echo: EchoLike = shouldEnableRealtime

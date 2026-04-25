@@ -1,4 +1,3 @@
-// import { useEffect, useMemo, } from "react";
 import { getAssetUrl, GAME_ASSETS } from "../config/gameConfig";
 import MenuButton from "./MenuButton";
 type GiftMenuProps = {

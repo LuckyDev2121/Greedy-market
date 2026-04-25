@@ -24,7 +24,6 @@ import {
   JACKPOT_FIRE_API_URL,
 } from "../config/gameConfig";
 import { getUserId } from "../utils/user";
-import JackpotMenu from "../components/Jackpot";
 
 function isNoRecordsResponse(status?: boolean, message?: string): boolean {
   return status === false && /no records found/i.test(message ?? "");

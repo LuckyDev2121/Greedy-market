@@ -65,19 +65,12 @@ export default function GreedyMarket({
 }) {
 
   const [activeModal, setActiveModal] = useState<string | null>(null);
-  // const [repeatRequestId, setRepeatRequestId] = useState(0);
   const [scale, setScale] = useState(1);
   const [isAdvancedMode, setIsAdvancedMode] = useState(false);
   const [remainingAmount, setRemainingAmount] = useState(0);
   const [giftAmount, setGiftAmount] = useState(0);
   const { gameMode, handleGameMode, setGameMode, myRanking, JackpotAdvance, JackpotBasic } = useGame();
   const isOverlayOpen = activeModal !== null;
-  // const previousRoundTotal = Object.values(previousRoundBets).reduce((sum, amount) => sum + amount, 0);
-  // const availableBalance = Number.parseFloat(displayBalance ?? "0");
-  // const hasInsufficientBalance = previousRoundTotal > availableBalance;
-  // const triggerRepeatBet = () => {
-  //   setRepeatRequestId((prev) => prev + 1);
-  // };
   useEffect(() => {
     const load = async () => {
 
@@ -186,7 +179,7 @@ export default function GreedyMarket({
                 <ToggleRow isOn={isAdvancedMode} onAdvanced={() => {
                   void (async () => {
                     await setGameMode(false).then((response) => {
-                      if (!response.status) {
+                      if (!response.status && response.remaining) {
                         setRemainingAmount(response.remaining);
                         setActiveModal("advanced");
                       }
@@ -227,7 +220,6 @@ export default function GreedyMarket({
               onOpenModal={(modal) => setActiveModal(modal)}
               isAdvanced={isAdvancedMode}
               giftAmount={(gift) => setGiftAmount(gift)}
-            // repeatRequestId={repeatRequestId}
             />
           </div>
 

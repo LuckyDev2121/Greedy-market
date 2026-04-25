@@ -75,27 +75,6 @@ export default function NoteMenu({ onCloseNote, isAdvanced }: NoteMenuProps) {
                 <div className="scrollbar-hidden absolute top-[30px]  left-1/2 transform -translate-x-1/2 w-[325px] h-[500px] grip overflow-x-hidden overflow-y-auto">
                     {historyData.map((item) => {
                         const winningOption = optionById.get(item.winning_option_id[0]);
-                        // let total = 0;
-
-                        // item.winning_option_id.forEach((optionId) => {
-                        //     let timer = 0;
-                        //     let betAmount = 0;
-
-                        //     if (optionId < 24) timer = 5;
-                        //     else if (optionId === 24) timer = 10;
-                        //     else if (optionId === 25) timer = 15;
-                        //     else if (optionId === 26) timer = 25;
-                        //     else if (optionId === 27) timer = 45;
-
-                        //     item.selected_options?.forEach((selectedOption) => {
-                        //         if (selectedOption.option_id === optionId && selectedOption.total_amount) {
-                        //             betAmount = selectedOption.total_amount;
-                        //         }
-                        //     });
-
-                        //     total += timer * betAmount;
-                        // });
-
                         return (
                             <div key={item.round_no} className="relative mt-[5px] bg-amber-300/30 rounded-[20px] w-[325px] h-[150px] border-t-[1px] border-t-amber-600">
                                 <div className="absolute w-[325px] flex justify-between mx-[20px] mt-[5px]">
