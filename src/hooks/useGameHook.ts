@@ -43,6 +43,7 @@ import {
   REALTIME_EVENT,
   getAssetUrl,
 } from "../config/gameConfig";
+import { getUserId } from "../utils/user";
 
 export function resolveAssetUrl(path: string): string {
   return getAssetUrl(path);
@@ -133,6 +134,15 @@ type RefreshGameDataOptions = {
   resetPendingBalanceDeduction?: boolean;
 };
 
+async function loadOptionalData<T>(label: string, loader: () => Promise<T>, fallback: T): Promise<T> {
+  try {
+    return await loader();
+  } catch (error) {
+    console.error(`Failed to load ${label}`, error);
+    return fallback;
+  }
+}
+
 function formatBalanceValue(amount: number): string {
   if (Number.isNaN(amount) || amount <= 0) {
     return "0";
@@ -161,22 +171,22 @@ async function runRefreshGameData(options?: RefreshGameDataOptions) {
 
   try {
     const [jackpotBasic, jackpotAdvance, myRanking, basicHistory, advanceHistory, gameDetail, player, gameResults,  rankingToday, rankingYesterday,  winToday,  url, prizeDistribution, isSoundEnabled, isMusicEnabled, gameMode] = await Promise.all([
-      fetchJackpot("basic"),
-      fetchJackpot("advance"),
-      fetchMyRanking(),
-      fetchHistoryBasic(),
-      fetchHistoryAdvance(),
+      loadOptionalData("basic jackpot", () => fetchJackpot("basic"), { status: true, mode: "basic", last_7_days_total: "0", message: "" }),
+      loadOptionalData("advance jackpot", () => fetchJackpot("advance"), { status: true, mode: "advance", last_7_days_total: "0", message: "" }),
+      loadOptionalData("my ranking", fetchMyRanking, { status: true, data: { ranking_position: 0, total_players: 0 }, message: "" }),
+      loadOptionalData("basic history", fetchHistoryBasic, { status: true, count: 0, data: [], message: "" }),
+      loadOptionalData("advance history", fetchHistoryAdvance, { status: true, count: 0, data: [], message: "" }),
       fetchGameDetail(),
       fetchPlayerInfo(),
       fetchGameResults(),
-      fetchRankingToday(),
-      fetchRankingYesterday(),
-      fetchWinToday(),
-      fetchRechargeUrl(),
-      fetchPrizeDistribution(),
-      fetchSoundSetting(),
-      fetchMusicSetting(),
-      fetchCurrentMode(),
+      loadOptionalData("ranking today", fetchRankingToday, []),
+      loadOptionalData("ranking yesterday", fetchRankingYesterday, []),
+      loadOptionalData("win today", fetchWinToday, { status: true, user_id: 0, win: 0, message: "" }),
+      loadOptionalData("recharge url", fetchRechargeUrl, { status: true, message: "", url: "" }),
+      loadOptionalData("prize distribution", fetchPrizeDistribution, { status: true, ranks: [], policy: [], message: "" }),
+      loadOptionalData("sound setting", fetchSoundSetting, true),
+      loadOptionalData("music setting", fetchMusicSetting, true),
+      loadOptionalData("current mode", fetchCurrentMode, { status: true, message: "", data: { user_id: getUserId(), mode: "basic" } }),
     ]);
 
   updateStore({

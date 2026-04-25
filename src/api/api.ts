@@ -65,6 +65,7 @@ type HowToPlay = {
 type giftBox={
   id:number;
   amount: string;
+  gift_amount:number;
   box_closed: string;
   box_opened:string;
   is_claimed:true;
