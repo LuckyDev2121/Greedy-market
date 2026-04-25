@@ -271,7 +271,7 @@ export default function CupMenu({ onCloseCup }: CupMenuProps) {
                             <span className="absolute text-[#FDF4C1]  font-bold text-[16px] top-1/2 -translate-y-1/2  [text-shadow:1px_0_0_brown,-1px_0_0_brown,0_1px_0_brown,0_-1px_0_brown]">{myRanking?.data.ranking_position}</span>
                         </div>
                     )}
-                    {myRanking?.data.ranking_position && myRanking?.data.ranking_position > 98 && (
+                    {myRanking?.data.ranking_position && (myRanking?.data.ranking_position > 98 || myRanking?.data.ranking_position === 0) && (
                         <div className="absolute left-0 top-0 h-[48px] w-[48px] bg-[#ffaa2c] rounded-l-[9px]">
                             <span className="absolute text-[#FDF4C1]  font-bold text-[16px] top-1/2 -translate-y-1/2  [text-shadow:1px_0_0_brown,-1px_0_0_brown,0_1px_0_brown,0_-1px_0_brown]">+99</span>
                         </div>
