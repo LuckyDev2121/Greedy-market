@@ -592,6 +592,7 @@ export default function PlayBoard({
                     <div className={`absolute w-[343px] h-[18px] top-[140px] left-1/2 -translate-x-1/2`}>
                         {gift_boxes?.map((element, index) => {
                             const amountValue = Number.parseInt(element.amount, 10);
+
                             return currentWinToday >= amountValue ? (
                                 <>
                                     {index === 0 && (

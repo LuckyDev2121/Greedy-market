@@ -327,26 +327,29 @@ const handlePrizeDistribution= useCallback(async () => {
   }, []);
 
   const handlePlaceBet = useCallback(async (optionId: number, amount: number,isAdvanceMode: boolean,) => {
-    let isMode='';
-    if(isAdvanceMode)isMode="advance"
-    else isMode="basic"
-    const currentBalance = Number.parseFloat(store.playerInfo?.balance ?? "0");
+	    let isMode='';
+	    if(isAdvanceMode)isMode="advance"
+	    else isMode="basic"
+	    const currentBalance = Number.parseFloat(store.playerInfo?.balance ?? "0");
 
     if (currentBalance < amount) {
       throw new Error("Insufficient balance");
     }
-
-    const response: PlaceBet = await placeBetRequest(optionId, amount,isMode);
-    updateStore((current) => ({
-      currentRoundBets: {
-        ...current.currentRoundBets,
-        [optionId]: (current.currentRoundBets[optionId] ?? 0) + amount,
-      },
-      lastBetMessage: response.message ?? null,
-    }));
-
-    return response;
-  }, []);
+	
+	    const response: PlaceBet = await placeBetRequest(optionId, amount,isMode);
+      const jackpot = await fetchJackpot(isMode);
+	    updateStore((current) => ({
+	      currentRoundBets: {
+	        ...current.currentRoundBets,
+	        [optionId]: (current.currentRoundBets[optionId] ?? 0) + amount,
+	      },
+	      lastBetMessage: response.message ?? null,
+        JackpotAdvance: isMode === "advance" ? jackpot.last_7_days_total : current.JackpotAdvance,
+        JackpotBasic: isMode === "basic" ? jackpot.last_7_days_total : current.JackpotBasic,
+	    }));
+	
+	    return response;
+	  }, []);
 
   const reserveBetBalance = useCallback((amount: number) => {
     if (amount <= 0) {
