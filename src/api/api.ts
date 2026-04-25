@@ -67,6 +67,7 @@ type giftBox={
   amount: string;
   box_closed: string;
   box_opened:string;
+  is_claimed:true;
 }
 export type GameDetailsData = {
   id?: number;

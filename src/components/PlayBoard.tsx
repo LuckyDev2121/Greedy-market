@@ -228,6 +228,16 @@ export default function PlayBoard({
             setFlyingBets((prev) => prev.filter((item) => item.id !== animationId));
         }, 220);
     };
+
+    useEffect(() => {
+        if (gift_boxes[0].is_claimed) setBox1(true);
+        if (gift_boxes[1].is_claimed) setBox2(true);
+        if (gift_boxes[2].is_claimed) setBox3(true);
+        if (gift_boxes[3].is_claimed) setBox4(true);
+        if (gift_boxes[4].is_claimed) setBox5(true);
+    }, [])
+
+
     useEffect(() => {
         const matched = betAmounts.find((element) =>
             isAdvanced ? element.mode === "advance" : element.mode === "basic"
