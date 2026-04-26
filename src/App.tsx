@@ -96,7 +96,7 @@ function App() {
     isAttemptingRoundRef.current = true;
 
     try {
-      const res = await createRound();
+      const res = await createRound(false);
       if (!isRoundStartable(res?.remaining_seconds)) {
         return false;
       }
@@ -137,7 +137,7 @@ function App() {
 
 
         const [res] = await Promise.all([
-          createRound(),
+          createRound(false),
           bootstrapGameStore({ resetPendingBalanceDeduction: true }),
         ]);
         if (cancelled) {

@@ -258,8 +258,13 @@ export function useGame() {
     await runRefreshGameData(options);
   }, []);
 
-  const handleCreateRound = useCallback(async () => {
-    const data = await createRound();
+  const handleCreateRound = useCallback(async (isMode:boolean) => {
+    let data
+    if(isMode){
+       data = await createRound("advance");
+    }else{
+      data = await createRound("basic");
+    }
     updateStore({ roundData: data });
     return data;
   }, []);

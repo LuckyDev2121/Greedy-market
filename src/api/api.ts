@@ -231,8 +231,8 @@ export type CreateRoundResponse = {
 };
 
 
-export const createRound = async (): Promise<CreateRoundResponse> => {
-    const response = await axios.get<CreateRoundResponse>(CURRENT_ROUND_API_URL);
+export const createRound = async ( isMode: string,): Promise<CreateRoundResponse> => {
+    const response = await axios.get<CreateRoundResponse>(`${CURRENT_ROUND_API_URL}/${isMode}`);
   
   if (!response.data) {
     throw new Error(response.data || "Failed to load sound setting");
