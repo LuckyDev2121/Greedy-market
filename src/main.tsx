@@ -6,7 +6,13 @@ import { checkIntroIntegration } from "./api/auth.ts"
 import { closeCurrentView } from "./utils/closeCurrentView.ts"
 
 async function bootstrap() {
-  const search = window.location.search.replace(/\?/g, "&").replace(/^&/, "?");
+  const normalizedSearch = window.location.search.replace(/\?/g, "&").replace(/^&/, "?");
+  if (normalizedSearch !== window.location.search) {
+    const normalizedUrl = `${window.location.pathname}${normalizedSearch}${window.location.hash}`;
+    window.history.replaceState(null, "", normalizedUrl);
+  }
+
+  const search = normalizedSearch;
   const params = new URLSearchParams(search);
 
   const userId = Number(params.get("userid"));
