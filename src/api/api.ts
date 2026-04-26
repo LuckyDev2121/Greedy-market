@@ -222,14 +222,12 @@ export const makeGameResult = async (roundId: number): Promise<ResultData> => {
   };
 };
 
-
 export type CreateRoundResponse = {
   game_id: number;
   round_no: number;
   remaining_seconds: number;
   stage: string;
 };
-
 
 export const createRound = async ( isMode: string,): Promise<CreateRoundResponse> => {
     const response = await axios.get<CreateRoundResponse>(`${CURRENT_ROUND_API_URL}/${isMode}`);
@@ -240,7 +238,6 @@ export const createRound = async ( isMode: string,): Promise<CreateRoundResponse
 
   return response.data;
 }
-
 
 export type CurrentData={
   user_id?: number;
