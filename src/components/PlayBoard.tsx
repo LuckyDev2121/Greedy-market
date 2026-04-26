@@ -515,7 +515,7 @@ export default function PlayBoard({
                     )}
                     <div className={`absolute justify-between items-center px-[10px] ${todayWin} flex w-[234px] h-[26px] top-[10px] rounded-full border-[2px]  left-1/2 -translate-x-1/2`}>
                         <span className=" font-blod">TODAY'S WIN</span>
-                        <span className="text-yellow-500 font-blod">{formatNumber(winToday?.win ?? 0)}</span>
+                        <span className="text-yellow-500 font-blod">{isAdvanced ? formatNumber(winToday?.win2 ?? 0) : formatNumber(winToday?.win ?? 0)}</span>
                     </div>
                     <button className="absolute left-[10px] -top-[60px] h-[70px] w-[70px] z-[50]">
                         <img src={getAssetUrl(GAME_ASSETS.RotatedInstant)} alt="RotatedInstant" className="absolute scale-125" />
