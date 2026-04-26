@@ -181,7 +181,7 @@ async function runRefreshGameData(options?: RefreshGameDataOptions) {
       fetchGameResults(),
       loadOptionalData("ranking today", fetchRankingToday, []),
       loadOptionalData("ranking yesterday", fetchRankingYesterday, []),
-      loadOptionalData("win today", fetchWinToday, { status: true, user_id: 0, win: 0, message: "" }),
+      loadOptionalData("win today", fetchWinToday, { status: true, user_id: 0, win: 0,win2:0, message: "" }),
       loadOptionalData("recharge url", fetchRechargeUrl, { status: true, message: "", url: "" }),
       loadOptionalData("prize distribution", fetchPrizeDistribution, { status: true, ranks: [], policy: [], message: "" }),
       loadOptionalData("sound setting", fetchSoundSetting, true),
@@ -316,7 +316,7 @@ const handlePrizeDistribution= useCallback(async () => {
       fetchGameResults(),
       loadOptionalData("ranking today", fetchRankingToday, []),
       loadOptionalData("ranking yesterday", fetchRankingYesterday, []),
-      loadOptionalData("win today", fetchWinToday, { status: true, user_id: 0, win: 0, message: "" }),
+      loadOptionalData("win today", fetchWinToday, { status: true, user_id: 0, win: 0, win2:0, message: "" }),
       loadOptionalData("advance history", fetchHistoryAdvance, { status: true, count: 0, data: [], message: "" }),
       loadOptionalData("basic history", fetchHistoryBasic, { status: true, count: 0, data: [], message: "" }),
     ]);

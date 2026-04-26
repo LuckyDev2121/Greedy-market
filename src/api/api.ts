@@ -63,6 +63,7 @@ type HowToPlay = {
   rules?: string;
 };
 type giftBox={
+  mode: string;
   id:number;
   amount: string;
   gift_amount:number;
@@ -405,6 +406,7 @@ export type WinTodayResponse={
   status?:boolean;
   user_id?:number;
   win?:number;
+  win2:number;
   message?: string;
 }
 export const fetchWinToday= async (): Promise<WinTodayResponse> => {
@@ -415,6 +417,7 @@ export const fetchWinToday= async (): Promise<WinTodayResponse> => {
       status: true,
       user_id: getUserId(),
       win: 0,
+      win2:0,
     };
   }
 

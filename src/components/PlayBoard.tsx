@@ -139,18 +139,31 @@ export default function PlayBoard({
     }, [options]);
     const roundKey = RoundId ?? "waiting";
     const playerBalance = Number.parseFloat(playerInfo?.balance ?? "0");
-    const currentWinToday = Math.max(0, Number(winToday?.win ?? 0));
-    const progressBarWidth =
-        currentWinToday >= 0 && currentWinToday < Number.parseInt(gift_boxes[0]?.amount, 10)
-            ? currentWinToday / Number.parseInt(gift_boxes[0]?.amount, 10) * 20
-            : currentWinToday >= Number.parseInt(gift_boxes[0]?.amount, 10) && currentWinToday < Number.parseInt(gift_boxes[1]?.amount, 10)
-                ? (currentWinToday - Number.parseInt(gift_boxes[0]?.amount, 10)) / (Number.parseInt(gift_boxes[1]?.amount, 10) - Number.parseInt(gift_boxes[0]?.amount, 10)) * 20 + 20
-                : currentWinToday >= Number.parseInt(gift_boxes[1]?.amount, 10) && currentWinToday < Number.parseInt(gift_boxes[2]?.amount, 10)
-                    ? (currentWinToday - Number.parseInt(gift_boxes[1]?.amount, 10)) / (Number.parseInt(gift_boxes[2]?.amount, 10) - Number.parseInt(gift_boxes[1]?.amount, 10)) * 20 + 40
-                    : currentWinToday >= Number.parseInt(gift_boxes[2]?.amount, 10) && currentWinToday < Number.parseInt(gift_boxes[3]?.amount, 10)
-                        ? (currentWinToday - Number.parseInt(gift_boxes[2]?.amount, 10)) / (Number.parseInt(gift_boxes[3]?.amount, 10) - Number.parseInt(gift_boxes[2]?.amount, 10)) * 20 + 60
-                        : currentWinToday >= Number.parseInt(gift_boxes[3]?.amount, 10) && currentWinToday < Number.parseInt(gift_boxes[4]?.amount, 10)
-                            ? (currentWinToday - Number.parseInt(gift_boxes[3]?.amount, 10)) / (Number.parseInt(gift_boxes[4]?.amount, 10) - Number.parseInt(gift_boxes[3]?.amount, 10)) * 20 + 80
+    const currentWinTodayBasic = Math.max(0, Number(winToday?.win ?? 0));
+    const currentWinTodayAdvance = Math.max(0, Number(winToday?.win2 ?? 0));
+    const progressBarWidthBasic =
+        currentWinTodayBasic >= 0 && currentWinTodayBasic < Number.parseInt(gift_boxes[0]?.amount, 10)
+            ? currentWinTodayBasic / Number.parseInt(gift_boxes[0]?.amount, 10) * 20
+            : currentWinTodayBasic >= Number.parseInt(gift_boxes[0]?.amount, 10) && currentWinTodayBasic < Number.parseInt(gift_boxes[1]?.amount, 10)
+                ? (currentWinTodayBasic - Number.parseInt(gift_boxes[0]?.amount, 10)) / (Number.parseInt(gift_boxes[1]?.amount, 10) - Number.parseInt(gift_boxes[0]?.amount, 10)) * 20 + 20
+                : currentWinTodayBasic >= Number.parseInt(gift_boxes[1]?.amount, 10) && currentWinTodayBasic < Number.parseInt(gift_boxes[2]?.amount, 10)
+                    ? (currentWinTodayBasic - Number.parseInt(gift_boxes[1]?.amount, 10)) / (Number.parseInt(gift_boxes[2]?.amount, 10) - Number.parseInt(gift_boxes[1]?.amount, 10)) * 20 + 40
+                    : currentWinTodayBasic >= Number.parseInt(gift_boxes[2]?.amount, 10) && currentWinTodayBasic < Number.parseInt(gift_boxes[3]?.amount, 10)
+                        ? (currentWinTodayBasic - Number.parseInt(gift_boxes[2]?.amount, 10)) / (Number.parseInt(gift_boxes[3]?.amount, 10) - Number.parseInt(gift_boxes[2]?.amount, 10)) * 20 + 60
+                        : currentWinTodayBasic >= Number.parseInt(gift_boxes[3]?.amount, 10) && currentWinTodayBasic < Number.parseInt(gift_boxes[4]?.amount, 10)
+                            ? (currentWinTodayBasic - Number.parseInt(gift_boxes[3]?.amount, 10)) / (Number.parseInt(gift_boxes[4]?.amount, 10) - Number.parseInt(gift_boxes[3]?.amount, 10)) * 20 + 80
+                            : 100;
+    const progressBarWidthAdvance =
+        currentWinTodayAdvance >= 0 && currentWinTodayAdvance < Number.parseInt(gift_boxes[5]?.amount, 10)
+            ? currentWinTodayAdvance / Number.parseInt(gift_boxes[5]?.amount, 10) * 20
+            : currentWinTodayAdvance >= Number.parseInt(gift_boxes[5]?.amount, 10) && currentWinTodayAdvance < Number.parseInt(gift_boxes[6]?.amount, 10)
+                ? (currentWinTodayAdvance - Number.parseInt(gift_boxes[5]?.amount, 10)) / (Number.parseInt(gift_boxes[6]?.amount, 10) - Number.parseInt(gift_boxes[5]?.amount, 10)) * 20 + 20
+                : currentWinTodayAdvance >= Number.parseInt(gift_boxes[6]?.amount, 10) && currentWinTodayAdvance < Number.parseInt(gift_boxes[7]?.amount, 10)
+                    ? (currentWinTodayAdvance - Number.parseInt(gift_boxes[6]?.amount, 10)) / (Number.parseInt(gift_boxes[7]?.amount, 10) - Number.parseInt(gift_boxes[6]?.amount, 10)) * 20 + 40
+                    : currentWinTodayAdvance >= Number.parseInt(gift_boxes[7]?.amount, 10) && currentWinTodayAdvance < Number.parseInt(gift_boxes[8]?.amount, 10)
+                        ? (currentWinTodayAdvance - Number.parseInt(gift_boxes[7]?.amount, 10)) / (Number.parseInt(gift_boxes[8]?.amount, 10) - Number.parseInt(gift_boxes[7]?.amount, 10)) * 20 + 60
+                        : currentWinTodayAdvance >= Number.parseInt(gift_boxes[8]?.amount, 10) && currentWinTodayAdvance < Number.parseInt(gift_boxes[9]?.amount, 10)
+                            ? (currentWinTodayAdvance - Number.parseInt(gift_boxes[8]?.amount, 10)) / (Number.parseInt(gift_boxes[9]?.amount, 10) - Number.parseInt(gift_boxes[8]?.amount, 10)) * 20 + 80
                             : 100;
 
 
@@ -227,12 +240,19 @@ export default function PlayBoard({
     };
 
     useEffect(() => {
+        if (isAdvanced) {
+            setBox1(Boolean(gift_boxes[5]?.is_claimed));
+            setBox2(Boolean(gift_boxes[6]?.is_claimed));
+            setBox3(Boolean(gift_boxes[7]?.is_claimed));
+            setBox4(Boolean(gift_boxes[8]?.is_claimed));
+            setBox5(Boolean(gift_boxes[9]?.is_claimed));
+        }
         setBox1(Boolean(gift_boxes[0]?.is_claimed));
         setBox2(Boolean(gift_boxes[1]?.is_claimed));
         setBox3(Boolean(gift_boxes[2]?.is_claimed));
         setBox4(Boolean(gift_boxes[3]?.is_claimed));
         setBox5(Boolean(gift_boxes[4]?.is_claimed));
-    }, [gift_boxes])
+    }, [gift_boxes, isAdvanced])
 
 
     useEffect(() => {
@@ -546,211 +566,409 @@ export default function PlayBoard({
                             })}
                     </div>
                     <div className={`absolute w-[343px] h-[18px] overflow-hidden rounded-[20px] top-[160px] ${scoreBoard}  border-[1px]  left-1/2 -translate-x-1/2`}>
-                        <div
+                        {isAdvanced ? <div
                             className={`absolute inset-y-0 left-0 rounded-[20px] bg-gradient-to-t from-[#118D11] to-[#1EF31E]`}
-                            style={{ width: `${progressBarWidth}%` }}
+                            style={{ width: `${progressBarWidthAdvance}%` }}
                         />
-
+                            : <div
+                                className={`absolute inset-y-0 left-0 rounded-[20px] bg-gradient-to-t from-[#118D11] to-[#1EF31E]`}
+                                style={{ width: `${progressBarWidthBasic}%` }}
+                            />
+                        }
                     </div >
                     <div className={`absolute w-[343px] h-[18px] top-[140px] left-1/2 -translate-x-1/2`}>
                         {gift_boxes?.map((element, index) => {
                             const amountValue = Number.parseInt(element.amount, 10);
-
-                            return currentWinToday >= amountValue ? (
-                                <>
-                                    {index === 0 && (
-                                        <button onClick={() => {
-                                            void handleClaimGift(element.id, index);
-                                        }}>
-                                            <motion.img src={getAssetUrl(GAME_ASSETS.RotatedInstant)} alt="RotatedInstant" className="absolute left-[32px] top-[0px] w-[60px]"
-                                                animate={{ rotate: 360 }}
-                                                transition={{
-                                                    rotate: { repeat: Infinity, duration: 5, ease: "linear" },
-                                                }} />
-                                            {box1 ? <img
-                                                key={index}
-                                                src={`${gameDetails?.gift_boxes_asset_base_path}${element.box_opened}`}
-                                                alt="box"
-                                                className={`absolute left-[38px] top-[12px] cursor-pointer `}
-                                            />
-                                                : <img
+                            if (isAdvanced) {
+                                if (index < 5) return
+                                else
+                                    return currentWinTodayAdvance >= amountValue ? (
+                                        <>
+                                            {index === 5 && (
+                                                <button onClick={() => {
+                                                    void handleClaimGift(element.id, index);
+                                                }}>
+                                                    <motion.img src={getAssetUrl(GAME_ASSETS.RotatedInstant)} alt="RotatedInstant" className="absolute left-[32px] top-[0px] w-[60px]"
+                                                        animate={{ rotate: 360 }}
+                                                        transition={{
+                                                            rotate: { repeat: Infinity, duration: 5, ease: "linear" },
+                                                        }} />
+                                                    {box1 ? <img
+                                                        key={index}
+                                                        src={`${gameDetails?.gift_boxes_asset_base_path}${element.box_opened}`}
+                                                        alt="box"
+                                                        className={`absolute left-[38px] top-[12px] cursor-pointer `}
+                                                    />
+                                                        : <img
+                                                            key={index}
+                                                            src={`${gameDetails?.gift_boxes_asset_base_path}${element.box_closed}`}
+                                                            alt="box"
+                                                            className={`absolute left-[38px] top-[12px]`}
+                                                        />
+                                                    }
+                                                    <span className={`absolute left-[48px] top-[45px] text-[#f0d457] [text-shadow:1px_0_0_brown,-1px_0_0_brown,0_1px_0_brown,0_-1px_0_brown]`}>{formatNumber(amountValue)}</span>
+                                                </button >
+                                            )}
+                                            {index === 6 && (
+                                                <button onClick={() => {
+                                                    void handleClaimGift(element.id, index);
+                                                }}>
+                                                    <motion.img src={getAssetUrl(GAME_ASSETS.RotatedInstant)} alt="RotatedInstant" className="absolute left-[100px] top-[0px] w-[60px]"
+                                                        animate={{ rotate: 360 }}
+                                                        transition={{
+                                                            rotate: { repeat: Infinity, duration: 5, ease: "linear" },
+                                                        }} />
+                                                    {box2 ? <img
+                                                        key={index}
+                                                        src={`${gameDetails?.gift_boxes_asset_base_path}${element.box_opened}`}
+                                                        alt="box"
+                                                        className={`absolute left-[106px] top-[12px] cursor-pointer`}
+                                                    />
+                                                        : <img
+                                                            key={index}
+                                                            src={`${gameDetails?.gift_boxes_asset_base_path}${element.box_closed}`}
+                                                            alt="box"
+                                                            className={`absolute left-[106px] top-[12px]`}
+                                                        />}
+                                                    <span className={`absolute left-[116px] top-[45px] text-[#f0d457] [text-shadow:1px_0_0_brown,-1px_0_0_brown,0_1px_0_brown,0_-1px_0_brown]`}>{formatNumber(amountValue)}</span>
+                                                </button>
+                                            )}
+                                            {index === 7 && (
+                                                <button onClick={() => {
+                                                    void handleClaimGift(element.id, index);
+                                                }}>
+                                                    <motion.img src={getAssetUrl(GAME_ASSETS.RotatedInstant)} alt="RotatedInstant" className="absolute left-[168px] top-[0px] w-[60px]"
+                                                        animate={{ rotate: 360 }}
+                                                        transition={{
+                                                            rotate: { repeat: Infinity, duration: 5, ease: "linear" },
+                                                        }} />
+                                                    {box3 ? <img
+                                                        key={index}
+                                                        src={`${gameDetails?.gift_boxes_asset_base_path}${element.box_opened}`}
+                                                        alt="box"
+                                                        className={`absolute left-[174px] top-[12px] cursor-pointer`}
+                                                        onClick={() => {
+                                                            void handleClaimGift(element.id, index);
+                                                        }}
+                                                    />
+                                                        : <img
+                                                            key={index}
+                                                            src={`${gameDetails?.gift_boxes_asset_base_path}${element.box_closed}`}
+                                                            alt="box"
+                                                            className={`absolute left-[174px] top-[12px]`}
+                                                        />}
+                                                    <span className={`absolute left-[184px] top-[45px] text-[#f0d457] [text-shadow:1px_0_0_brown,-1px_0_0_brown,0_1px_0_brown,0_-1px_0_brown]`}>{formatNumber(amountValue)}</span>
+                                                </button>
+                                            )}
+                                            {index === 8 && (
+                                                <button onClick={() => {
+                                                    void handleClaimGift(element.id, index);
+                                                }}>
+                                                    <motion.img src={getAssetUrl(GAME_ASSETS.RotatedInstant)} alt="RotatedInstant" className="absolute left-[236px] top-[0px] w-[60px]"
+                                                        animate={{ rotate: 360 }}
+                                                        transition={{
+                                                            rotate: { repeat: Infinity, duration: 5, ease: "linear" },
+                                                        }} />
+                                                    {box4 ? <img
+                                                        key={index}
+                                                        src={`${gameDetails?.gift_boxes_asset_base_path}${element.box_opened}`}
+                                                        alt="box"
+                                                        className={`absolute left-[242px] top-[12px] cursor-pointer`}
+                                                        onClick={() => {
+                                                            void handleClaimGift(element.id, index);
+                                                        }}
+                                                    />
+                                                        : <img
+                                                            key={index}
+                                                            src={`${gameDetails?.gift_boxes_asset_base_path}${element.box_closed}`}
+                                                            alt="box"
+                                                            className={`absolute left-[242px] top-[12px]`}
+                                                        />}
+                                                    <span className={`absolute left-[252px] top-[45px] text-[#f0d457] [text-shadow:1px_0_0_brown,-1px_0_0_brown,0_1px_0_brown,0_-1px_0_brown]`}>{formatNumber(amountValue)}</span>
+                                                </button>
+                                            )}
+                                            {index === 9 && (
+                                                <button onClick={() => {
+                                                    void handleClaimGift(element.id, index);
+                                                }}>
+                                                    <motion.img src={getAssetUrl(GAME_ASSETS.RotatedInstant)} alt="RotatedInstant" className="absolute left-[304px] top-[0px] w-[60px]"
+                                                        animate={{ rotate: 360 }}
+                                                        transition={{
+                                                            rotate: { repeat: Infinity, duration: 5, ease: "linear" },
+                                                        }} />
+                                                    {box5 ? <img
+                                                        key={index}
+                                                        src={`${gameDetails?.gift_boxes_asset_base_path}${element.box_opened}`}
+                                                        alt="box"
+                                                        className={`absolute left-[310px] top-[12px] cursor-pointer`}
+                                                        onClick={() => {
+                                                            void handleClaimGift(element.id, index);
+                                                        }}
+                                                    />
+                                                        : <img
+                                                            key={index}
+                                                            src={`${gameDetails?.gift_boxes_asset_base_path}${element.box_closed}`}
+                                                            alt="box"
+                                                            className={`absolute left-[310px] top-[12px]`}
+                                                        />}
+                                                    <span className={`absolute left-[320px] top-[45px] text-[#f0d457] [text-shadow:1px_0_0_brown,-1px_0_0_brown,0_1px_0_brown,0_-1px_0_brown]`}>{formatNumber(amountValue)}</span>
+                                                </button>
+                                            )}
+                                        </>
+                                    ) : (
+                                        <>
+                                            {index === 5 && (
+                                                <>
+                                                    <img
+                                                        key={index}
+                                                        src={`${gameDetails?.gift_boxes_asset_base_path}${element.box_closed}`}
+                                                        alt="box"
+                                                        className={`absolute left-[38px] top-[12px]`}
+                                                    />
+                                                    <span className={`absolute left-[48px] top-[45px] text-[#f0d457] [text-shadow:1px_0_0_brown,-1px_0_0_brown,0_1px_0_brown,0_-1px_0_brown]`}>{formatNumber(amountValue)}</span>
+                                                </>
+                                            )}
+                                            {index === 6 && (
+                                                <>
+                                                    <img
+                                                        key={index}
+                                                        src={`${gameDetails?.gift_boxes_asset_base_path}${element.box_closed}`}
+                                                        alt="box"
+                                                        className={`absolute left-[106px] top-[12px]`}
+                                                    />
+                                                    <span className={`absolute left-[116px] top-[45px] text-[#f0d457] [text-shadow:1px_0_0_brown,-1px_0_0_brown,0_1px_0_brown,0_-1px_0_brown]`}>{formatNumber(amountValue)}</span>
+                                                </>
+                                            )}
+                                            {index === 7 && (
+                                                <>
+                                                    <img
+                                                        key={index}
+                                                        src={`${gameDetails?.gift_boxes_asset_base_path}${element.box_closed}`}
+                                                        alt="box"
+                                                        className={`absolute left-[174px] top-[12px]`}
+                                                    />
+                                                    <span className={`absolute left-[184px] top-[45px] text-[#f0d457] [text-shadow:1px_0_0_brown,-1px_0_0_brown,0_1px_0_brown,0_-1px_0_brown]`}>{formatNumber(amountValue)}</span>
+                                                </>
+                                            )}
+                                            {index === 8 && (
+                                                <>
+                                                    <img
+                                                        key={index}
+                                                        src={`${gameDetails?.gift_boxes_asset_base_path}${element.box_closed}`}
+                                                        alt="box"
+                                                        className={`absolute left-[242px] top-[12px]`}
+                                                    />
+                                                    <span className={`absolute left-[252px] top-[45px] text-[#f0d457] [text-shadow:1px_0_0_brown,-1px_0_0_brown,0_1px_0_brown,0_-1px_0_brown]`}>{formatNumber(amountValue)}</span>
+                                                </>
+                                            )}
+                                            {index === 9 && (
+                                                <>
+                                                    <img
+                                                        key={index}
+                                                        src={`${gameDetails?.gift_boxes_asset_base_path}${element.box_closed}`}
+                                                        alt="box"
+                                                        className={`absolute left-[310px] top-[12px]`}
+                                                    />
+                                                    <span className={`absolute left-[320px] top-[45px] text-[#f0d457] [text-shadow:1px_0_0_brown,-1px_0_0_brown,0_1px_0_brown,0_-1px_0_brown]`}>{formatNumber(amountValue)}</span>
+                                                </>
+                                            )}
+                                        </>
+                                    );
+                            }
+                            else {
+                                return currentWinTodayBasic >= amountValue ? (
+                                    <>
+                                        {index === 0 && (
+                                            <button onClick={() => {
+                                                void handleClaimGift(element.id, index);
+                                            }}>
+                                                <motion.img src={getAssetUrl(GAME_ASSETS.RotatedInstant)} alt="RotatedInstant" className="absolute left-[32px] top-[0px] w-[60px]"
+                                                    animate={{ rotate: 360 }}
+                                                    transition={{
+                                                        rotate: { repeat: Infinity, duration: 5, ease: "linear" },
+                                                    }} />
+                                                {box1 ? <img
+                                                    key={index}
+                                                    src={`${gameDetails?.gift_boxes_asset_base_path}${element.box_opened}`}
+                                                    alt="box"
+                                                    className={`absolute left-[38px] top-[12px] cursor-pointer `}
+                                                />
+                                                    : <img
+                                                        key={index}
+                                                        src={`${gameDetails?.gift_boxes_asset_base_path}${element.box_closed}`}
+                                                        alt="box"
+                                                        className={`absolute left-[38px] top-[12px]`}
+                                                    />
+                                                }
+                                                <span className={`absolute left-[48px] top-[45px] text-[#f0d457] [text-shadow:1px_0_0_brown,-1px_0_0_brown,0_1px_0_brown,0_-1px_0_brown]`}>{formatNumber(amountValue)}</span>
+                                            </button >
+                                        )}
+                                        {index === 1 && (
+                                            <button onClick={() => {
+                                                void handleClaimGift(element.id, index);
+                                            }}>
+                                                <motion.img src={getAssetUrl(GAME_ASSETS.RotatedInstant)} alt="RotatedInstant" className="absolute left-[100px] top-[0px] w-[60px]"
+                                                    animate={{ rotate: 360 }}
+                                                    transition={{
+                                                        rotate: { repeat: Infinity, duration: 5, ease: "linear" },
+                                                    }} />
+                                                {box2 ? <img
+                                                    key={index}
+                                                    src={`${gameDetails?.gift_boxes_asset_base_path}${element.box_opened}`}
+                                                    alt="box"
+                                                    className={`absolute left-[106px] top-[12px] cursor-pointer`}
+                                                />
+                                                    : <img
+                                                        key={index}
+                                                        src={`${gameDetails?.gift_boxes_asset_base_path}${element.box_closed}`}
+                                                        alt="box"
+                                                        className={`absolute left-[106px] top-[12px]`}
+                                                    />}
+                                                <span className={`absolute left-[116px] top-[45px] text-[#f0d457] [text-shadow:1px_0_0_brown,-1px_0_0_brown,0_1px_0_brown,0_-1px_0_brown]`}>{formatNumber(amountValue)}</span>
+                                            </button>
+                                        )}
+                                        {index === 2 && (
+                                            <button onClick={() => {
+                                                void handleClaimGift(element.id, index);
+                                            }}>
+                                                <motion.img src={getAssetUrl(GAME_ASSETS.RotatedInstant)} alt="RotatedInstant" className="absolute left-[168px] top-[0px] w-[60px]"
+                                                    animate={{ rotate: 360 }}
+                                                    transition={{
+                                                        rotate: { repeat: Infinity, duration: 5, ease: "linear" },
+                                                    }} />
+                                                {box3 ? <img
+                                                    key={index}
+                                                    src={`${gameDetails?.gift_boxes_asset_base_path}${element.box_opened}`}
+                                                    alt="box"
+                                                    className={`absolute left-[174px] top-[12px] cursor-pointer`}
+                                                    onClick={() => {
+                                                        void handleClaimGift(element.id, index);
+                                                    }}
+                                                />
+                                                    : <img
+                                                        key={index}
+                                                        src={`${gameDetails?.gift_boxes_asset_base_path}${element.box_closed}`}
+                                                        alt="box"
+                                                        className={`absolute left-[174px] top-[12px]`}
+                                                    />}
+                                                <span className={`absolute left-[184px] top-[45px] text-[#f0d457] [text-shadow:1px_0_0_brown,-1px_0_0_brown,0_1px_0_brown,0_-1px_0_brown]`}>{formatNumber(amountValue)}</span>
+                                            </button>
+                                        )}
+                                        {index === 3 && (
+                                            <button onClick={() => {
+                                                void handleClaimGift(element.id, index);
+                                            }}>
+                                                <motion.img src={getAssetUrl(GAME_ASSETS.RotatedInstant)} alt="RotatedInstant" className="absolute left-[236px] top-[0px] w-[60px]"
+                                                    animate={{ rotate: 360 }}
+                                                    transition={{
+                                                        rotate: { repeat: Infinity, duration: 5, ease: "linear" },
+                                                    }} />
+                                                {box4 ? <img
+                                                    key={index}
+                                                    src={`${gameDetails?.gift_boxes_asset_base_path}${element.box_opened}`}
+                                                    alt="box"
+                                                    className={`absolute left-[242px] top-[12px] cursor-pointer`}
+                                                    onClick={() => {
+                                                        void handleClaimGift(element.id, index);
+                                                    }}
+                                                />
+                                                    : <img
+                                                        key={index}
+                                                        src={`${gameDetails?.gift_boxes_asset_base_path}${element.box_closed}`}
+                                                        alt="box"
+                                                        className={`absolute left-[242px] top-[12px]`}
+                                                    />}
+                                                <span className={`absolute left-[252px] top-[45px] text-[#f0d457] [text-shadow:1px_0_0_brown,-1px_0_0_brown,0_1px_0_brown,0_-1px_0_brown]`}>{formatNumber(amountValue)}</span>
+                                            </button>
+                                        )}
+                                        {index === 4 && (
+                                            <button onClick={() => {
+                                                void handleClaimGift(element.id, index);
+                                            }}>
+                                                <motion.img src={getAssetUrl(GAME_ASSETS.RotatedInstant)} alt="RotatedInstant" className="absolute left-[304px] top-[0px] w-[60px]"
+                                                    animate={{ rotate: 360 }}
+                                                    transition={{
+                                                        rotate: { repeat: Infinity, duration: 5, ease: "linear" },
+                                                    }} />
+                                                {box5 ? <img
+                                                    key={index}
+                                                    src={`${gameDetails?.gift_boxes_asset_base_path}${element.box_opened}`}
+                                                    alt="box"
+                                                    className={`absolute left-[310px] top-[12px] cursor-pointer`}
+                                                    onClick={() => {
+                                                        void handleClaimGift(element.id, index);
+                                                    }}
+                                                />
+                                                    : <img
+                                                        key={index}
+                                                        src={`${gameDetails?.gift_boxes_asset_base_path}${element.box_closed}`}
+                                                        alt="box"
+                                                        className={`absolute left-[310px] top-[12px]`}
+                                                    />}
+                                                <span className={`absolute left-[320px] top-[45px] text-[#f0d457] [text-shadow:1px_0_0_brown,-1px_0_0_brown,0_1px_0_brown,0_-1px_0_brown]`}>{formatNumber(amountValue)}</span>
+                                            </button>
+                                        )}
+                                    </>
+                                ) : (
+                                    <>
+                                        {index === 0 && (
+                                            <>
+                                                <img
                                                     key={index}
                                                     src={`${gameDetails?.gift_boxes_asset_base_path}${element.box_closed}`}
                                                     alt="box"
                                                     className={`absolute left-[38px] top-[12px]`}
                                                 />
-                                            }
-                                            <span className={`absolute left-[48px] top-[45px] text-[#f0d457] [text-shadow:1px_0_0_brown,-1px_0_0_brown,0_1px_0_brown,0_-1px_0_brown]`}>{formatNumber(amountValue)}</span>
-                                        </button >
-                                    )}
-                                    {index === 1 && (
-                                        <button onClick={() => {
-                                            void handleClaimGift(element.id, index);
-                                        }}>
-                                            <motion.img src={getAssetUrl(GAME_ASSETS.RotatedInstant)} alt="RotatedInstant" className="absolute left-[100px] top-[0px] w-[60px]"
-                                                animate={{ rotate: 360 }}
-                                                transition={{
-                                                    rotate: { repeat: Infinity, duration: 5, ease: "linear" },
-                                                }} />
-                                            {box2 ? <img
-                                                key={index}
-                                                src={`${gameDetails?.gift_boxes_asset_base_path}${element.box_opened}`}
-                                                alt="box"
-                                                className={`absolute left-[106px] top-[12px] cursor-pointer`}
-                                            // onClick={() => {
-                                            //     void handleClaimGift(element.id);
-                                            // }}
-                                            />
-                                                : <img
+                                                <span className={`absolute left-[48px] top-[45px] text-[#f0d457] [text-shadow:1px_0_0_brown,-1px_0_0_brown,0_1px_0_brown,0_-1px_0_brown]`}>{formatNumber(amountValue)}</span>
+                                            </>
+                                        )}
+                                        {index === 1 && (
+                                            <>
+                                                <img
                                                     key={index}
                                                     src={`${gameDetails?.gift_boxes_asset_base_path}${element.box_closed}`}
                                                     alt="box"
                                                     className={`absolute left-[106px] top-[12px]`}
-                                                />}
-                                            <span className={`absolute left-[116px] top-[45px] text-[#f0d457] [text-shadow:1px_0_0_brown,-1px_0_0_brown,0_1px_0_brown,0_-1px_0_brown]`}>{formatNumber(amountValue)}</span>
-                                        </button>
-                                    )}
-                                    {index === 2 && (
-                                        <button onClick={() => {
-                                            void handleClaimGift(element.id, index);
-                                        }}>
-                                            <motion.img src={getAssetUrl(GAME_ASSETS.RotatedInstant)} alt="RotatedInstant" className="absolute left-[168px] top-[0px] w-[60px]"
-                                                animate={{ rotate: 360 }}
-                                                transition={{
-                                                    rotate: { repeat: Infinity, duration: 5, ease: "linear" },
-                                                }} />
-                                            {box3 ? <img
-                                                key={index}
-                                                src={`${gameDetails?.gift_boxes_asset_base_path}${element.box_opened}`}
-                                                alt="box"
-                                                className={`absolute left-[174px] top-[12px] cursor-pointer`}
-                                                onClick={() => {
-                                                    void handleClaimGift(element.id, index);
-                                                }}
-                                            />
-                                                : <img
+                                                />
+                                                <span className={`absolute left-[116px] top-[45px] text-[#f0d457] [text-shadow:1px_0_0_brown,-1px_0_0_brown,0_1px_0_brown,0_-1px_0_brown]`}>{formatNumber(amountValue)}</span>
+                                            </>
+                                        )}
+                                        {index === 2 && (
+                                            <>
+                                                <img
                                                     key={index}
                                                     src={`${gameDetails?.gift_boxes_asset_base_path}${element.box_closed}`}
                                                     alt="box"
                                                     className={`absolute left-[174px] top-[12px]`}
-                                                />}
-                                            <span className={`absolute left-[184px] top-[45px] text-[#f0d457] [text-shadow:1px_0_0_brown,-1px_0_0_brown,0_1px_0_brown,0_-1px_0_brown]`}>{formatNumber(amountValue)}</span>
-                                        </button>
-                                    )}
-                                    {index === 3 && (
-                                        <button onClick={() => {
-                                            void handleClaimGift(element.id, index);
-                                        }}>
-                                            <motion.img src={getAssetUrl(GAME_ASSETS.RotatedInstant)} alt="RotatedInstant" className="absolute left-[236px] top-[0px] w-[60px]"
-                                                animate={{ rotate: 360 }}
-                                                transition={{
-                                                    rotate: { repeat: Infinity, duration: 5, ease: "linear" },
-                                                }} />
-                                            {box4 ? <img
-                                                key={index}
-                                                src={`${gameDetails?.gift_boxes_asset_base_path}${element.box_opened}`}
-                                                alt="box"
-                                                className={`absolute left-[242px] top-[12px] cursor-pointer`}
-                                                onClick={() => {
-                                                    void handleClaimGift(element.id, index);
-                                                }}
-                                            />
-                                                : <img
+                                                />
+                                                <span className={`absolute left-[184px] top-[45px] text-[#f0d457] [text-shadow:1px_0_0_brown,-1px_0_0_brown,0_1px_0_brown,0_-1px_0_brown]`}>{formatNumber(amountValue)}</span>
+                                            </>
+                                        )}
+                                        {index === 3 && (
+                                            <>
+                                                <img
                                                     key={index}
                                                     src={`${gameDetails?.gift_boxes_asset_base_path}${element.box_closed}`}
                                                     alt="box"
                                                     className={`absolute left-[242px] top-[12px]`}
-                                                />}
-                                            <span className={`absolute left-[252px] top-[45px] text-[#f0d457] [text-shadow:1px_0_0_brown,-1px_0_0_brown,0_1px_0_brown,0_-1px_0_brown]`}>{formatNumber(amountValue)}</span>
-                                        </button>
-                                    )}
-                                    {index === 4 && (
-                                        <button onClick={() => {
-                                            void handleClaimGift(element.id, index);
-                                        }}>
-                                            <motion.img src={getAssetUrl(GAME_ASSETS.RotatedInstant)} alt="RotatedInstant" className="absolute left-[304px] top-[0px] w-[60px]"
-                                                animate={{ rotate: 360 }}
-                                                transition={{
-                                                    rotate: { repeat: Infinity, duration: 5, ease: "linear" },
-                                                }} />
-                                            {box5 ? <img
-                                                key={index}
-                                                src={`${gameDetails?.gift_boxes_asset_base_path}${element.box_opened}`}
-                                                alt="box"
-                                                className={`absolute left-[310px] top-[12px] cursor-pointer`}
-                                                onClick={() => {
-                                                    void handleClaimGift(element.id, index);
-                                                }}
-                                            />
-                                                : <img
+                                                />
+                                                <span className={`absolute left-[252px] top-[45px] text-[#f0d457] [text-shadow:1px_0_0_brown,-1px_0_0_brown,0_1px_0_brown,0_-1px_0_brown]`}>{formatNumber(amountValue)}</span>
+                                            </>
+                                        )}
+                                        {index === 4 && (
+                                            <>
+                                                <img
                                                     key={index}
                                                     src={`${gameDetails?.gift_boxes_asset_base_path}${element.box_closed}`}
                                                     alt="box"
                                                     className={`absolute left-[310px] top-[12px]`}
-                                                />}
-                                            <span className={`absolute left-[320px] top-[45px] text-[#f0d457] [text-shadow:1px_0_0_brown,-1px_0_0_brown,0_1px_0_brown,0_-1px_0_brown]`}>{formatNumber(amountValue)}</span>
-                                        </button>
-                                    )}
-                                </>
-                            ) : (
-                                <>
-                                    {index === 0 && (
-                                        <>
-                                            <img
-                                                key={index}
-                                                src={`${gameDetails?.gift_boxes_asset_base_path}${element.box_closed}`}
-                                                alt="box"
-                                                className={`absolute left-[38px] top-[12px]`}
-                                            />
-                                            <span className={`absolute left-[48px] top-[45px] text-[#f0d457] [text-shadow:1px_0_0_brown,-1px_0_0_brown,0_1px_0_brown,0_-1px_0_brown]`}>{formatNumber(amountValue)}</span>
-                                        </>
-                                    )}
-                                    {index === 1 && (
-                                        <>
-                                            <img
-                                                key={index}
-                                                src={`${gameDetails?.gift_boxes_asset_base_path}${element.box_closed}`}
-                                                alt="box"
-                                                className={`absolute left-[106px] top-[12px]`}
-                                            />
-                                            <span className={`absolute left-[116px] top-[45px] text-[#f0d457] [text-shadow:1px_0_0_brown,-1px_0_0_brown,0_1px_0_brown,0_-1px_0_brown]`}>{formatNumber(amountValue)}</span>
-                                        </>
-                                    )}
-                                    {index === 2 && (
-                                        <>
-                                            <img
-                                                key={index}
-                                                src={`${gameDetails?.gift_boxes_asset_base_path}${element.box_closed}`}
-                                                alt="box"
-                                                className={`absolute left-[174px] top-[12px]`}
-                                            />
-                                            <span className={`absolute left-[184px] top-[45px] text-[#f0d457] [text-shadow:1px_0_0_brown,-1px_0_0_brown,0_1px_0_brown,0_-1px_0_brown]`}>{formatNumber(amountValue)}</span>
-                                        </>
-                                    )}
-                                    {index === 3 && (
-                                        <>
-                                            <img
-                                                key={index}
-                                                src={`${gameDetails?.gift_boxes_asset_base_path}${element.box_closed}`}
-                                                alt="box"
-                                                className={`absolute left-[242px] top-[12px]`}
-                                            />
-                                            <span className={`absolute left-[252px] top-[45px] text-[#f0d457] [text-shadow:1px_0_0_brown,-1px_0_0_brown,0_1px_0_brown,0_-1px_0_brown]`}>{formatNumber(amountValue)}</span>
-                                        </>
-                                    )}
-                                    {index === 4 && (
-                                        <>
-                                            <img
-                                                key={index}
-                                                src={`${gameDetails?.gift_boxes_asset_base_path}${element.box_closed}`}
-                                                alt="box"
-                                                className={`absolute left-[310px] top-[12px]`}
-                                            />
-                                            <span className={`absolute left-[320px] top-[45px] text-[#f0d457] [text-shadow:1px_0_0_brown,-1px_0_0_brown,0_1px_0_brown,0_-1px_0_brown]`}>{formatNumber(amountValue)}</span>
-                                        </>
-                                    )}
-                                </>
-                            );
+                                                />
+                                                <span className={`absolute left-[320px] top-[45px] text-[#f0d457] [text-shadow:1px_0_0_brown,-1px_0_0_brown,0_1px_0_brown,0_-1px_0_brown]`}>{formatNumber(amountValue)}</span>
+                                            </>
+                                        )}
+                                    </>
+                                );
+                            }
                         })}
                     </div >
                     <div className={`absolute flex items-center w-[343px] h-[45px] rounded-[12px] ${resultBoard} top-[210px]  border-[2px]  left-1/2 -translate-x-1/2`}>
