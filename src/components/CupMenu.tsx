@@ -284,7 +284,7 @@ export default function CupMenu({ onCloseCup }: CupMenuProps) {
                     <img src={resolveAssetUrl(playerInfo?.avater ?? "")} alt="avatar" className="absolute left-[50px]  h-[45px] w-[45px] rounded-full" />
                     <span className="absolute  text-[#A45721] font-bold left-[100px]">{playerInfo?.username}</span>
                     <img src={getAssetUrl(GAME_ASSETS.diamond)} alt="diamond" className="absolute left-[220px] h-[40px] w-[40px]" />
-                    <span className="absolute left-[260px] [text-shadow:1px_0_0_brown,-1px_0_0_brown,0_1px_0_brown,0_-1px_0_brown] text-[#fde4c7] font-bold  h-[40px] w-[80px] content-center">{Number(winToday?.win).toString()}</span>
+                    <span className="absolute left-[260px] [text-shadow:1px_0_0_brown,-1px_0_0_brown,0_1px_0_brown,0_-1px_0_brown] text-[#fde4c7] font-bold  h-[40px] w-[80px] content-center">{Number((winToday?.win ?? 0) + (winToday?.win2 ?? 0)).toString()}</span>
                 </div>
                 {isRankingHelpOpen && (
                     <>
