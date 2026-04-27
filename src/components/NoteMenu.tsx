@@ -90,6 +90,37 @@ export default function NoteMenu({ onCloseNote, isAdvanced }: NoteMenuProps) {
 
     const historyData = isAdvanced ? (advanceHistory?.data ?? []) : (basicHistory?.data ?? []);
 
+    const getWinningIcons = (winningOptionIds: number[]) => {
+        if (winningOptionIds.length === 0) {
+            return [];
+        }
+
+        const isVegGroup = winningOptionIds.every((id) => id >= 20 && id <= 23);
+        if (winningOptionIds.length > 1 && isVegGroup) {
+            return [{ key: "veg", src: getAssetUrl(GAME_ASSETS.veg), alt: "Veg group" }];
+        }
+
+        const isDrinkGroup = winningOptionIds.every((id) => id >= 24 && id <= 27);
+        if (winningOptionIds.length > 1 && isDrinkGroup) {
+            return [{ key: "drink", src: getAssetUrl(GAME_ASSETS.drink), alt: "Drink group" }];
+        }
+
+        return winningOptionIds
+            .map((id) => {
+                const option = optionById.get(id);
+                if (!option) {
+                    return null;
+                }
+
+                return {
+                    key: id.toString(),
+                    src: getAssetUrl(option.logo),
+                    alt: option.name,
+                };
+            })
+            .filter((item): item is { key: string; src: string; alt: string } => item !== null);
+    };
+
     return (
         <div className="h-[567px] bg-amber-500 w-[355px] rounded-[20px]">
             <div className="absolute bg-[#fadbad] h-[547px] w-[335px] left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 rounded-[20px]">
@@ -103,7 +134,7 @@ export default function NoteMenu({ onCloseNote, isAdvanced }: NoteMenuProps) {
                 <div className="scrollbar-hidden absolute top-[30px]  left-1/2 transform -translate-x-1/2 w-[325px] h-[500px] grip overflow-x-hidden overflow-y-auto">
                     {historyData.map((item) => {
                         const winningOptionIds = normalizeWinningOptionIds(item.winning_option_id);
-                        const winningOption = optionById.get(winningOptionIds[0]);
+                        const winningIcons = getWinningIcons(winningOptionIds);
                         return (
                             <div key={item.round_no} className="relative mt-[5px] bg-amber-300/30 rounded-[20px] w-[325px] h-[150px] border-t-[1px] border-t-amber-600">
                                 <div className="absolute w-[325px] flex justify-between mx-[20px] mt-[5px]">
@@ -121,7 +152,7 @@ export default function NoteMenu({ onCloseNote, isAdvanced }: NoteMenuProps) {
                                         if (element.total_amount && option) {
                                             return (
                                                 <div key={element.option_id} className="relative w-[75px] h-[20px] bg-[#e4a553] rounded-[8px] justify-center items-center flex ">
-                                                    <img src={getAssetUrl(option.logo)} alt={option.name} className="h-4 w-4 mr-[2px]" />
+                                                    <img src={getAssetUrl(element.option_logo || option.logo)} alt={option.name} className="h-4 w-4 mr-[2px]" />
                                                     <span className=" items-center ml-[2px]">{formatNumber(element.total_amount)}</span>
                                                 </div>
                                             );
@@ -130,31 +161,19 @@ export default function NoteMenu({ onCloseNote, isAdvanced }: NoteMenuProps) {
                                         return null;
                                     })}
                                 </div>
-                                <span className=" absolute flex left-[5px] top-[90px] text-[12px] text-[#bb8000] ">Winning items:
-                                    {winningOptionIds.length === 1 && winningOption && (
-                                        <img
-                                            src={getAssetUrl(winningOption.logo)}
-                                            alt="a"
-                                            className="w-[20px] h-[20px] ml-[10px]"
-                                        />
-                                    )}
-                                    {winningOptionIds.length > 1 && winningOptionIds[0] === 20 && (
-                                        <img
-                                            key={winningOptionIds[0]}
-                                            src={getAssetUrl(GAME_ASSETS.veg)}
-                                            alt="a"
-                                            className="w-[20px] h-[20px] ml-[10px]"
-                                        />
-                                    )}
-                                    {winningOptionIds.length > 1 && winningOptionIds[0] === 24 && (
-                                        <img
-                                            key={winningOptionIds[0]}
-                                            src={getAssetUrl(GAME_ASSETS.drink)}
-                                            alt="a"
-                                            className="w-[20px] h-[20px] ml-[10px]"
-                                        />
-                                    )}
-                                </span>
+                                <div className=" absolute flex items-center left-[5px] top-[90px] text-[12px] text-[#bb8000] ">
+                                    <span>Winning items:</span>
+                                    <div className="ml-[10px] flex gap-[4px]">
+                                        {winningIcons.map((icon) => (
+                                            <img
+                                                key={icon.key}
+                                                src={icon.src}
+                                                alt={icon.alt}
+                                                className="h-[20px] w-[20px]"
+                                            />
+                                        ))}
+                                    </div>
+                                </div>
                                 <span className=" absolute left-[5px] top-[110px] text-[12px] text-[#bb8000] ">Win diamonds:{formatNumber(item.win_amount ?? 0)}</span>
                                 <span className=" absolute left-[5px] top-[130px] text-[12px] text-[#bb8000] ">Diamond Balance: {`${formatNumber(Number.parseInt(item.post_balance ?? "0", 10))}=>${formatNumber(Number.parseInt(item.new_balance ?? "0", 10))}`}</span>
                             </div>

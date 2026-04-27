@@ -24,7 +24,7 @@ function formatNumber(num: number): string {
 }
 
 const GameElements = ({ controlButtons, currentBetAmount, displayedBets, onBetOption, registerOptionRef }: FruitBoardProps) => {
-    const { options, playerInfo } = useGame();
+    const { options, displayBalance } = useGame();
 
     useEffect(() => {
         if (!options.length) return;
@@ -34,7 +34,7 @@ const GameElements = ({ controlButtons, currentBetAmount, displayedBets, onBetOp
         });
     }, [options]);
 
-    const balance = Number.parseFloat(playerInfo?.balance ?? "0");
+    const balance = Number.parseFloat(displayBalance ?? "0");
 
     return (
         <div className='relative top-[8px] h-[400px] w-[402px] z-30  left-1/2 transform -translate-x-1/2' style={{ pointerEvents: controlButtons }}>

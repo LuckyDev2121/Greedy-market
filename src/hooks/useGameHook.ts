@@ -310,15 +310,15 @@ const handlePrizeDistribution= useCallback(async () => {
 
   const handleMakeResult = useCallback(async (roundId: number) => {
     const data = await makeGameResult(roundId);
-    const [myRanking, player, gameResults, rankingToday,rankingYesterday,  winToday, basicHistory, advancdHistory] = await Promise.all([
+    const [myRanking, player, gameResults, rankingToday,rankingYesterday,  winToday, basicHistory, advanceHistory] = await Promise.all([
       loadOptionalData("my ranking", fetchMyRanking, { status: true, data: { ranking_position: 0, total_players: 0 }, message: "" }),
       fetchPlayerInfo(),
       fetchGameResults(),
       loadOptionalData("ranking today", fetchRankingToday, []),
       loadOptionalData("ranking yesterday", fetchRankingYesterday, []),
       loadOptionalData("win today", fetchWinToday, { status: true, user_id: 0, win: 0, win2:0, message: "" }),
-      loadOptionalData("advance history", fetchHistoryAdvance, { status: true, count: 0, data: [], message: "" }),
       loadOptionalData("basic history", fetchHistoryBasic, { status: true, count: 0, data: [], message: "" }),
+      loadOptionalData("advance history", fetchHistoryAdvance, { status: true, count: 0, data: [], message: "" }),
     ]);
 
     updateStore({
@@ -330,7 +330,7 @@ const handlePrizeDistribution= useCallback(async () => {
       rankingYesterdays: rankingYesterday,
       winToday:winToday,
       basicHistory:basicHistory,
-      advanceHistory:advancdHistory,
+      advanceHistory:advanceHistory,
     });
 
     return data;
