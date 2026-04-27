@@ -266,7 +266,6 @@ export default function PlayBoard({
     };
 
     useEffect(() => {
-        console.log("---", gift_boxes)
         const matched = betAmounts.find((element) =>
             isAdvanced ? element.mode === "advance" : element.mode === "basic"
         );
@@ -362,7 +361,7 @@ export default function PlayBoard({
             setChooseTime(7);
             setResultTime(1);
             setHiddenTime(3);
-            setBlockClick("auto");
+            setBlockClick("none");
             setShowLedTimer(true);
             setShowChooseTimer(false);
             setShowHiddenTimer(false);
@@ -379,7 +378,7 @@ export default function PlayBoard({
             setChooseTime(7);
             setResultTime(1);
             setHiddenTime(Math.floor(RoundTime));
-            setBlockClick("auto");
+            setBlockClick("none");
             setShowLedTimer(true);
             setShowChooseTimer(false);
             setShowHiddenTimer(true);
@@ -588,11 +587,10 @@ export default function PlayBoard({
                             // const isClaimed = element.is_claimed || claimedGiftIds.has(element.id);
                             const isUnlocked = currentWinToday >= amountValue;
                             const boxLeft = giftBoxPositions[index] ?? giftBoxPositions[0];
-                            const glowLeft = giftBoxGlowPositions[index] ?? giftBoxGlowPositions[0];
+                            // const glowLeft = giftBoxGlowPositions[index] ?? giftBoxGlowPositions[0];
                             const labelLeft = boxLeft + 10;
                             // const boxImageName = isClaimed ? element.box_opened : element.box_closed;
                             // const boxImageSrc = `${gameDetails?.gift_boxes_asset_base_path ?? ""}${boxImageName}`;
-                            console.log("========", modeGiftBoxes)
                             return (
                                 <div key={`${activeMode}-${element.id}`} className="contents">
                                     {isUnlocked ? (
