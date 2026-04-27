@@ -147,6 +147,7 @@ export default function PlayBoard({
         winToday,
         handleWinToday,
         handleGetGift,
+        refreshGameData,
     } = useGame();
     const displayedBetsRef = useRef<Record<number, number>>({});
     const errorTimeoutRef = useRef<number | null>(null);
@@ -218,12 +219,14 @@ export default function PlayBoard({
             const response = await handleGetGift(giftId);
             if (response.status) {
                 giftAmount(response.data?.gift_amount ?? 0);
+                await refreshGameData();
                 // markGiftAsClaimed(giftId);
                 onOpenModal("gift");
                 return;
             }
 
             if (response.message === "Gift already claimed") {
+                await refreshGameData();
                 // markGiftAsClaimed(giftId);
             }
 
@@ -602,15 +605,16 @@ export default function PlayBoard({
                                                 void handleClaimGift(element.id);
                                             }}
                                         >
-
                                             {element.is_claimed ? (
-
-                                                <img
-                                                    src={resolveAssetUrl(`${gameDetails?.gift_boxes_asset_base_path}${element.box_opened}`)}
-                                                    alt="box"
-                                                    className="absolute top-[12px]"
-                                                    style={{ left: `${6}px` }}
-                                                />
+                                                <>
+                                                    <img src={getAssetUrl(GAME_ASSETS.RotatedInstant)} alt="dsda" className="absolute top-[0px] w-[60px]" />
+                                                    <img
+                                                        src={resolveAssetUrl(`${gameDetails?.gift_boxes_asset_base_path}${element.box_opened}`)}
+                                                        alt="box"
+                                                        className="absolute top-[12px]"
+                                                        style={{ left: `${6}px` }}
+                                                    />
+                                                </>
 
                                             ) : (
                                                 <>
@@ -644,11 +648,6 @@ export default function PlayBoard({
                                         style={{ left: `${labelLeft}px` }}
                                     >
                                         {formatNumber(amountValue)}
-
-
-
-
-
                                     </span>
                                 </div>
                             );

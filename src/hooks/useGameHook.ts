@@ -261,6 +261,12 @@ export function useGame() {
     await runRefreshGameData(options);
   }, []);
 
+  const refreshPlayerInfo = useCallback(async () => {
+    const player = await fetchPlayerInfo();
+    updateStore({ playerInfo: player, pendingBalanceDeduction: 0 });
+    return player;
+  }, []);
+
   const handleCreateRound = useCallback(async (mode: "basic" | "advance") => {
     const data = await createRound(mode);
     updateStore({ roundData: data });
@@ -276,8 +282,11 @@ export function useGame() {
 
   const handleGetGift= useCallback(async (giftId:number) => {
     const data = await fetchGetGift(giftId);
+    if (data.status) {
+      await refreshPlayerInfo();
+    }
     return data;
-  }, []);
+  }, [refreshPlayerInfo]);
 
 
 const handlePrizeDistribution= useCallback(async () => {
@@ -491,6 +500,7 @@ const handleJackpot= useCallback(async (mode:string) => {
     JackpotAdvance:snapshot.JackpotAdvance,
     JackpotBasic:snapshot.JackpotBasic,
     refreshGameData,
+    refreshPlayerInfo,
     createRound: handleCreateRound,
     makeGameRound:handleGameRound,
     makeGameResult: handleMakeResult,
