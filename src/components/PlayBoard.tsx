@@ -172,11 +172,15 @@ export default function PlayBoard({
     const currentWinTodayAdvance = Math.max(0, Number(winToday?.win2 ?? 0));
     const activeMode = isAdvanced ? "advance" : "basic";
     const modeGiftBoxes = useMemo(
-        () => gift_boxes.filter((box) => box.mode === activeMode).slice(0, 5),
+        () =>
+            gift_boxes
+                .filter((box) => box.mode === activeMode)
+                .sort((left, right) => Number.parseFloat(left.amount) - Number.parseFloat(right.amount))
+                .slice(0, 5),
         [activeMode, gift_boxes],
     );
     const currentWinToday = isAdvanced ? currentWinTodayAdvance : currentWinTodayBasic;
-    const giftBoxThresholds = modeGiftBoxes.map((box) => Number.parseInt(box.amount, 10));
+    const giftBoxThresholds = modeGiftBoxes.map((box) => Number.parseFloat(box.amount));
     const progressBarWidth = calculateGiftProgress(currentWinToday, giftBoxThresholds);
     const claimedBoxes = [box1, box2, box3, box4, box5];
     const giftBoxPositions = [38, 106, 174, 242, 310];
@@ -582,7 +586,7 @@ export default function PlayBoard({
                     </div >
                     <div className={`absolute w-[343px] h-[18px] top-[140px] left-1/2 -translate-x-1/2`}>
                         {modeGiftBoxes.map((element, index) => {
-                            const amountValue = Number.parseInt(element.amount, 10);
+                            const amountValue = Number.parseFloat(element.amount);
                             const isClaimed = claimedBoxes[index] ?? false;
                             const isUnlocked = currentWinToday >= amountValue;
                             const boxLeft = giftBoxPositions[index] ?? giftBoxPositions[0];

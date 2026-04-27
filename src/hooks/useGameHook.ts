@@ -206,9 +206,7 @@ async function runRefreshGameData(options?: RefreshGameDataOptions) {
   winToday:winToday,
   url: url,
   prizeDistribution:prizeDistribution,
-    pendingBalanceDeduction: options?.resetPendingBalanceDeduction
-      ? 0
-      : store.pendingBalanceDeduction,
+    pendingBalanceDeduction: 0,
   previousRoundBets: normalizeBetRecord(gameDetail.options, store.previousRoundBets),
   isSoundEnabled,
   isMusicEnabled,
@@ -331,6 +329,7 @@ const handlePrizeDistribution= useCallback(async () => {
       winToday:winToday,
       basicHistory:basicHistory,
       advanceHistory:advanceHistory,
+      pendingBalanceDeduction: 0,
     });
 
     return data;
