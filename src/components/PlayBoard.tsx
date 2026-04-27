@@ -602,30 +602,35 @@ export default function PlayBoard({
                                                 void handleClaimGift(element.id);
                                             }}
                                         >
-                                            <motion.img
-                                                src={getAssetUrl(GAME_ASSETS.RotatedInstant)}
-                                                alt="RotatedInstant"
-                                                className="absolute top-[0px] w-[60px]"
-                                                style={{ left: "0px" }}
-                                                animate={{ rotate: 360 }}
-                                                transition={{
-                                                    rotate: { repeat: Infinity, duration: 5, ease: "linear" },
-                                                }}
-                                            />
+
                                             {element.is_claimed ? (
+
                                                 <img
                                                     src={resolveAssetUrl(`${gameDetails?.gift_boxes_asset_base_path}${element.box_opened}`)}
                                                     alt="box"
                                                     className="absolute top-[12px]"
                                                     style={{ left: `${6}px` }}
                                                 />
+
                                             ) : (
-                                                <img
-                                                    src={resolveAssetUrl(`${gameDetails?.gift_boxes_asset_base_path}${element.box_closed}`)}
-                                                    alt="box"
-                                                    className="absolute top-[12px]"
-                                                    style={{ left: `${6}px` }}
-                                                />
+                                                <>
+                                                    <motion.img
+                                                        src={getAssetUrl(GAME_ASSETS.RotatedInstant)}
+                                                        alt="RotatedInstant"
+                                                        className="absolute top-[0px] w-[60px]"
+                                                        style={{ left: "0px" }}
+                                                        animate={{ rotate: 360 }}
+                                                        transition={{
+                                                            rotate: { repeat: Infinity, duration: 5, ease: "linear" },
+                                                        }}
+                                                    />
+                                                    <img
+                                                        src={resolveAssetUrl(`${gameDetails?.gift_boxes_asset_base_path}${element.box_closed}`)}
+                                                        alt="box"
+                                                        className="absolute top-[12px]"
+                                                        style={{ left: `${6}px` }}
+                                                    />
+                                                </>
                                             )}
                                         </button>
                                     ) : <img
@@ -639,6 +644,11 @@ export default function PlayBoard({
                                         style={{ left: `${labelLeft}px` }}
                                     >
                                         {formatNumber(amountValue)}
+
+
+
+
+
                                     </span>
                                 </div>
                             );
