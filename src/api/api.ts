@@ -180,18 +180,23 @@ type Winners = {
 export type ResultData = {
   round_id: number;
   round_no: number;
-  winning_option_id: number[]; // ✅ ALWAYS ARRAY NOW
+  winning_option_id: number[];
   winners: Winners[];
   jackpot_avatar?: string;
+};
+
+type RawResultData = {
+  round_id: number;
+  round_no: number;
+  winning_option_id: number | number[];
+  winners: Winners[];
 };
 
 export type MakeResultResponse = {
   status: boolean;
   message: string;
   jackpot_avatar?:string;
-  data?: ResultData;
-  remaining_seconds?: number;
-  
+  data?: RawResultData;
 };
 
 export const makeGameResult = async (roundId: number): Promise<ResultData> => {
