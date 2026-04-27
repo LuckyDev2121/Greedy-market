@@ -171,6 +171,10 @@ export default function PlayBoard({
         () =>
             gift_boxes
                 .filter((box) => box.mode === activeMode)
+                .map((box) => ({
+                    ...box,
+                    is_claimed: box.is_claimed === true || box.is_claimed === "true" || box.is_claimed === 1,
+                }))
                 .sort((left, right) => Number.parseFloat(left.amount) - Number.parseFloat(right.amount))
                 .slice(0, 5),
         [activeMode, gift_boxes],
@@ -201,18 +205,22 @@ export default function PlayBoard({
         optionButtonRefs.current[optionId] = element;
     };
 
+    const markGiftAsClaimed = (giftId: number) => {
+        setOptimisticClaimedGiftIds((prev) => prev.includes(giftId) ? prev : [...prev, giftId]);
+    };
+
     const handleClaimGift = async (giftId: number) => {
         try {
             const response = await handleGetGift(giftId);
             if (response.status) {
                 giftAmount(response.data?.gift_amount ?? 0);
-                setOptimisticClaimedGiftIds((prev) => prev.includes(giftId) ? prev : [...prev, giftId]);
+                markGiftAsClaimed(giftId);
                 onOpenModal("gift");
                 return;
             }
 
             if (response.message === "Gift already claimed") {
-                setOptimisticClaimedGiftIds((prev) => prev.includes(giftId) ? prev : [...prev, giftId]);
+                markGiftAsClaimed(giftId);
             }
 
             console.warn("Gift claim rejected:", response.message ?? "Unknown reason");
@@ -572,7 +580,7 @@ export default function PlayBoard({
                     <div className={`absolute w-[343px] h-[18px] top-[140px] left-1/2 -translate-x-1/2`}>
                         {modeGiftBoxes.map((element, index) => {
                             const amountValue = Number.parseFloat(element.amount);
-                            const isClaimed = claimedGiftIds.has(element.id);
+                            const isClaimed = element.is_claimed || claimedGiftIds.has(element.id);
                             const isUnlocked = currentWinToday >= amountValue;
                             const boxLeft = giftBoxPositions[index] ?? giftBoxPositions[0];
                             const glowLeft = giftBoxGlowPositions[index] ?? giftBoxGlowPositions[0];
