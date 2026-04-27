@@ -132,6 +132,7 @@ function updateStore(
 
 type RefreshGameDataOptions = {
   resetPendingBalanceDeduction?: boolean;
+  preloadedGameDetail?: GameDetailsData;
 };
 
 async function loadOptionalData<T>(label: string, loader: () => Promise<T>, fallback: T): Promise<T> {
@@ -170,13 +171,17 @@ async function runRefreshGameData(options?: RefreshGameDataOptions) {
   updateStore({ isLoading: true, isMusicSettingLoading: true });
 
   try {
+    const gameDetailPromise = options?.preloadedGameDetail
+      ? Promise.resolve(options.preloadedGameDetail)
+      : fetchGameDetail();
+
     const [jackpotBasic, jackpotAdvance, myRanking, basicHistory, advanceHistory, gameDetail, player, gameResults,  rankingToday, rankingYesterday,  winToday,  url, prizeDistribution, isSoundEnabled, isMusicEnabled, gameMode] = await Promise.all([
       loadOptionalData("basic jackpot", () => fetchJackpot("basic"), { status: true, mode: "basic", last_7_days_total: "0", message: "" }),
       loadOptionalData("advance jackpot", () => fetchJackpot("advance"), { status: true, mode: "advance", last_7_days_total: "0", message: "" }),
       loadOptionalData("my ranking", fetchMyRanking, { status: true, data: { ranking_position: 0, total_players: 0 }, message: "" }),
       loadOptionalData("basic history", fetchHistoryBasic, { status: true, count: 0, data: [], message: "" }),
       loadOptionalData("advance history", fetchHistoryAdvance, { status: true, count: 0, data: [], message: "" }),
-      fetchGameDetail(),
+      gameDetailPromise,
       fetchPlayerInfo(),
       fetchGameResults(),
       loadOptionalData("ranking today", fetchRankingToday, []),

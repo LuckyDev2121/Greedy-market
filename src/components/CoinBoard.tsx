@@ -9,6 +9,7 @@ type CoinBoardProps = {
 
 export default function CoinBoard({ onOpenModal }: CoinBoardProps) {
   const { playerInfo, displayBalance, } = useGame();
+  const balanceLabel = displayBalance ?? playerInfo?.balance ?? "0";
 
   useEffect(() => {
     if (playerInfo?.avater) {
@@ -26,7 +27,7 @@ export default function CoinBoard({ onOpenModal }: CoinBoardProps) {
             <img src={getAssetUrl(GAME_ASSETS.diamond)} alt="Diamond Icon" className="absolute -left-[48px] scale-50" />
           </div>
           <span className="pointer-events-none absolute ml-[10px] inset-0 flex items-center justify-center font-bold">
-            {displayBalance}
+            {balanceLabel}
           </span>
           <button
             type="button"

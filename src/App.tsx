@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
+import { fetchGameDetail, type GameDetailsData } from "./api/api";
 import { MusicPlayer } from "./components/GameMusic";
 import LoadingScreen from "./components/LoadingScrean";
 import GreedyMarket from "./components/GreedyMarket";
@@ -41,6 +42,38 @@ async function preloadGameAssets(setProgress: (value: number) => void) {
           });
         }),
     ),
+  );
+}
+
+function getGameDetailsAssetUrls(gameDetails: GameDetailsData): string[] {
+  const optionAssets = (gameDetails.options ?? []).map((option) => getAssetUrl(option.logo));
+  const betAssets = (gameDetails.bet_amounts ?? []).map((betAmount) => getAssetUrl(betAmount.icon));
+  const giftBoxBasePath = gameDetails.gift_boxes_asset_base_path ?? "";
+  const giftBoxAssets = (gameDetails.gift_boxes ?? []).flatMap((giftBox) => [
+    getAssetUrl(`${giftBoxBasePath}${giftBox.box_closed}`),
+    getAssetUrl(`${giftBoxBasePath}${giftBox.box_opened}`),
+  ]);
+
+  return [...new Set([...optionAssets, ...betAssets, ...giftBoxAssets].filter(Boolean))];
+}
+
+async function preloadAssetBatch(
+  assetUrls: string[],
+  onProgress?: (loaded: number, total: number) => void,
+) {
+  if (assetUrls.length === 0) {
+    onProgress?.(0, 0);
+    return;
+  }
+
+  let loaded = 0;
+
+  await Promise.all(
+    assetUrls.map(async (src) => {
+      await preloadImage(src);
+      loaded += 1;
+      onProgress?.(loaded, assetUrls.length);
+    }),
   );
 }
 
@@ -149,17 +182,68 @@ function App() {
 
     const bootstrap = async () => {
       try {
-        await preloadGameAssets(setProgress);
-        if (cancelled) {
-          return;
-        }
+        const updateBootProgress = (
+          staticProgress: number,
+          dynamicProgress: number,
+          hasGameDetails: boolean,
+          hasData: boolean,
+        ) => {
+          const nextProgress = Math.round(
+            staticProgress * 0.55 +
+            dynamicProgress * 0.2 +
+            (hasGameDetails ? 10 : 0) +
+            (hasData ? 15 : 0),
+          );
 
-        setProgress(85);
+          setProgress(Math.min(100, nextProgress));
+        };
 
+        let staticProgress = 0;
+        let dynamicProgress = 0;
+        let hasGameDetails = false;
+        let hasData = false;
+
+        const syncProgress = () => {
+          if (cancelled) {
+            return;
+          }
+
+          updateBootProgress(staticProgress, dynamicProgress, hasGameDetails, hasData);
+        };
+
+        const gameDetailsPromise = fetchGameDetail().then((gameDetails) => {
+          hasGameDetails = true;
+          syncProgress();
+          return gameDetails;
+        });
+
+        const staticAssetsPromise = preloadGameAssets((value) => {
+          staticProgress = value;
+          syncProgress();
+        });
+
+        const dynamicAssetsPromise = gameDetailsPromise.then((gameDetails) =>
+          preloadAssetBatch(getGameDetailsAssetUrls(gameDetails), (loaded, total) => {
+            dynamicProgress = total === 0 ? 100 : Math.round((loaded / total) * 100);
+            syncProgress();
+          }),
+        );
+
+        const storePromise = gameDetailsPromise.then((gameDetails) =>
+          bootstrapGameStore({
+            resetPendingBalanceDeduction: true,
+            preloadedGameDetail: gameDetails,
+          }),
+        );
 
         const [res] = await Promise.all([
           createRound("basic"),
-          bootstrapGameStore({ resetPendingBalanceDeduction: true }),
+          storePromise.then(() => {
+            hasData = true;
+            syncProgress();
+          }),
+          staticAssetsPromise,
+          dynamicAssetsPromise,
         ]);
         if (cancelled) {
           return;
