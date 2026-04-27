@@ -45,7 +45,6 @@ async function preloadGameAssets(setProgress: (value: number) => void) {
 }
 
 function App() {
-  type GameMode = "basic" | "advance";
   const [progress, setProgress] = useState(0);
   const [isBootLoading, setIsBootLoading] = useState(true);
   const [audioUnlockVersion, setAudioUnlockVersion] = useState(0);
@@ -57,8 +56,6 @@ function App() {
   const activeRoundIdRef = useRef<number | null>(null);
   const {
     createRound,
-    gameMode,
-    setGameMode,
     isMusicEnabled,
     isSoundEnabled,
     isMusicSettingLoading,
@@ -91,7 +88,7 @@ function App() {
     setIsRoundRunning(running);
   }, []);
 
-  const attemptStartRound = useCallback(async (mode: GameMode) => {
+  const attemptStartRound = useCallback(async () => {
     if (isAttemptingRoundRef.current) {
       return false;
     }
@@ -99,7 +96,7 @@ function App() {
     isAttemptingRoundRef.current = true;
 
     try {
-      const res = await createRound(mode);
+      const res = await createRound(false);
       if (!isRoundStartable(res?.remaining_seconds)) {
         return false;
       }
@@ -126,22 +123,22 @@ function App() {
     applyRoundState(null, 0, false);
   }, [applyRoundState]);
 
-  const handleModeAction = useCallback(async (targetMode: GameMode) => {
-    if (gameMode === targetMode) {
-      return {
-        action: "start-round" as const,
-        started: await attemptStartRound(targetMode),
-      };
-    }
+  // const handleModeAction = useCallback(async (targetMode: GameMode) => {
+  //   if (gameMode === targetMode) {
+  //     return {
+  //       action: "start-round" as const,
+  //       started: await attemptStartRound(targetMode),
+  //     };
+  //   }
 
-    applyRoundState(null, 0, false);
+  //   applyRoundState(null, 0, false);
 
-    const response = await setGameMode(targetMode);
-    return {
-      action: "change-mode" as const,
-      response,
-    };
-  }, [applyRoundState, attemptStartRound, gameMode, setGameMode]);
+  //   const response = await setGameMode(targetMode);
+  //   return {
+  //     action: "change-mode" as const,
+  //     response,
+  //   };
+  // }, [applyRoundState, attemptStartRound, gameMode, setGameMode]);
 
   useEffect(() => {
     let cancelled = false;
@@ -157,7 +154,7 @@ function App() {
 
 
         const [res] = await Promise.all([
-          createRound("basic"),
+          createRound(false),
           bootstrapGameStore({ resetPendingBalanceDeduction: true }),
         ]);
         if (cancelled) {
@@ -191,11 +188,11 @@ function App() {
     }
 
     const timer = window.setInterval(() => {
-      void attemptStartRound(gameMode === "advance" ? "advance" : "basic");
+      void attemptStartRound();
     }, 1000);
 
     return () => window.clearInterval(timer);
-  }, [attemptStartRound, gameMode, isBootLoading, isRoundRunning]);
+  }, [attemptStartRound, isBootLoading, isRoundRunning]);
 
   return (
     <div className="relative flex min-h-[100dvh] w-full items-end justify-center overflow-hidden">
@@ -220,7 +217,6 @@ function App() {
             isRoundRunning={isRoundRunning}
             RoundTime={roundTime}
             onRoundFinished={handleRoundFinished}
-            onModeAction={handleModeAction}
             onOpenResultMenu={() => undefined}
             onCloseResultMenu={() => undefined}
             isMusicPlaying={isMusicEnabled}

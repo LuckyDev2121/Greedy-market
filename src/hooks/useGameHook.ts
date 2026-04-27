@@ -258,8 +258,13 @@ export function useGame() {
     await runRefreshGameData(options);
   }, []);
 
-  const handleCreateRound = useCallback(async (mode: "basic" | "advance") => {
-    const data = await createRound(mode);
+  const handleCreateRound = useCallback(async (isMode:boolean) => {
+    let data
+    if(isMode){
+       data = await createRound("advance");
+    }else{
+      data = await createRound("basic");
+    }
     updateStore({ roundData: data });
     return data;
   }, []);
@@ -391,11 +396,14 @@ const handleSetMusicEnabled = useCallback(async (nextValue: boolean) => {
     updateStore({ isMusicEnabled: nextValue });
   }, []);
  
-  const handleChangeGameMode = useCallback(async (mode: "basic" | "advance") => {
-   const response=await changeMode(mode);
+ const handleChangeGameMode = useCallback(async (isAdvanceMode: boolean) => {
+    let isMode='';
+    if(isAdvanceMode)isMode="basic"
+    else isMode="advance"
+   const response=await changeMode(isMode);
     if (response.status) {
       updateStore({
-        gameMode: mode,
+        gameMode: isMode,
         remaining: response.remaining ?? 0,
       });
       return response;

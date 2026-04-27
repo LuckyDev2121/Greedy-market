@@ -27,14 +27,14 @@ function ToggleRow({ isOn, onBasic, onAdvanced }: ToggleRowProps) {
       <div className="flex h-[26px] w-[172px] overflow-hidden rounded-full border bg-gradient-to-t bg-black/10 border-[#b4870a]  text-white shadow-[inset_0_0_0_1px_rgba(255,255,255,0.14)]">
         <button
           type="button"
-          onClick={onBasic}
+          onClick={isOn ? onBasic : undefined}
           className={`h-full flex-1 text-[10px] font-bold [text-shadow:1px_0_0_brown,-1px_0_0_brown,0_1px_0_brown,0_-1px_0_brown] leading-none transition ${isOn ? "bg-transparent  " : "bg-gradient-to-t from-[#E09613] to-[#FFDB19] rounded-full"}`}
         >
           Basic
         </button>
         <button
           type="button"
-          onClick={onAdvanced}
+          onClick={isOn ? undefined : onAdvanced}
           className={`h-full flex-1 text-[10px] font-bold [text-shadow:1px_0_0_brown,-1px_0_0_brown,0_1px_0_brown,0_-1px_0_brown] leading-none transition ${isOn ? "bg-gradient-to-t from-[#a02323] to-[#fa7070] rounded-full  " : "bg-transparent text-white "}`}
         >
           Advance
@@ -47,7 +47,7 @@ function ToggleRow({ isOn, onBasic, onAdvanced }: ToggleRowProps) {
 export default function GreedyMarket({
   onToggleMusic,
   isMusicPlaying,
-  onModeAction,
+  // onModeAction,
   onOpenResultMenu,
   onCloseResultMenu,
   TodaysRoundId,
@@ -58,13 +58,13 @@ export default function GreedyMarket({
   RoundTime: number;
   onToggleMusic: () => void;
   isMusicPlaying: boolean;
-  onModeAction: (mode: "basic" | "advance") => Promise<
-    | { action: "start-round"; started: boolean }
-    | {
-        action: "change-mode";
-        response: { status: boolean; remaining?: number };
-      }
-  >;
+  // onModeAction: (mode: "basic" | "advance") => Promise<
+  //   | { action: "start-round"; started: boolean }
+  //   | {
+  //     action: "change-mode";
+  //     response: { status: boolean; remaining?: number };
+  //   }
+  // >;
   onOpenResultMenu: () => void;
   onCloseResultMenu: () => void;
   TodaysRoundId: number | null;
@@ -77,7 +77,7 @@ export default function GreedyMarket({
   const [isAdvancedMode, setIsAdvancedMode] = useState(false);
   const [remainingAmount, setRemainingAmount] = useState(0);
   const [giftAmount, setGiftAmount] = useState(0);
-  const { gameMode, handleGameMode, myRanking, JackpotAdvance, JackpotBasic } = useGame();
+  const { gameMode, handleGameMode, setGameMode, myRanking, JackpotAdvance, JackpotBasic } = useGame();
   const isOverlayOpen = activeModal !== null;
   useEffect(() => {
     const load = async () => {
@@ -182,27 +182,43 @@ export default function GreedyMarket({
                 <img src={getAssetUrl(GAME_ASSETS.trofy)} alt="cup" className="absolute h-[50px] w-[50px] left-[11px] top-[11px]" />
                 <span className="absolute font-bold left-1/3 -translate-x-1/2 top-[55px] [text-shadow:1px_0_0_brown,-1px_0_0_brown,0_1px_0_brown,0_-1px_0_brown]">{myRanking?.data.ranking_position && myRanking?.data.ranking_position && myRanking?.data.ranking_position > 98 ? +99 : (myRanking?.data.ranking_position ? myRanking?.data.ranking_position : "+99")}</span>
               </motion.button>
-
-	              <div key="mode-toggle" className="absolute flex top-[20px] left-1/2 -translate-x-1/2">
-	                <ToggleRow isOn={isAdvancedMode} onAdvanced={() => {
-	                  void (async () => {
-	                    const result = await onModeAction("advance");
-                      if (
-                        result.action === "change-mode" &&
-                        !result.response.status &&
-                        result.response.remaining
-                      ) {
-	                        setRemainingAmount(result.response.remaining);
-	                        setActiveModal("advanced");
-	                      }
-	                  })();
-	                }}
-	                  onBasic={() => {
-	                    void (async () => {
-	                      await onModeAction("basic");
-	                    })();
-	                  }} />
-	              </div>
+              <div key="mode-toggle" className="absolute flex top-[20px] left-1/2 -translate-x-1/2">
+                <ToggleRow isOn={isAdvancedMode} onAdvanced={() => {
+                  void (async () => {
+                    await setGameMode(false).then((response) => {
+                      if (!response.status && response.remaining) {
+                        setRemainingAmount(response.remaining);
+                        setActiveModal("advanced");
+                      }
+                    })
+                  })();
+                }}
+                  onBasic={() => {
+                    void (async () => {
+                      await setGameMode(true);
+                    })();
+                  }} />
+              </div>
+              {/* <div key="mode-toggle" className="absolute flex top-[20px] left-1/2 -translate-x-1/2">
+                <ToggleRow isOn={isAdvancedMode} onAdvanced={() => {
+                  void (async () => {
+                    const result = await onModeAction("advance");
+                    if (
+                      result.action === "change-mode" &&
+                      !result.response.status &&
+                      result.response.remaining
+                    ) {
+                      setRemainingAmount(result.response.remaining);
+                      setActiveModal("advanced");
+                    }
+                  })();
+                }}
+                  onBasic={() => {
+                    void (async () => {
+                      await onModeAction("basic");
+                    })();
+                  }} />
+              </div> */}
               <motion.button key="jackpot-entry" className="absolute flex w-[70px] h-[70px] right-[5px]"
                 initial={{ y: 0, }}
                 animate={{ y: 3, }}
