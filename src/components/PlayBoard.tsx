@@ -586,18 +586,18 @@ export default function PlayBoard({
                     <div className={`absolute w-[343px] h-[18px] top-[140px] left-1/2 -translate-x-1/2`}>
                         {modeGiftBoxes.map((element, index) => {
                             const amountValue = Number.parseFloat(element.amount);
-                            const isClaimed = element.is_claimed || claimedGiftIds.has(element.id);
+                            // const isClaimed = element.is_claimed || claimedGiftIds.has(element.id);
                             const isUnlocked = currentWinToday >= amountValue;
                             const boxLeft = giftBoxPositions[index] ?? giftBoxPositions[0];
                             const glowLeft = giftBoxGlowPositions[index] ?? giftBoxGlowPositions[0];
                             const labelLeft = boxLeft + 10;
-                            const boxImageName = isClaimed ? element.box_opened : element.box_closed;
-                            const boxImageSrc = `${gameDetails?.gift_boxes_asset_base_path ?? ""}${boxImageName}`;
+                            // const boxImageName = isClaimed ? element.box_opened : element.box_closed;
+                            // const boxImageSrc = `${gameDetails?.gift_boxes_asset_base_path ?? ""}${boxImageName}`;
 
                             return (
                                 <div key={`${activeMode}-${element.id}`} className="contents">
-                                    {isUnlocked && !isClaimed && (
-                                        <button
+                                    {isUnlocked ? (
+                                        < button
                                             type="button"
                                             className="absolute top-[0px] h-[60px] w-[60px] bg-transparent"
                                             style={{ left: `${glowLeft}px` }}
@@ -615,14 +615,28 @@ export default function PlayBoard({
                                                     rotate: { repeat: Infinity, duration: 5, ease: "linear" },
                                                 }}
                                             />
+                                            {element.is_claimed ? (
+                                                <img
+                                                    src={resolveAssetUrl(element.box_opened)}
+                                                    alt="box"
+                                                    className="absolute top-[12px]"
+                                                    style={{ left: `${boxLeft}px` }}
+                                                />
+                                            ) : (
+                                                <img
+                                                    src={resolveAssetUrl(element.box_closed)}
+                                                    alt="box"
+                                                    className="absolute top-[12px]"
+                                                    style={{ left: `${boxLeft}px` }}
+                                                />
+                                            )}
                                         </button>
-                                    )}
-                                    <img
-                                        src={boxImageSrc}
+                                    ) : <img
+                                        src={resolveAssetUrl(element.box_closed)}
                                         alt="box"
                                         className="absolute top-[12px]"
                                         style={{ left: `${boxLeft}px` }}
-                                    />
+                                    />}
                                     <span
                                         className="absolute top-[45px] text-[#f0d457] [text-shadow:1px_0_0_brown,-1px_0_0_brown,0_1px_0_brown,0_-1px_0_brown]"
                                         style={{ left: `${labelLeft}px` }}
