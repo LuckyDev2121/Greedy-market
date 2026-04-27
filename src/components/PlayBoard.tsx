@@ -599,7 +599,7 @@ export default function PlayBoard({
                                         < button
                                             type="button"
                                             className="absolute top-[0px] h-[60px] w-[60px] bg-transparent"
-                                            style={{ left: `${glowLeft}px` }}
+                                            style={{ left: `${38 + 68 * index}px` }}
                                             onClick={() => {
                                                 void handleClaimGift(element.id);
                                             }}
@@ -619,14 +619,14 @@ export default function PlayBoard({
                                                     src={resolveAssetUrl(`${gameDetails?.gift_boxes_asset_base_path}${element.box_opened}`)}
                                                     alt="box"
                                                     className="absolute top-[12px]"
-                                                    style={{ left: `${boxLeft}px` }}
+                                                    style={{ left: `${6}px` }}
                                                 />
                                             ) : (
                                                 <img
                                                     src={resolveAssetUrl(`${gameDetails?.gift_boxes_asset_base_path}${element.box_closed}`)}
                                                     alt="box"
                                                     className="absolute top-[12px]"
-                                                    style={{ left: `${boxLeft}px` }}
+                                                    style={{ left: `${6}px` }}
                                                 />
                                             )}
                                         </button>
@@ -634,7 +634,7 @@ export default function PlayBoard({
                                         src={resolveAssetUrl(`${gameDetails?.gift_boxes_asset_base_path}${element.box_closed}`)}
                                         alt="box"
                                         className="absolute top-[12px]"
-                                        style={{ left: `${boxLeft}px` }}
+                                        style={{ left: `${6}px` }}
                                     />}
                                     <span
                                         className="absolute top-[45px] text-[#f0d457] [text-shadow:1px_0_0_brown,-1px_0_0_brown,0_1px_0_brown,0_-1px_0_brown]"

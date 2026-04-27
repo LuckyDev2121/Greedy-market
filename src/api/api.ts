@@ -79,7 +79,7 @@ export type GameDetailsData = {
   bet_amounts?: BetAmount[];
   gift_boxes_asset_base_path:string;
   gift_boxes:giftBox[];
-};
+}; 
 
 type GameDetails = {
   status?: boolean;
@@ -88,7 +88,7 @@ type GameDetails = {
 };
 
 export const fetchGameDetail = async (): Promise<GameDetailsData> => {
-  const response = await axios.get<GameDetails>(GAME_DETAILS_API_URL);
+  const response = await axios.get<GameDetails>(`${GAME_DETAILS_API_URL}/${getUserId()}`);
 console.log("res:",response)
   if (!response.data.status) {
     throw new Error(response.data.message || "API returned false status");
