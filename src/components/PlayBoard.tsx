@@ -135,7 +135,7 @@ export default function PlayBoard({
         betAmounts,
         options,
         results,
-        // gameDetails,
+        gameDetails,
         gift_boxes,
         clearCurrentRoundBets,
         placeBet,
@@ -616,14 +616,14 @@ export default function PlayBoard({
                                             />
                                             {element.is_claimed ? (
                                                 <img
-                                                    src={resolveAssetUrl(element.box_opened)}
+                                                    src={resolveAssetUrl(`${gameDetails?.gift_boxes_asset_base_path}${element.box_opened}`)}
                                                     alt="box"
                                                     className="absolute top-[12px]"
                                                     style={{ left: `${boxLeft}px` }}
                                                 />
                                             ) : (
                                                 <img
-                                                    src={resolveAssetUrl(element.box_closed)}
+                                                    src={resolveAssetUrl(`${gameDetails?.gift_boxes_asset_base_path}${element.box_closed}`)}
                                                     alt="box"
                                                     className="absolute top-[12px]"
                                                     style={{ left: `${boxLeft}px` }}
@@ -631,7 +631,7 @@ export default function PlayBoard({
                                             )}
                                         </button>
                                     ) : <img
-                                        src={resolveAssetUrl(element.box_closed)}
+                                        src={resolveAssetUrl(`${gameDetails?.gift_boxes_asset_base_path}${element.box_closed}`)}
                                         alt="box"
                                         className="absolute top-[12px]"
                                         style={{ left: `${boxLeft}px` }}
