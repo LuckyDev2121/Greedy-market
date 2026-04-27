@@ -130,12 +130,12 @@ export default function PlayBoard({
     const [scoreBoard, setScoreBoard] = useState('');
     const [resultBoard, setResultBoard] = useState('');
     const [flyingBets, setFlyingBets] = useState<FlyingBet[]>([]);
-    const [optimisticClaimedGiftIds, setOptimisticClaimedGiftIds] = useState<number[]>([]);
+    // const [optimisticClaimedGiftIds, setOptimisticClaimedGiftIds] = useState<number[]>([]);
     const {
         betAmounts,
         options,
         results,
-        gameDetails,
+        // gameDetails,
         gift_boxes,
         clearCurrentRoundBets,
         placeBet,
@@ -169,18 +169,16 @@ export default function PlayBoard({
     const activeMode = isAdvanced ? "advance" : "basic";
     const modeGiftBoxes = useMemo(
         () =>
+
             gift_boxes
                 .filter((box) => box.mode === activeMode)
-                .map((box) => ({
-                    ...box,
-                    box_closed: box.box_closed.trim(),
-                    box_opened: box.box_opened.trim(),
-                    is_claimed:
-                        box.is_claimed === true ||
-                        box.is_claimed === "true" ||
-                        box.is_claimed === 1 ||
-                        box.is_claimed === "1",
-                }))
+                // .map((box) => ({
+                //     ...box,
+                //     box_closed: box.box_closed,
+                //     box_opened: box.box_opened,
+                //     is_claimed:
+                //         box.is_claimed === true
+                // }))
                 .sort((left, right) => Number.parseFloat(left.amount) - Number.parseFloat(right.amount))
                 .slice(0, 5),
         [activeMode, gift_boxes],
@@ -190,13 +188,13 @@ export default function PlayBoard({
     const progressBarWidth = calculateGiftProgress(currentWinToday, giftBoxThresholds);
     const giftBoxPositions = [38, 106, 174, 242, 310];
     const giftBoxGlowPositions = giftBoxPositions.map((position) => position - 6);
-    const claimedGiftIds = useMemo(
-        () => new Set([
-            ...gift_boxes.filter((box) => box.is_claimed).map((box) => box.id),
-            ...optimisticClaimedGiftIds,
-        ]),
-        [gift_boxes, optimisticClaimedGiftIds],
-    );
+    // const claimedGiftIds = useMemo(
+    //     () => new Set([
+    //         ...gift_boxes.filter((box) => box.is_claimed).map((box) => box.id),
+    //         ...optimisticClaimedGiftIds,
+    //     ]),
+    //     [gift_boxes, optimisticClaimedGiftIds],
+    // );
 
 
     const getResultOptionLogo = (id: number) =>
@@ -211,22 +209,22 @@ export default function PlayBoard({
         optionButtonRefs.current[optionId] = element;
     };
 
-    const markGiftAsClaimed = (giftId: number) => {
-        setOptimisticClaimedGiftIds((prev) => prev.includes(giftId) ? prev : [...prev, giftId]);
-    };
+    // const markGiftAsClaimed = (giftId: number) => {
+    //     setOptimisticClaimedGiftIds((prev) => prev.includes(giftId) ? prev : [...prev, giftId]);
+    // };
 
     const handleClaimGift = async (giftId: number) => {
         try {
             const response = await handleGetGift(giftId);
             if (response.status) {
                 giftAmount(response.data?.gift_amount ?? 0);
-                markGiftAsClaimed(giftId);
+                // markGiftAsClaimed(giftId);
                 onOpenModal("gift");
                 return;
             }
 
             if (response.message === "Gift already claimed") {
-                markGiftAsClaimed(giftId);
+                // markGiftAsClaimed(giftId);
             }
 
             console.warn("Gift claim rejected:", response.message ?? "Unknown reason");
@@ -268,6 +266,7 @@ export default function PlayBoard({
     };
 
     useEffect(() => {
+        console.log("---", gift_boxes)
         const matched = betAmounts.find((element) =>
             isAdvanced ? element.mode === "advance" : element.mode === "basic"
         );
@@ -593,7 +592,7 @@ export default function PlayBoard({
                             const labelLeft = boxLeft + 10;
                             // const boxImageName = isClaimed ? element.box_opened : element.box_closed;
                             // const boxImageSrc = `${gameDetails?.gift_boxes_asset_base_path ?? ""}${boxImageName}`;
-
+                            console.log("========", modeGiftBoxes)
                             return (
                                 <div key={`${activeMode}-${element.id}`} className="contents">
                                     {isUnlocked ? (

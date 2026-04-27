@@ -89,7 +89,7 @@ type GameDetails = {
 
 export const fetchGameDetail = async (): Promise<GameDetailsData> => {
   const response = await axios.get<GameDetails>(GAME_DETAILS_API_URL);
-
+console.log("res:",response)
   if (!response.data.status) {
     throw new Error(response.data.message || "API returned false status");
   }
