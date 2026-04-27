@@ -90,7 +90,10 @@ export default function NoteMenu({ onCloseNote, isAdvanced }: NoteMenuProps) {
 
     const historyData = isAdvanced ? (advanceHistory?.data ?? []) : (basicHistory?.data ?? []);
 
-    const getWinningIcons = (winningOptionIds: number[]) => {
+    const getWinningIcons = (
+        winningOptionIds: number[],
+        selectedOptions?: { option_id?: number; option_logo?: string }[],
+    ) => {
         if (winningOptionIds.length === 0) {
             return [];
         }
@@ -108,13 +111,23 @@ export default function NoteMenu({ onCloseNote, isAdvanced }: NoteMenuProps) {
         return winningOptionIds
             .map((id) => {
                 const option = optionById.get(id);
+                const selectedOption = selectedOptions?.find((item) => item.option_id === id);
+                const logo = selectedOption?.option_logo || option?.logo;
                 if (!option) {
-                    return null;
+                    if (!logo) {
+                        return null;
+                    }
+
+                    return {
+                        key: id.toString(),
+                        src: getAssetUrl(logo),
+                        alt: `Option ${id}`,
+                    };
                 }
 
                 return {
                     key: id.toString(),
-                    src: getAssetUrl(option.logo),
+                    src: getAssetUrl(logo),
                     alt: option.name,
                 };
             })
@@ -132,9 +145,14 @@ export default function NoteMenu({ onCloseNote, isAdvanced }: NoteMenuProps) {
                     <CloseIcon />
                 </button>
                 <div className="scrollbar-hidden absolute top-[30px]  left-1/2 transform -translate-x-1/2 w-[325px] h-[500px] grip overflow-x-hidden overflow-y-auto">
+                    {historyData.length === 0 && (
+                        <div className="flex h-full items-center justify-center text-[14px] text-[#bb8000]">
+                            No records yet
+                        </div>
+                    )}
                     {historyData.map((item) => {
                         const winningOptionIds = normalizeWinningOptionIds(item.winning_option_id);
-                        const winningIcons = getWinningIcons(winningOptionIds);
+                        const winningIcons = getWinningIcons(winningOptionIds, item.selected_options);
                         return (
                             <div key={item.round_no} className="relative mt-[5px] bg-amber-300/30 rounded-[20px] w-[325px] h-[150px] border-t-[1px] border-t-amber-600">
                                 <div className="absolute w-[325px] flex justify-between mx-[20px] mt-[5px]">
@@ -148,11 +166,13 @@ export default function NoteMenu({ onCloseNote, isAdvanced }: NoteMenuProps) {
                                         const option = element.option_id !== undefined
                                             ? optionById.get(element.option_id)
                                             : undefined;
+                                        const optionLogo = element.option_logo || option?.logo;
+                                        const optionAlt = option?.name || `Option ${element.option_id ?? ""}`.trim();
 
-                                        if (element.total_amount && option) {
+                                        if (element.total_amount && optionLogo) {
                                             return (
                                                 <div key={element.option_id} className="relative w-[75px] h-[20px] bg-[#e4a553] rounded-[8px] justify-center items-center flex ">
-                                                    <img src={getAssetUrl(element.option_logo || option.logo)} alt={option.name} className="h-4 w-4 mr-[2px]" />
+                                                    <img src={getAssetUrl(optionLogo)} alt={optionAlt} className="h-4 w-4 mr-[2px]" />
                                                     <span className=" items-center ml-[2px]">{formatNumber(element.total_amount)}</span>
                                                 </div>
                                             );
