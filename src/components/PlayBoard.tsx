@@ -130,11 +130,7 @@ export default function PlayBoard({
     const [scoreBoard, setScoreBoard] = useState('');
     const [resultBoard, setResultBoard] = useState('');
     const [flyingBets, setFlyingBets] = useState<FlyingBet[]>([]);
-    const [box1, setBox1] = useState(false);
-    const [box2, setBox2] = useState(false);
-    const [box3, setBox3] = useState(false);
-    const [box4, setBox4] = useState(false);
-    const [box5, setBox5] = useState(false);
+    const [optimisticClaimedGiftIds, setOptimisticClaimedGiftIds] = useState<number[]>([]);
     const {
         betAmounts,
         options,
@@ -182,9 +178,15 @@ export default function PlayBoard({
     const currentWinToday = isAdvanced ? currentWinTodayAdvance : currentWinTodayBasic;
     const giftBoxThresholds = modeGiftBoxes.map((box) => Number.parseFloat(box.amount));
     const progressBarWidth = calculateGiftProgress(currentWinToday, giftBoxThresholds);
-    const claimedBoxes = [box1, box2, box3, box4, box5];
     const giftBoxPositions = [38, 106, 174, 242, 310];
     const giftBoxGlowPositions = giftBoxPositions.map((position) => position - 6);
+    const claimedGiftIds = useMemo(
+        () => new Set([
+            ...gift_boxes.filter((box) => box.is_claimed).map((box) => box.id),
+            ...optimisticClaimedGiftIds,
+        ]),
+        [gift_boxes, optimisticClaimedGiftIds],
+    );
 
 
     const getResultOptionLogo = (id: number) =>
@@ -199,26 +201,18 @@ export default function PlayBoard({
         optionButtonRefs.current[optionId] = element;
     };
 
-    const setClaimedBox = (index: number) => {
-        if (index === 0) setBox1(true);
-        if (index === 1) setBox2(true);
-        if (index === 2) setBox3(true);
-        if (index === 3) setBox4(true);
-        if (index === 4) setBox5(true);
-    };
-
-    const handleClaimGift = async (giftId: number, index: number) => {
+    const handleClaimGift = async (giftId: number) => {
         try {
             const response = await handleGetGift(giftId);
             if (response.status) {
                 giftAmount(response.data?.gift_amount ?? 0);
-                setClaimedBox(index);
+                setOptimisticClaimedGiftIds((prev) => prev.includes(giftId) ? prev : [...prev, giftId]);
                 onOpenModal("gift");
                 return;
             }
 
             if (response.message === "Gift already claimed") {
-                setClaimedBox(index);
+                setOptimisticClaimedGiftIds((prev) => prev.includes(giftId) ? prev : [...prev, giftId]);
             }
 
             console.warn("Gift claim rejected:", response.message ?? "Unknown reason");
@@ -258,15 +252,6 @@ export default function PlayBoard({
             setFlyingBets((prev) => prev.filter((item) => item.id !== animationId));
         }, 220);
     };
-
-    useEffect(() => {
-        setBox1(Boolean(modeGiftBoxes[0]?.is_claimed));
-        setBox2(Boolean(modeGiftBoxes[1]?.is_claimed));
-        setBox3(Boolean(modeGiftBoxes[2]?.is_claimed));
-        setBox4(Boolean(modeGiftBoxes[3]?.is_claimed));
-        setBox5(Boolean(modeGiftBoxes[4]?.is_claimed));
-    }, [modeGiftBoxes])
-
 
     useEffect(() => {
         const matched = betAmounts.find((element) =>
@@ -587,7 +572,7 @@ export default function PlayBoard({
                     <div className={`absolute w-[343px] h-[18px] top-[140px] left-1/2 -translate-x-1/2`}>
                         {modeGiftBoxes.map((element, index) => {
                             const amountValue = Number.parseFloat(element.amount);
-                            const isClaimed = claimedBoxes[index] ?? false;
+                            const isClaimed = claimedGiftIds.has(element.id);
                             const isUnlocked = currentWinToday >= amountValue;
                             const boxLeft = giftBoxPositions[index] ?? giftBoxPositions[0];
                             const glowLeft = giftBoxGlowPositions[index] ?? giftBoxGlowPositions[0];
@@ -595,9 +580,9 @@ export default function PlayBoard({
 
                             return (
                                 <div key={`${activeMode}-${element.id}`} className="contents">
-                                    {isUnlocked && (
+                                    {isUnlocked && !isClaimed && (
                                         <button onClick={() => {
-                                            void handleClaimGift(element.id, index);
+                                            void handleClaimGift(element.id);
                                         }}>
                                             <motion.img
                                                 src={getAssetUrl(GAME_ASSETS.RotatedInstant)}
@@ -617,9 +602,9 @@ export default function PlayBoard({
                                             />
                                         </button>
                                     )}
-                                    {!isUnlocked && (
+                                    {(!isUnlocked || isClaimed) && (
                                         <img
-                                            src={`${gameDetails?.gift_boxes_asset_base_path}${element.box_closed}`}
+                                            src={`${gameDetails?.gift_boxes_asset_base_path}${isClaimed ? element.box_opened : element.box_closed}`}
                                             alt="box"
                                             className="absolute top-[12px]"
                                             style={{ left: `${boxLeft}px` }}
