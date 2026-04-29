@@ -11,7 +11,6 @@ export default function CoinBoard({ onOpenModal }: CoinBoardProps) {
   const { playerInfo, displayBalance, } = useGame();
   const balanceLabel = displayBalance ?? playerInfo?.balance ?? "0";
   useEffect(() => {
-    console.log(playerInfo?.balance, displayBalance, balanceLabel)
   }, [playerInfo?.balance, displayBalance, balanceLabel]);
 
   useEffect(() => {
