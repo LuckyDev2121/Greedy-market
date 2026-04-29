@@ -188,7 +188,7 @@ export default function PlayBoard({
     const giftBoxThresholds = modeGiftBoxes.map((box) => Number.parseFloat(box.amount));
     const progressBarWidth = calculateGiftProgress(currentWinToday, giftBoxThresholds);
     const giftBoxPositions = [38, 106, 174, 242, 310];
-    const giftBoxGlowPositions = giftBoxPositions.map((position) => position - 6);
+    // const giftBoxGlowPositions = giftBoxPositions.map((position) => position - 6);
     // const claimedGiftIds = useMemo(
     //     () => new Set([
     //         ...gift_boxes.filter((box) => box.is_claimed).map((box) => box.id),
@@ -420,9 +420,7 @@ export default function PlayBoard({
             return false;
         }
 
-        const displayedTotal = sumBetMap(displayedBetsRef.current);
-
-        if ((playerBalance - displayedTotal) < amount) {
+        if ((playerBalance - amount) < 0) {
             onOpenModal("recharge");
             return false;
         }

@@ -115,7 +115,7 @@ export const fetchPlayerInfo = async (): Promise<PlayerDetailsData> => {
   if (!response.data.status) {
     throw new Error(response.data.message || "API returned false status");
   }
-
+  console.log("===playerInfo",response.data.data?.balance)
   return response.data.data as PlayerDetailsData;
 };
 
@@ -162,7 +162,7 @@ export const placeBet = async (betId: number, amount: number,isMode: string,): P
     user_id: getUserId(),
     mode:isMode,
   });
-
+console.log("option",betId,"amount", amount,"mode",isMode)
   if (!response.data.status) {
     throw new Error(response.data.message || "Failed to place bet");
   }

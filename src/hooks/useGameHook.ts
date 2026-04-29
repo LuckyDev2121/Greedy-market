@@ -361,6 +361,7 @@ const handlePrizeDistribution= useCallback(async () => {
 	
 	    const response: PlaceBet = await placeBetRequest(optionId, amount,isMode);
       const jackpot = await fetchJackpot(isMode);
+
 	    updateStore((current) => ({
 	      currentRoundBets: {
 	        ...current.currentRoundBets,
