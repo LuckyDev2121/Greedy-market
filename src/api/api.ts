@@ -127,6 +127,7 @@ type GameResultItem = {
 export type GameResults = {
   status?: boolean;
   data?: GameResultItem[];
+  advance_mode?:GameResultItem[];
   message?: string;
 };
 
