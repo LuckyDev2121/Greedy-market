@@ -114,6 +114,7 @@ JackpotAdvance:null,
 };
 
 let hasInitialized = false;
+const jackpotRefreshTimers: Partial<Record<"basic" | "advance", number>> = {};
 
 function emit() {
   listeners.forEach((listener) => listener(store));
@@ -236,6 +237,30 @@ function initializeStore() {
   });
 }
 
+function scheduleJackpotRefresh(mode: "basic" | "advance") {
+  const existingTimer = jackpotRefreshTimers[mode];
+
+  if (existingTimer !== undefined) {
+    window.clearTimeout(existingTimer);
+  }
+
+  jackpotRefreshTimers[mode] = window.setTimeout(() => {
+    void fetchJackpot(mode)
+      .then((jackpot) => {
+        updateStore((current) => ({
+          JackpotAdvance: mode === "advance" ? jackpot.last_7_days_total : current.JackpotAdvance,
+          JackpotBasic: mode === "basic" ? jackpot.last_7_days_total : current.JackpotBasic,
+        }));
+      })
+      .catch((error) => {
+        console.error(`Failed to refresh ${mode} jackpot`, error);
+      })
+      .finally(() => {
+        delete jackpotRefreshTimers[mode];
+      });
+  }, 500);
+}
+
 export async function bootstrapGameStore(options?: RefreshGameDataOptions) {
   initializeStore();
   await runRefreshGameData(options);
@@ -350,9 +375,7 @@ const handlePrizeDistribution= useCallback(async () => {
   }, []);
 
   const handlePlaceBet = useCallback(async (optionId: number, amount: number,isAdvanceMode: boolean,) => {
-	    let isMode='';
-	    if(isAdvanceMode)isMode="advance"
-	    else isMode="basic"
+	    const isMode = isAdvanceMode ? "advance" : "basic";
 	    const currentBalance = Number.parseFloat(store.playerInfo?.balance ?? "0");
 
     if (currentBalance < amount) {
@@ -360,7 +383,6 @@ const handlePrizeDistribution= useCallback(async () => {
     }
 	
 	    const response: PlaceBet = await placeBetRequest(optionId, amount,isMode);
-      const jackpot = await fetchJackpot(isMode);
 
 	    updateStore((current) => ({
 	      currentRoundBets: {
@@ -368,9 +390,9 @@ const handlePrizeDistribution= useCallback(async () => {
 	        [optionId]: (current.currentRoundBets[optionId] ?? 0) + amount,
 	      },
 	      lastBetMessage: response.message ?? null,
-        JackpotAdvance: isMode === "advance" ? jackpot.last_7_days_total : current.JackpotAdvance,
-        JackpotBasic: isMode === "basic" ? jackpot.last_7_days_total : current.JackpotBasic,
 	    }));
+
+      scheduleJackpotRefresh(isMode);
 	
 	    return response;
 	  }, []);

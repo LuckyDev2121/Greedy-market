@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { getAssetUrl, GAME_ASSETS } from "../config/gameConfig";
 import { motion } from "framer-motion";
 import ChooseRectangle from "./ChooseRectangle";
@@ -32,10 +32,6 @@ function formatNumber(num: number): string {
     }
     return num.toString();
 }
-function sumBetMap(betMap: Record<number, number>): number {
-    return Object.values(betMap).reduce((sum, amount) => sum + amount, 0);
-}
-
 function calculateGiftProgress(currentValue: number, thresholds: number[]): number {
     if (thresholds.length === 0) {
         return 0;
@@ -124,11 +120,6 @@ export default function PlayBoard({
     const [hiddenTime, setHiddenTime] = useState(0);
     const [showResultTimer, setShowResultTimer] = useState(false);
     const [roundStart, setRoundStart] = useState(false)
-    const [board, setBoard] = useState('');
-    const [todayWin, setTodayWin] = useState('');
-    const [betBoard, setBetBoard] = useState('');
-    const [scoreBoard, setScoreBoard] = useState('');
-    const [resultBoard, setResultBoard] = useState('');
     const [flyingBets, setFlyingBets] = useState<FlyingBet[]>([]);
     // const [optimisticClaimedGiftIds, setOptimisticClaimedGiftIds] = useState<number[]>([]);
     const {
@@ -185,9 +176,36 @@ export default function PlayBoard({
         [activeMode, gift_boxes],
     );
     const currentWinToday = isAdvanced ? currentWinTodayAdvance : currentWinTodayBasic;
-    const giftBoxThresholds = modeGiftBoxes.map((box) => Number.parseFloat(box.amount));
+    const giftBoxThresholds = useMemo(
+        () => modeGiftBoxes.map((box) => Number.parseFloat(box.amount)),
+        [modeGiftBoxes],
+    );
     const progressBarWidth = calculateGiftProgress(currentWinToday, giftBoxThresholds);
     const giftBoxPositions = [38, 106, 174, 242, 310];
+    const modeBoardClasses = useMemo(() => {
+        if (isAdvanced) {
+            return {
+                board: "bg-[#4e4e4e]",
+                todayWin: "bg-[#6F372F] border-[#E92407]",
+                betBoard: "bg-[#D95B48] border-[#E02407]",
+                scoreBoard: "bg-[#D95B48] border-[#E02407]",
+                resultBoard: "bg-[#D95B48] border-[#E02407]",
+            };
+        }
+
+        return {
+            board: "bg-[#2B93CA]",
+            todayWin: "bg-[#0F6095] border-[#1087C6]",
+            betBoard: "bg-[#0F6095] border-[#1087C6]",
+            scoreBoard: "bg-[#0F6095] border-[#1087C6]",
+            resultBoard: "bg-[#0F6095] border-[#1087C6]",
+        };
+    }, [isAdvanced]);
+    const visibleBetAmounts = useMemo(
+        () => betAmounts.filter((element) => isAdvanced ? element.mode === "advance" : element.mode === "basic"),
+        [betAmounts, isAdvanced],
+    );
+    const visibleResults = isAdvanced ? results?.advance_mode : results?.data;
     // const giftBoxGlowPositions = giftBoxPositions.map((position) => position - 6);
     // const claimedGiftIds = useMemo(
     //     () => new Set([
@@ -206,9 +224,9 @@ export default function PlayBoard({
         return selectedBetAmount ? resolveAssetUrl(selectedBetAmount.icon) : "";
     }, [betAmounts, currentBetAmount]);
 
-    const registerOptionRef = (optionId: number, element: HTMLButtonElement | null) => {
+    const registerOptionRef = useCallback((optionId: number, element: HTMLButtonElement | null) => {
         optionButtonRefs.current[optionId] = element;
-    };
+    }, []);
 
     // const markGiftAsClaimed = (giftId: number) => {
     //     setOptimisticClaimedGiftIds((prev) => prev.includes(giftId) ? prev : [...prev, giftId]);
@@ -236,7 +254,7 @@ export default function PlayBoard({
         }
     };
 
-    const startBetFlight = (startElement: HTMLElement | null, optionId: number) => {
+    const startBetFlight = useCallback((startElement: HTMLElement | null, optionId: number) => {
         const boardElement = boardRef.current;
         const targetElement = optionButtonRefs.current[optionId];
 
@@ -266,7 +284,7 @@ export default function PlayBoard({
         window.setTimeout(() => {
             setFlyingBets((prev) => prev.filter((item) => item.id !== animationId));
         }, 220);
-    };
+    }, [currentBetImageSrc]);
 
     useEffect(() => {
         const matched = betAmounts.find((element) =>
@@ -415,7 +433,7 @@ export default function PlayBoard({
         }
     }, [RoundId, isRoundRunning, clearCurrentRoundBets]);
 
-    const handleBetOption = async (optionId: number, amount: number, startElement: HTMLElement | null) => {
+    const handleBetOption = useCallback(async (optionId: number, amount: number, startElement: HTMLElement | null) => {
         if (blockClick === "none" || hasStartedFinalBetWindow) {
             return false;
         }
@@ -459,24 +477,28 @@ export default function PlayBoard({
             releaseBetBalance(amount);
             return false;
         }
-    };
+    }, [
+        blockClick,
+        hasStartedFinalBetWindow,
+        isAdvanced,
+        onOpenModal,
+        placeBet,
+        playerBalance,
+        releaseBetBalance,
+        reserveBetBalance,
+        startBetFlight,
+    ]);
 
-    useEffect(() => {
-        if (isAdvanced) {
-            setBoard("bg-[#4e4e4e]");
-            setTodayWin("bg-[#6F372F] border-[#E92407]");
-            setBetBoard("bg-[#D95B48] border-[#E02407]");
-            setScoreBoard("bg-[#D95B48] border-[#E02407]");
-            setResultBoard("bg-[#D95B48] border-[#E02407]");
-            return;
-        }
+    const handleElementBet = useCallback((optionId: number, amount: number) => {
+        void handleBetOption(optionId, amount, currentBetButtonRef.current);
+    }, [handleBetOption]);
 
-        setBoard("bg-[#2B93CA]");
-        setTodayWin("bg-[#0F6095] border-[#1087C6]");
-        setBetBoard("bg-[#0F6095] border-[#1087C6]");
-        setScoreBoard("bg-[#0F6095] border-[#1087C6]");
-        setResultBoard("bg-[#0F6095] border-[#1087C6]");
-    }, [isAdvanced]);
+    const handleGroupBet = useCallback((optionIds: number[], startElement: HTMLElement | null) => {
+        optionIds.forEach((optionId) => {
+            void handleBetOption(optionId, currentBetAmount, startElement);
+        });
+    }, [currentBetAmount, handleBetOption]);
+
     return (
         <div className="absolute z-20 object-contain top-[90px]" style={{ width: "100%", height: "100%" }}>
             <div ref={boardRef} className="relative inset-0 z-20">
@@ -493,9 +515,9 @@ export default function PlayBoard({
                     controlButtons={blockClick}
                     currentBetAmount={currentBetAmount}
                     displayedBets={displayedBets}
-                    onBetOption={(optionId, amount) => {
-                        void handleBetOption(optionId, amount, currentBetButtonRef.current);
-                    }}
+                    displayBalance={displayBalance}
+                    options={options}
+                    onBetOption={handleElementBet}
                     registerOptionRef={registerOptionRef}
                 />
                 {flyingBets.map((item) => (
@@ -513,7 +535,7 @@ export default function PlayBoard({
                         }}
                     />
                 ))}
-                <div className={`absolute w-[402px] h-[297px] top-[380px]  ${board}`}>
+                <div className={`absolute w-[402px] h-[297px] top-[380px]  ${modeBoardClasses.board}`}>
                     <div className="absolute -top-[15px] left-[0px] h-[100px] w-[402px] overflow-hidden">
                         <img
                             src={getAssetUrl(GAME_ASSETS.jhalot)}
@@ -524,36 +546,25 @@ export default function PlayBoard({
                     {isAdvanced && (
                         <div className="absolute w-[402px] h-[370px] -top-[1px] inset-0 bg-red-700/80 mix-blend-plus-darker" />
                     )}
-                    <div className={`absolute justify-between items-center px-[10px] ${todayWin} flex w-[234px] h-[26px] top-[10px] rounded-full border-[2px]  left-1/2 -translate-x-1/2`}>
+                    <div className={`absolute justify-between items-center px-[10px] ${modeBoardClasses.todayWin} flex w-[234px] h-[26px] top-[10px] rounded-full border-[2px]  left-1/2 -translate-x-1/2`}>
                         <span className=" font-blod">TODAY'S WIN</span>
                         <span className="text-yellow-500 font-blod">{isAdvanced ? formatNumber(winToday?.win2 ?? 0) : formatNumber(winToday?.win ?? 0)}</span>
                     </div>
                     <button className="absolute left-[10px] -top-[60px] h-[70px] w-[70px] z-[50]">
                         <img src={getAssetUrl(GAME_ASSETS.RotatedInstant)} alt="RotatedInstant" className="absolute scale-125" />
                         <img ref={vegButtonRef} src={getAssetUrl(GAME_ASSETS.veg)} alt="drink" className="absolute h-[70px] w-[70px] " onClick={() => {
-                            [20, 21, 22, 23].forEach((optionId) => {
-                                if (handleBetOption(optionId, currentBetAmount)) {
-                                    startBetFlight(vegButtonRef.current, optionId);
-                                }
-                            });
+                            handleGroupBet([20, 21, 22, 23], vegButtonRef.current);
                         }} />
                     </button>
                     <button className="absolute  right-[10px] -top-[60px] h-[70px] w-[70px] z-[50] ">
                         <img src={getAssetUrl(GAME_ASSETS.RotatedInstant)} alt="RotatedInstant" className="absolute scale-125" />
                         <img ref={drinkButtonRef} src={getAssetUrl(GAME_ASSETS.drink)} alt="veg" className="absolute h-[70px] w-[70px]" onClick={() => {
-                            [24, 25, 26, 27].forEach((optionId) => {
-                                if (handleBetOption(optionId, currentBetAmount)) {
-                                    startBetFlight(drinkButtonRef.current, optionId);
-                                }
-                            });
+                            handleGroupBet([24, 25, 26, 27], drinkButtonRef.current);
                         }} />
                     </button>
-                    <div className={`absolute scrollbar-hidden flex overflow-y-hidden overflow-x-auto w-[345px] h-[100px] ${betBoard} top-[50px] rounded-[20px] border-[5px] left-1/2 -translate-x-1/2`}
+                    <div className={`absolute scrollbar-hidden flex overflow-y-hidden overflow-x-auto w-[345px] h-[100px] ${modeBoardClasses.betBoard} top-[50px] rounded-[20px] border-[5px] left-1/2 -translate-x-1/2`}
                         style={{ pointerEvents: "auto" }}>
-                        {betAmounts
-                            .filter((element) =>
-                                isAdvanced ? element.mode === "advance" : element.mode === "basic"
-                            )
+                        {visibleBetAmounts
                             .map((element) => {
                                 const amountValue = Number.parseInt(element.amount, 10);
                                 return (
@@ -576,7 +587,7 @@ export default function PlayBoard({
                                 );
                             })}
                     </div>
-                    <div className={`absolute w-[343px] h-[18px] overflow-hidden rounded-[20px] top-[160px] ${scoreBoard}  border-[1px]  left-1/2 -translate-x-1/2`}>
+                    <div className={`absolute w-[343px] h-[18px] overflow-hidden rounded-[20px] top-[160px] ${modeBoardClasses.scoreBoard}  border-[1px]  left-1/2 -translate-x-1/2`}>
                         <div
                             className="absolute inset-y-0 left-0 rounded-[20px] bg-gradient-to-t from-[#118D11] to-[#1EF31E]"
                             style={{ width: `${progressBarWidth}%` }}
@@ -651,12 +662,12 @@ export default function PlayBoard({
                             );
                         })}
                     </div >
-                    <div className={`absolute flex items-center w-[343px] h-[45px] rounded-[12px] ${resultBoard} top-[210px]  border-[2px]  left-1/2 -translate-x-1/2`}>
+                    <div className={`absolute flex items-center w-[343px] h-[45px] rounded-[12px] ${modeBoardClasses.resultBoard} top-[210px]  border-[2px]  left-1/2 -translate-x-1/2`}>
                         <span className="ml-[10px] text-[16px]">Result</span>
                         <div className="ml-[10px] w-[2px] h-[25px] bg-white/80"></div>
                         <div className=" scrollbar-hidden absolute flex  left-[65px] top-[5px] h-[40px] w-[270px] overflow-y-hidden overflow-x-auto z-20 ">
-                            {isAdvanced ? <>{results?.advance_mode?.map((result, index) => (
-                                <div key={index} className={`flex-shrink-0 relative h-[30px] w-[30px] left-[6px] mt-[0px] ${results.data?.length === undefined || index === results.data.length - 1 ? "" : "mr-[10px]"
+                            {visibleResults?.map((result, index) => (
+                                <div key={`${result.option_id}-${index}`} className={`flex-shrink-0 relative h-[30px] w-[30px] left-[6px] mt-[0px] ${visibleResults.length === undefined || index === visibleResults.length - 1 ? "" : "mr-[10px]"
                                     }`}>
                                     {result.is_jackpot === 0 && (
                                         <img
@@ -681,35 +692,6 @@ export default function PlayBoard({
                                     )}
                                 </div>
                             ))}
-                            </>
-                                :
-                                <>{results?.data?.map((result, index) => (
-                                    <div key={index} className={`flex-shrink-0 relative h-[30px] w-[30px] left-[6px] mt-[0px] ${results.data?.length === undefined || index === results.data.length - 1 ? "" : "mr-[10px]"
-                                        }`}>
-                                        {result.is_jackpot === 0 && (
-                                            <img
-                                                src={getResultOptionLogo(result.option_id)}
-                                                alt={result.option_name || `Result ${index + 1}`}
-                                                className="absolute inset-0 h-full w-full"
-                                            />
-                                        )}
-                                        {result.is_jackpot === 1 && (
-                                            <img
-                                                src={getAssetUrl(GAME_ASSETS.drink)}
-                                                alt={result.option_name || `Result ${index + 1}`}
-                                                className="absolute inset-0 h-full w-full"
-                                            />
-                                        )}
-                                        {result.is_jackpot === 2 && (
-                                            <img
-                                                src={getAssetUrl(GAME_ASSETS.veg)}
-                                                alt={result.option_name || `Result ${index + 1}`}
-                                                className="absolute inset-0 h-full w-full"
-                                            />
-                                        )}
-                                    </div>
-                                ))}
-                                </>}
                         </div>
                     </div>
                 </div>
