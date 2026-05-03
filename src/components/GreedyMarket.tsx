@@ -77,8 +77,8 @@ export default function GreedyMarket({
   const [isAdvancedMode, setIsAdvancedMode] = useState(false);
   const [remainingAmount, setRemainingAmount] = useState(0);
   const [giftAmount, setGiftAmount] = useState(0);
-  const [round, setRound] = useState(0)
-  const { gameMode, handleGameMode, myRanking, JackpotAdvance, JackpotBasic, createRound } = useGame();
+
+  const { gameMode, handleGameMode, myRanking, JackpotAdvance, JackpotBasic, } = useGame();
   const isOverlayOpen = activeModal !== null;
   useEffect(() => {
     const load = async () => {
@@ -103,14 +103,7 @@ export default function GreedyMarket({
       setIsAdvancedMode(true);
     }
   }, [gameMode]);
-  useEffect(() => {
-    if (gameMode !== null) {
-      createRound(gameMode)
-        .then((res) => {
-          setRound(res.round_no)
-        })
-    }
-  }, [gameMode])
+
 
   useEffect(() => {
     if (activeModal === "result") {
@@ -248,7 +241,7 @@ export default function GreedyMarket({
           </div>
           <div className="bottom-0 left-0 right-0">
             <PlayBoard
-              RoundId={round}
+              RoundId={TodaysRoundId}
               RoundTime={RoundTime}
               isRoundRunning={isRoundRunning}
               onRoundFinished={onRoundFinished}
