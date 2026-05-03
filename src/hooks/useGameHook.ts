@@ -313,7 +313,6 @@ export function useGame() {
     return data;
   }, [refreshPlayerInfo]);
 
-
 const handlePrizeDistribution= useCallback(async () => {
     const data = await fetchPrizeDistribution();
     updateStore({ prizeDistribution: data });
