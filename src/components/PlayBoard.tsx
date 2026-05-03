@@ -771,7 +771,7 @@ export default function PlayBoard({
                 {showChooseRectangle && (
                     <div className="absolute inset-0 z-40">
                         <ChooseRectangle
-                            RoundId={RoundId}
+                            isAdvance={isAdvanced}
                             onChooseTimeUp={() => {
                                 setShowChooseRectangle(false);
                             }}

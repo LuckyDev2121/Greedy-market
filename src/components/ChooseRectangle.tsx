@@ -19,16 +19,17 @@ const fruits = [
 //         { id: 22, height: 87, width: 96, top: 140, left: 305 },
 //         { id: 21, height: 87, width: 98, top: 28, left: 260 },
 //         { id: 20, height: 82, width: 98, top: 8, left: 153 },
-export default function ChooseRectangle({ onChooseTimeUp, RoundId }: { onChooseTimeUp?: () => void; RoundId?: number | null; onResult?: (fruit: string) => void }) {
+export default function ChooseRectangle({ onChooseTimeUp, isAdvance }: { onChooseTimeUp?: () => void; isAdvance?: boolean | null; onResult?: (fruit: string) => void }) {
     const [time, setTime] = useState(0);
     const [second, setSecond] = useState(0);
     const [timestep, setTimestep] = useState(100);
     const [addTime, setAddTime] = useState(0);
+    const [roundId, setRoundId] = useState(0)
 
     const [resultResponse, setResultResponse] = useState<ResultData | null>(null);
     const onChooseTimeUpRef = useRef(onChooseTimeUp);
     const currentFruit = fruits[(8 + time) % fruits.length];
-    const { makeGameRound,
+    const { makeGameRound, createRound,
         makeResult } = useGame();
     const [steps, setSteps] = useState(0);
     const result = resultResponse ?? makeResult;
@@ -44,12 +45,24 @@ export default function ChooseRectangle({ onChooseTimeUp, RoundId }: { onChooseT
         }
         const timer = setInterval(() => {
             if (second <= 4000) {
+                if (second === 0) {
+                    if (isAdvance)
+                        createRound("advance")
+                            .then((res) => {
+                                setRoundId(res.round_no)
+                            })
+                    else
+                        createRound("basic")
+                            .then((res) => {
+                                setRoundId(res.round_no)
+                            })
+                }
                 setSecond((s) => s + 100);
                 setTime((t) => t + 1);
                 setTimestep(100);
-                if (second === 1000) {
-                    if (RoundId) {
-                        void makeGameRound(RoundId)
+                if (second === 2000) {
+                    if (roundId) {
+                        void makeGameRound(roundId)
                             .then((response) => {
                                 setResultResponse(response);
                             })
