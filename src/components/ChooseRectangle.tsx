@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react"
 import { useGame } from "../hooks/useGameHook";
-import type { ResultData } from "../api/api";
+import { createRound, type ResultData } from "../api/api";
 const fruits = [
     { id: 27, element_name: "H", top: 37, left: 50 },
     { id: 20, element_name: "G", top: 16, left: 156 },
@@ -24,10 +24,12 @@ export default function ChooseRectangle({ onChooseTimeUp, RoundId }: { onChooseT
     const [second, setSecond] = useState(0);
     const [timestep, setTimestep] = useState(100);
     const [addTime, setAddTime] = useState(0);
+    const [round, setRound] = useState(0)
     const [resultResponse, setResultResponse] = useState<ResultData | null>(null);
     const onChooseTimeUpRef = useRef(onChooseTimeUp);
     const currentFruit = fruits[(8 + time) % fruits.length];
-    const { makeGameRound, makeResult } = useGame();
+    const { makeGameRound, createRound,
+        makeResult } = useGame();
     const [steps, setSteps] = useState(0);
     const result = resultResponse ?? makeResult;
 
@@ -42,12 +44,18 @@ export default function ChooseRectangle({ onChooseTimeUp, RoundId }: { onChooseT
         }
         const timer = setInterval(() => {
             if (second <= 4000) {
+                if (second === 0) {
+                    void createRound()
+                        .then((response) => {
+                            setRound(response.round_no)
+                        })
+                }
                 setSecond((s) => s + 100);
                 setTime((t) => t + 1);
                 setTimestep(100);
                 if (second === 1000) {
-                    if (RoundId) {
-                        void makeGameRound(RoundId)
+                    if (round) {
+                        void makeGameRound(round)
                             .then((response) => {
                                 setResultResponse(response);
                             })

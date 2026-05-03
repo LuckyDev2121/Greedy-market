@@ -139,6 +139,7 @@ export default function PlayBoard({
         handleWinToday,
         handleGetGift,
         refreshGameData,
+        createRound,
     } = useGame();
     const displayedBetsRef = useRef<Record<number, number>>({});
     const errorTimeoutRef = useRef<number | null>(null);
@@ -582,7 +583,6 @@ export default function PlayBoard({
                                             alt={`Bet amount ${element.amount}`}
                                             className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 pt-0"
                                         />
-
                                     </button>
                                 );
                             })}
