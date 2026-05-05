@@ -489,6 +489,16 @@ const handleRemainingToday= useCallback(async () => {
     }));
   }, []);
 
+  const setCurrentRoundBets = useCallback((mode: "basic" | "advance", betMap: Record<number, number>) => {
+    updateStore((current) => ({
+      currentRoundBetsByMode: {
+        ...current.currentRoundBetsByMode,
+        [mode]: betMap,
+      },
+      currentRoundBets: mode === (current.gameMode ?? "basic") ? betMap : current.currentRoundBets,
+    }));
+  }, []);
+
   const archiveCurrentRoundBets = useCallback(() => {
     updateStore({
       previousRoundBets: normalizeBetRecord(
@@ -567,6 +577,7 @@ const handleJackpot= useCallback(async (mode:string) => {
     setSoundEnabled: handleSetSoundEnabled,
     setGameMode:handleChangeGameMode,
     clearCurrentRoundBets,
+    setCurrentRoundBets,
     archiveCurrentRoundBets,
     setPreviousRoundBets,
     handleWinToday,

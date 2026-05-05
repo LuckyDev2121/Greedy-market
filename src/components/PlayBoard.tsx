@@ -133,6 +133,7 @@ export default function PlayBoard({
         gift_boxes,
         currentRoundBetsByMode,
         clearCurrentRoundBets,
+        setCurrentRoundBets,
         placeBet,
         reserveBetBalance,
         releaseBetBalance,
@@ -154,7 +155,6 @@ export default function PlayBoard({
     const drinkButtonRef = useRef<HTMLImageElement | null>(null);
     const optionButtonRefs = useRef<Record<number, HTMLButtonElement | null>>({});
     const initializedRoundRef = useRef<number | null>(null);
-    const clearedRoundByModeRef = useRef<Partial<Record<"basic" | "advance", number>>>({});
     const optionMap = useMemo(() => {
         return Object.fromEntries(
             options.map(o => [o.id, o.logo])
@@ -447,13 +447,6 @@ export default function PlayBoard({
             return;
         }
     }, [RoundId, RoundTime, isRoundRunning, onOpenModal]);
-    useEffect(() => {
-        if (isRoundRunning && RoundId && clearedRoundByModeRef.current[activeMode] !== RoundId) {
-            clearedRoundByModeRef.current[activeMode] = RoundId;
-            clearCurrentRoundBets(activeMode);
-        }
-    }, [RoundId, activeMode, isRoundRunning, clearCurrentRoundBets]);
-
     const handleBetOption = useCallback(async (optionId: number, amount: number, startElement: HTMLElement | null) => {
         if (blockClick === "none" || hasStartedFinalBetWindow) {
             return false;
@@ -476,6 +469,7 @@ export default function PlayBoard({
 
         displayedBetsRef.current = nextDisplayedBets;
         setDisplayedBets(nextDisplayedBets);
+        setCurrentRoundBets(activeMode, nextDisplayedBets);
         reserveBetBalance(amount);
         startBetFlight(startElement, optionId);
 
@@ -495,18 +489,21 @@ export default function PlayBoard({
 
             displayedBetsRef.current = revertedDisplayedBets;
             setDisplayedBets(revertedDisplayedBets);
+            setCurrentRoundBets(activeMode, revertedDisplayedBets);
             releaseBetBalance(amount);
             return false;
         }
     }, [
         blockClick,
         hasStartedFinalBetWindow,
+        activeMode,
         isAdvanced,
         onOpenModal,
         placeBet,
         playerBalance,
         releaseBetBalance,
         reserveBetBalance,
+        setCurrentRoundBets,
         startBetFlight,
     ]);
 
@@ -779,12 +776,13 @@ export default function PlayBoard({
                         <HiddenTimer
                             key={`hidden-${roundKey}`}
                             start={hiddenTime}
-                            onHiddenTimeUp={() => {
-                                setShowHiddenTimer(false);
-                                setShowHand(false);
-                                setBlockClick("none");
-                                onRoundFinished(RoundId);
-                            }}
+	                            onHiddenTimeUp={() => {
+	                                setShowHiddenTimer(false);
+	                                setShowHand(false);
+	                                setBlockClick("none");
+	                                clearCurrentRoundBets(activeMode);
+	                                onRoundFinished(RoundId);
+	                            }}
                         />
                     </div>
                 )}
