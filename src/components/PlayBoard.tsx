@@ -365,6 +365,7 @@ export default function PlayBoard({
         }
 
         initializedRoundRef.current = RoundId;
+        clearCurrentRoundBets();
 
         if (RoundTime >= 12) {
             setLedTime(Math.floor(RoundTime) - 11);
@@ -446,7 +447,7 @@ export default function PlayBoard({
             setHasStartedFinalBetWindow(false);
             return;
         }
-    }, [RoundId, RoundTime, isRoundRunning, onOpenModal]);
+    }, [RoundId, RoundTime, clearCurrentRoundBets, isRoundRunning, onOpenModal]);
     const handleBetOption = useCallback(async (optionId: number, amount: number, startElement: HTMLElement | null) => {
         if (blockClick === "none" || hasStartedFinalBetWindow) {
             return false;
