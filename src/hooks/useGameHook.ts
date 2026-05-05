@@ -55,6 +55,7 @@ type GameStore = {
   results: GameResults | null;
   roundData: CreateRoundResponse | null;
   makeResult: ResultData | null;
+  currentRoundBetsByMode: Record<"basic" | "advance", Record<number, number>>;
   currentRoundBets: Record<number, number>;
   previousRoundBets: Record<number, number>;
   pendingBalanceDeduction: number;
@@ -88,6 +89,10 @@ let store: GameStore = {
   results: null,
   roundData: null,
   makeResult: null,
+  currentRoundBetsByMode: {
+    basic: {},
+    advance: {},
+  },
   currentRoundBets: {},
   previousRoundBets: {},
   pendingBalanceDeduction: 0,
@@ -217,6 +222,7 @@ async function runRefreshGameData(options?: RefreshGameDataOptions) {
   isSoundEnabled,
   isMusicEnabled,
   gameMode:gameMode.data?.mode,
+  currentRoundBets: store.currentRoundBetsByMode[gameMode.data?.mode === "advance" ? "advance" : "basic"] ?? {},
 });
   } catch (error) {
     updateStore({ isLoading: false, isMusicSettingLoading: false, isSoundSettingLoading: false });
@@ -384,6 +390,13 @@ const handlePrizeDistribution= useCallback(async () => {
 	    const response: PlaceBet = await placeBetRequest(optionId, amount,isMode);
 
 	    updateStore((current) => ({
+        currentRoundBetsByMode: {
+          ...current.currentRoundBetsByMode,
+          [isMode]: {
+            ...current.currentRoundBetsByMode[isMode],
+            [optionId]: (current.currentRoundBetsByMode[isMode][optionId] ?? 0) + amount,
+          },
+        },
 	      currentRoundBets: {
 	        ...current.currentRoundBets,
 	        [optionId]: (current.currentRoundBets[optionId] ?? 0) + amount,
@@ -429,10 +442,11 @@ const handleSetMusicEnabled = useCallback(async (nextValue: boolean) => {
 const handleChangeGameMode = useCallback(async (mode: "basic" | "advance") => {
    const response=await changeMode(mode);
     if (response.status) {
-      updateStore({
+      updateStore((current) => ({
         gameMode: mode,
+        currentRoundBets: current.currentRoundBetsByMode[mode] ?? {},
         remaining: response.remaining ?? 0,
-      });
+      }));
       return response;
     }
 
@@ -452,8 +466,25 @@ const handleRemainingToday= useCallback(async () => {
     const data = await fetchRemainingToday();
     return data;
   }, []);
-  const clearCurrentRoundBets = useCallback(() => {
-    updateStore({ currentRoundBets: {} });
+  const clearCurrentRoundBets = useCallback((mode?: "basic" | "advance") => {
+    if (!mode) {
+      updateStore({
+        currentRoundBetsByMode: {
+          basic: {},
+          advance: {},
+        },
+        currentRoundBets: {},
+      });
+      return;
+    }
+
+    updateStore((current) => ({
+      currentRoundBetsByMode: {
+        ...current.currentRoundBetsByMode,
+        [mode]: {},
+      },
+      currentRoundBets: mode === (current.gameMode ?? "basic") ? {} : current.currentRoundBets,
+    }));
   }, []);
 
   const archiveCurrentRoundBets = useCallback(() => {

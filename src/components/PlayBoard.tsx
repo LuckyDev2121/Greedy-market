@@ -111,7 +111,10 @@ export default function PlayBoard({
     const [showBoardOpacity, setShowBoardOpacity] = useState(false);
     const [showHand, setShowHand] = useState(false);
     const [showChooseRectangle, setShowChooseRectangle] = useState(false);
-    const [currentBetAmount, setCurrentBetAmount] = useState(100);
+    const [currentBetAmountsByMode, setCurrentBetAmountsByMode] = useState<Record<"basic" | "advance", number>>({
+        basic: 100,
+        advance: 100,
+    });
     const [displayedBets, setDisplayedBets] = useState<Record<number, number>>({});
     const [hasStartedFinalBetWindow, setHasStartedFinalBetWindow] = useState(false);
     const [ledTime, setLedTime] = useState(0);
@@ -128,6 +131,7 @@ export default function PlayBoard({
         results,
         gameDetails,
         gift_boxes,
+        currentRoundBets,
         clearCurrentRoundBets,
         placeBet,
         reserveBetBalance,
@@ -160,6 +164,7 @@ export default function PlayBoard({
     const currentWinTodayBasic = Math.max(0, Number(winToday?.win ?? 0));
     const currentWinTodayAdvance = Math.max(0, Number(winToday?.win2 ?? 0));
     const activeMode = isAdvanced ? "advance" : "basic";
+    const currentBetAmount = currentBetAmountsByMode[activeMode];
     const modeGiftBoxes = useMemo(
         () =>
 
@@ -287,15 +292,27 @@ export default function PlayBoard({
         }, 220);
     }, [currentBetImageSrc]);
 
+    const setCurrentBetAmount = useCallback((amount: number) => {
+        setCurrentBetAmountsByMode((current) => ({
+            ...current,
+            [activeMode]: amount,
+        }));
+    }, [activeMode]);
+
     useEffect(() => {
-        const matched = betAmounts.find((element) =>
-            isAdvanced ? element.mode === "advance" : element.mode === "basic"
+        const hasSelectedAmount = visibleBetAmounts.some((element) =>
+            Number.parseInt(element.amount, 10) === currentBetAmount
         );
 
-        if (!matched) return;
+        if (hasSelectedAmount || visibleBetAmounts.length === 0) return;
 
-        setCurrentBetAmount(Number.parseInt(matched.amount, 10));
-    }, [isAdvanced,]);
+        setCurrentBetAmount(Number.parseInt(visibleBetAmounts[0].amount, 10));
+    }, [currentBetAmount, setCurrentBetAmount, visibleBetAmounts]);
+
+    useEffect(() => {
+        displayedBetsRef.current = currentRoundBets;
+        setDisplayedBets(currentRoundBets);
+    }, [activeMode, currentRoundBets]);
 
     useEffect(() => {
         displayedBetsRef.current = displayedBets;
