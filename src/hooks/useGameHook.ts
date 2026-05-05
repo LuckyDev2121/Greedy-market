@@ -447,8 +447,11 @@ const handleChangeGameMode = useCallback(async (mode: "basic" | "advance") => {
 
 const handleGameMode= useCallback(async () => {
     const data = await fetchCurrentMode();
-    updateStore({ gameMode: data.data?.mode
-     });
+    const mode = data.data?.mode === "advance" ? "advance" : "basic";
+    updateStore((current) => ({
+      gameMode: mode,
+      currentRoundBets: current.currentRoundBetsByMode[mode] ?? {},
+    }));
     return data;
   }, []);
 const handleRemainingToday= useCallback(async () => {

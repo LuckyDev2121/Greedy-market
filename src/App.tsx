@@ -168,9 +168,14 @@ function App() {
       };
     }
 
-    applyRoundState(null, 0, false);
-
     const response = await setGameMode(targetMode);
+    if (response.status) {
+      const started = await attemptStartRound(targetMode);
+      if (!started) {
+        applyRoundState(null, 0, false);
+      }
+    }
+
     return {
       action: "change-mode" as const,
       response,
