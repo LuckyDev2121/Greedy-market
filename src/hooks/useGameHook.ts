@@ -390,6 +390,12 @@ const handlePrizeDistribution= useCallback(async () => {
 	    const response: PlaceBet = await placeBetRequest(optionId, amount,isMode);
 
 	    updateStore((current) => ({
+        currentRoundBets: current.gameMode === isMode
+          ? {
+            ...current.currentRoundBets,
+            [optionId]: (current.currentRoundBets[optionId] ?? 0) + amount,
+          }
+          : current.currentRoundBets,
         currentRoundBetsByMode: {
           ...current.currentRoundBetsByMode,
           [isMode]: {
@@ -397,10 +403,6 @@ const handlePrizeDistribution= useCallback(async () => {
             [optionId]: (current.currentRoundBetsByMode[isMode][optionId] ?? 0) + amount,
           },
         },
-	      currentRoundBets: {
-	        ...current.currentRoundBets,
-	        [optionId]: (current.currentRoundBets[optionId] ?? 0) + amount,
-	      },
 	      lastBetMessage: response.message ?? null,
 	    }));
 
@@ -531,9 +533,10 @@ const handleJackpot= useCallback(async (mode:string) => {
     playerInfo: snapshot.playerInfo,
     displayBalance,
     results: snapshot.results,
-    roundData: snapshot.roundData,
-    makeResult: snapshot.makeResult,
-    currentRoundBets: snapshot.currentRoundBets,
+	    roundData: snapshot.roundData,
+	    makeResult: snapshot.makeResult,
+    currentRoundBetsByMode: snapshot.currentRoundBetsByMode,
+	    currentRoundBets: snapshot.currentRoundBets,
     previousRoundBets: snapshot.previousRoundBets,
     previousRoundBetEntries,
     isLoading: snapshot.isLoading,

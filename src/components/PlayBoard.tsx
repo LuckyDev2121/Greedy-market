@@ -131,7 +131,7 @@ export default function PlayBoard({
         results,
         gameDetails,
         gift_boxes,
-        currentRoundBets,
+        currentRoundBetsByMode,
         clearCurrentRoundBets,
         placeBet,
         reserveBetBalance,
@@ -154,6 +154,7 @@ export default function PlayBoard({
     const drinkButtonRef = useRef<HTMLImageElement | null>(null);
     const optionButtonRefs = useRef<Record<number, HTMLButtonElement | null>>({});
     const initializedRoundRef = useRef<number | null>(null);
+    const clearedRoundByModeRef = useRef<Partial<Record<"basic" | "advance", number>>>({});
     const optionMap = useMemo(() => {
         return Object.fromEntries(
             options.map(o => [o.id, o.logo])
@@ -165,6 +166,7 @@ export default function PlayBoard({
     const currentWinTodayAdvance = Math.max(0, Number(winToday?.win2 ?? 0));
     const activeMode = isAdvanced ? "advance" : "basic";
     const currentBetAmount = currentBetAmountsByMode[activeMode];
+    const activeModeBets = currentRoundBetsByMode[activeMode] ?? {};
     const modeGiftBoxes = useMemo(
         () =>
 
@@ -310,9 +312,9 @@ export default function PlayBoard({
     }, [currentBetAmount, setCurrentBetAmount, visibleBetAmounts]);
 
     useEffect(() => {
-        displayedBetsRef.current = currentRoundBets;
-        setDisplayedBets(currentRoundBets);
-    }, [activeMode, currentRoundBets]);
+        displayedBetsRef.current = activeModeBets;
+        setDisplayedBets(activeModeBets);
+    }, [activeMode, activeModeBets]);
 
     useEffect(() => {
         displayedBetsRef.current = displayedBets;
@@ -446,10 +448,11 @@ export default function PlayBoard({
         }
     }, [RoundId, RoundTime, isRoundRunning, onOpenModal]);
     useEffect(() => {
-        if (isRoundRunning && RoundId) {
-            clearCurrentRoundBets();
+        if (isRoundRunning && RoundId && clearedRoundByModeRef.current[activeMode] !== RoundId) {
+            clearedRoundByModeRef.current[activeMode] = RoundId;
+            clearCurrentRoundBets(activeMode);
         }
-    }, [RoundId, isRoundRunning, clearCurrentRoundBets]);
+    }, [RoundId, activeMode, isRoundRunning, clearCurrentRoundBets]);
 
     const handleBetOption = useCallback(async (optionId: number, amount: number, startElement: HTMLElement | null) => {
         if (blockClick === "none" || hasStartedFinalBetWindow) {
