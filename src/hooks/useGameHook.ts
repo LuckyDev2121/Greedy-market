@@ -389,22 +389,9 @@ const handlePrizeDistribution= useCallback(async () => {
 	
 	    const response: PlaceBet = await placeBetRequest(optionId, amount,isMode);
 
-	    updateStore((current) => ({
-        currentRoundBets: current.gameMode === isMode
-          ? {
-            ...current.currentRoundBets,
-            [optionId]: (current.currentRoundBets[optionId] ?? 0) + amount,
-          }
-          : current.currentRoundBets,
-        currentRoundBetsByMode: {
-          ...current.currentRoundBetsByMode,
-          [isMode]: {
-            ...current.currentRoundBetsByMode[isMode],
-            [optionId]: (current.currentRoundBetsByMode[isMode][optionId] ?? 0) + amount,
-          },
-        },
+	    updateStore({
 	      lastBetMessage: response.message ?? null,
-	    }));
+	    });
 
       scheduleJackpotRefresh(isMode);
 	
